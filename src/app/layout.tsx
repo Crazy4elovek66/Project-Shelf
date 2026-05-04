@@ -14,7 +14,7 @@ const spaceGrotesk = Space_Grotesk({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://project-shelf.example.com"),
+  metadataBase: new URL("https://project-shelf-beta.vercel.app"),
   title: "Project Shelf | Портфолио",
   description: "Личный хаб практических IT-проектов: боты, веб-сервисы, автоматизации.",
   keywords: [
