@@ -13,3 +13,4 @@ dist
 .next-dev-server*.log
 .project-visual*.png
 desktop.ini
+.claude/

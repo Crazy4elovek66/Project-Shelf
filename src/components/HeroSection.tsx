@@ -19,6 +19,7 @@ export function HeroSection() {
   return (
     <section id="top" className="relative flex min-h-screen items-center overflow-hidden pt-20">
       <div className="absolute left-1/2 top-28 h-72 w-72 -translate-x-1/2 rounded-full bg-cyan-300/10 blur-3xl" />
+
       <div className="section-shell grid gap-12 py-20 lg:grid-cols-[1.05fr_0.95fr] lg:items-center">
         <Reveal>
           <div className="max-w-3xl">
@@ -76,22 +77,25 @@ export function HeroSection() {
           </div>
         </Reveal>
         <Reveal delay={0.12}>
-          <div className="glass-panel relative overflow-hidden rounded-[28px] p-6">
-            <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(110,231,249,0.20),transparent_34%),radial-gradient(circle_at_80%_70%,rgba(188,167,255,0.18),transparent_36%)]" />
-            <div className="relative grid gap-4">
-              {projects.map((project, index) => (
-                <a
-                  key={project.title}
-                  href={`#${getProjectId(project.title)}`}
-                  onClick={(event) => scrollToProject(event, getProjectId(project.title))}
-                  className="group flex items-center justify-between rounded-2xl border border-white/10 bg-black/22 px-4 py-4 transition hover:translate-x-1 hover:border-cyan-200/30 hover:bg-white/[0.07]"
-                >
-                  <span className="text-sm font-medium text-slate-100 transition group-hover:text-cyan-200">
-                    {project.title}
-                  </span>
-                  <span className="text-xs text-slate-500">0{index + 1}</span>
-                </a>
-              ))}
+          <div className="relative z-[4] lg:mr-[clamp(80px,8vw,160px)]">
+            {/* Projects card */}
+            <div className="glass-panel relative overflow-hidden rounded-[28px] p-6">
+              <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(110,231,249,0.20),transparent_34%),radial-gradient(circle_at_80%_70%,rgba(188,167,255,0.18),transparent_36%)]" />
+              <div className="relative grid gap-4">
+                {projects.map((project, index) => (
+                  <a
+                    key={project.title}
+                    href={`#${getProjectId(project.title)}`}
+                    onClick={(event) => scrollToProject(event, getProjectId(project.title))}
+                    className="group flex items-center justify-between rounded-2xl border border-white/10 bg-black/22 px-4 py-4 transition hover:translate-x-1 hover:border-cyan-200/30 hover:bg-white/[0.07]"
+                  >
+                    <span className="text-sm font-medium text-slate-100 transition group-hover:text-cyan-200">
+                      {project.title}
+                    </span>
+                    <span className="text-xs text-slate-500">0{index + 1}</span>
+                  </a>
+                ))}
+              </div>
             </div>
           </div>
         </Reveal>
