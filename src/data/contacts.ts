@@ -1,7 +1,7 @@
 export const CONTACTS = {
   email: "apalladiumtv@gmail.com",
   telegram: "https://t.me/Crazy4elovek",
-  hh_resume: "https://saratov.hh.ru/resume/735f924bff106f79140039ed1f685350533748",
+  hh_resume: "https://hh.ru/resume/fe6b710dff10831cac0039ed1f46335a764430",
 } as const;
 
 export const contactItems = [
