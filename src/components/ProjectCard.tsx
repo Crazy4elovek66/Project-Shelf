@@ -1,4 +1,4 @@
-import { ExternalLink, Github } from "lucide-react";
+import { ExternalLink, Github, Send } from "lucide-react";
 import type { Project } from "@/data/projects";
 import { StatusBadge, TechBadge } from "./Badges";
 import { ProjectVisual } from "./ProjectVisual";
@@ -6,6 +6,7 @@ import { ProjectVisual } from "./ProjectVisual";
 export function ProjectCard({ project }: { project: Project }) {
   const hasRepo = Boolean(project.repoUrl);
   const hasDemo = Boolean(project.demoUrl);
+  const isTelegram = Boolean(project.repoUrl?.includes("t.me") || project.repoUrl?.includes("telegram"));
 
   return (
     <article className="glass-panel group grid h-full overflow-hidden rounded-3xl p-4 transition duration-300 hover:-translate-y-1 hover:border-cyan-200/30 lg:grid-cols-[0.86fr_1.14fr]">
@@ -42,8 +43,8 @@ export function ProjectCard({ project }: { project: Project }) {
               rel="noopener noreferrer"
               className="inline-flex items-center gap-2 rounded-full border border-white/12 bg-white/[0.055] px-4 py-2 text-sm font-semibold text-white transition hover:border-cyan-200/40"
             >
-              <Github size={16} />
-              Открыть репозиторий
+              {isTelegram ? <Send size={16} /> : <Github size={16} />}
+              {isTelegram ? "Протестировать" : "Открыть репозиторий"}
             </a>
           ) : (
             <span className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.02] px-4 py-2 text-sm text-slate-500 opacity-60 cursor-not-allowed select-none">

@@ -128,4 +128,35 @@ export const projects: Project[] = [
       pattern: "network",
     },
   },
+  {
+    title: "Магия Бабушки",
+    status: "Готово",
+    description:
+      "Интерактивное WebApp-приложение внутри Telegram для психологических гаданий на базе ИИ. Реализована сложная prompt-архитектура, система умного перехвата ошибок (Fallback) для стабильного вывода длинных текстов и полная автоматизация согласования родов на бэкенде.",
+    features: [
+      "Сложная prompt-архитектура",
+      "Умный перехват ошибок (Fallback)",
+      "Автоматизация согласования родов",
+      "Интерактивный WebApp-интерфейс",
+    ],
+    stack: [
+      "Node.js",
+      "Express",
+      "React",
+      "Vite",
+      "Supabase",
+      "PostgreSQL",
+      "OpenRouter API",
+      "Telegram WebApp API",
+    ],
+    repoUrl: "https://t.me/BabushkaMagicBot/app",
+    demoUrl: "",
+    imageUrl: "/projects/Magic.png",
+    visual: {
+      label: "бот / ИИ / гадания",
+      accent: "from-purple-900 via-indigo-500 to-pink-500",
+      pattern: "chat",
+    },
+  },
 ];
+

@@ -42,6 +42,8 @@ function ProjectMockup({ title, active }: { title: Project["title"]; active: boo
       return <AuraNetMockup active={active} />;
     case "AutoClip":
       return <AutoClipMockup active={active} />;
+    case "Магия Бабушки":
+      return <BabushkaMockup active={active} />;
     default:
       return <FallbackMockup />;
   }
@@ -497,6 +499,111 @@ function AutoClipMockup({ active }: { active: boolean }) {
         </div>
       </div>
     </div>
+  );
+}
+
+function BabushkaMockup({ active }: { active: boolean }) {
+  const [stage, setStage] = useState(0);
+
+  useEffect(() => {
+    if (!active) {
+      setStage(0);
+      return;
+    }
+    const interval = setInterval(() => {
+      setStage((prev) => (prev + 1) % 4);
+    }, 2500);
+    return () => clearInterval(interval);
+  }, [active]);
+
+  return (
+    <TelegramShell
+      botName="Магия Бабушки"
+      avatarClassName="bg-gradient-to-br from-purple-600 via-pink-700 to-amber-500"
+    >
+      <div className="absolute inset-0 flex flex-col bg-[#0f0e17] text-white p-2.5 font-sans relative overflow-hidden select-none">
+        {/* Mystic glowing background elements */}
+        <div className="absolute -top-12 -left-12 size-24 rounded-full bg-purple-500/20 blur-xl animate-pulse" />
+        <div className="absolute -bottom-12 -right-12 size-24 rounded-full bg-pink-500/20 blur-xl animate-pulse" />
+
+        {/* WebApp Header */}
+        <div className="flex items-center justify-between border-b border-purple-500/20 pb-1.5 mb-2 shrink-0">
+          <span className="text-[8px] font-bold tracking-wider text-purple-300 uppercase">
+            Магия Бабушки
+          </span>
+          <span className="text-[7px] text-pink-400 font-mono">ИИ Гадалка</span>
+        </div>
+
+        {/* WebApp Body */}
+        <div className="flex-1 flex flex-col justify-between overflow-hidden">
+          {/* Card Selection Stage */}
+          {stage === 0 && (
+            <div className="flex-1 flex flex-col items-center justify-center gap-1.5">
+              <div className="text-[8px] text-center text-slate-300">Выберите тему расклада</div>
+              <div className="flex gap-1.5 w-full justify-center">
+                <div className="px-2 py-1 rounded bg-purple-950/40 border border-purple-500/30 text-[7px] text-purple-200">Любовь</div>
+                <div className="px-2 py-1 rounded bg-purple-950/40 border border-purple-500/30 text-[7px] text-purple-200">Карьера</div>
+                <div className="px-2 py-1 rounded bg-purple-950/40 border border-purple-500/30 text-[7px] text-purple-200">Судьба</div>
+              </div>
+            </div>
+          )}
+
+          {/* Shuffling Cards Stage */}
+          {stage === 1 && (
+            <div className="flex-1 flex items-center justify-center gap-1">
+              <motion.div
+                animate={{ y: [-4, 4, -4], rotate: [-5, 5, -5] }}
+                transition={{ duration: 1.5, repeat: Infinity }}
+                className="w-6 h-10 rounded border border-purple-500/40 bg-purple-900/30 flex items-center justify-center shadow-lg"
+              >
+                <span className="text-[8px] text-purple-300">★</span>
+              </motion.div>
+              <motion.div
+                animate={{ y: [4, -4, 4], rotate: [5, -5, 5] }}
+                transition={{ duration: 1.5, repeat: Infinity }}
+                className="w-6 h-10 rounded border border-pink-500/40 bg-pink-900/30 flex items-center justify-center shadow-lg"
+              >
+                <span className="text-[8px] text-pink-300">★</span>
+              </motion.div>
+              <motion.div
+                animate={{ y: [-2, 2, -2], rotate: [-2, 2, -2] }}
+                transition={{ duration: 1.5, repeat: Infinity }}
+                className="w-6 h-10 rounded border border-purple-500/40 bg-purple-900/30 flex items-center justify-center shadow-lg"
+              >
+                <span className="text-[8px] text-purple-300">★</span>
+              </motion.div>
+            </div>
+          )}
+
+          {/* Prompt / Thinking Stage */}
+          {stage === 2 && (
+            <div className="flex-1 flex flex-col items-center justify-center gap-2">
+              <div className="flex gap-1">
+                <span className="size-1.5 rounded-full bg-purple-500 animate-bounce" style={{ animationDelay: "0ms" }} />
+                <span className="size-1.5 rounded-full bg-pink-500 animate-bounce" style={{ animationDelay: "150ms" }} />
+                <span className="size-1.5 rounded-full bg-amber-500 animate-bounce" style={{ animationDelay: "300ms" }} />
+              </div>
+              <div className="text-[7px] text-slate-400 font-mono animate-pulse">Бабушка тасует карты и думает...</div>
+            </div>
+          )}
+
+          {/* Result / Text Output Stage */}
+          {stage === 3 && (
+            <div className="flex-1 flex flex-col gap-1.5 overflow-hidden">
+              <div className="text-[7px] font-bold text-amber-300">Расклад «Карта Судьбы»:</div>
+              <div className="flex-1 text-[7px] leading-3 text-slate-200 overflow-hidden text-ellipsis border-l border-purple-500/30 pl-1.5">
+                Ваш путь озарен светом ИИ-мудрости. Впереди новые вызовы, но prompt-архитектура защитит вас от ошибок. Ожидайте успеха!
+              </div>
+            </div>
+          )}
+
+          {/* WebApp Action Button */}
+          <div className="h-6 mt-1.5 shrink-0 rounded bg-gradient-to-r from-purple-600 to-pink-600 flex items-center justify-center text-[7px] font-bold text-white uppercase tracking-wider shadow-[0_0_10px_rgba(168,85,247,0.3)]">
+            Получить предсказание
+          </div>
+        </div>
+      </div>
+    </TelegramShell>
   );
 }
 
