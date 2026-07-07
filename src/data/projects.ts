@@ -79,7 +79,7 @@ export const projects: Project[] = [
     ],
     stack: ["React", "Next.js", "TypeScript", "Tailwind CSS"],
     repoUrl: "https://github.com/Crazy4elovek66/aura-net",
-    demoUrl: "",
+    demoUrl: "https://aura-net.vercel.app",
     imageUrl: "/projects/AuraNet1.png",
     visual: {
       label: "сеть / веб-сервис",
@@ -100,7 +100,7 @@ export const projects: Project[] = [
     ],
     stack: ["TypeScript", "React", "Tailwind CSS"],
     repoUrl: "https://github.com/Crazy4elovek66/ProfitCheck",
-    demoUrl: "",
+    demoUrl: "https://t.me/ProfitCheckkbot",
     imageUrl: "/projects/ProfitCheck.png",
     visual: {
       label: "калькулятор / финансы",
