@@ -1,3 +1,5 @@
+import projectCommits from "./project-commits.json";
+
 export type ProjectStatus = "Готово" | "MVP" | "В разработке" | "Технический эксперимент";
 
 export type Project = {
@@ -9,6 +11,7 @@ export type Project = {
   repoUrl?: string;
   demoUrl?: string;
   imageUrl?: string;
+  updatedAt?: string;
   visual: {
     label: string;
     accent: string;
@@ -23,7 +26,7 @@ export function getProjectId(title: string) {
     .replace(/(^-|-$)/g, "")}`;
 }
 
-export const projects: Project[] = [
+const rawProjects: Project[] = [
   {
     title: "JobRadar",
     status: "MVP",
@@ -111,14 +114,15 @@ export const projects: Project[] = [
   {
     title: "AutoClip",
     status: "MVP",
-    description: "Инструмент для автоматической нарезки и обработки видеоклипов.",
+    description:
+      "Инструмент для автоматической нарезки Twitch-клипов в вертикальный формат (9:16) с трехэтапной детекцией лиц (OpenCV/Caffe/MediaPipe) для удержания спикера в кадре.",
     features: [
-      "Анализ видеоряда",
-      "Автоматизированная нарезка",
-      "Работа с видеоформатами",
-      "Оптимизация процесса",
+      "Автоматизированный сбор Twitch-клипов",
+      "Умное кадрирование под формат 9:16",
+      "Трехэтапная детекция лиц (OpenCV/Caffe)",
+      "Сборка и публикация в Telegram/YouTube",
     ],
-    stack: ["Python", "FFmpeg"],
+    stack: ["Python", "OpenCV", "FFmpeg"],
     repoUrl: "https://github.com/Crazy4elovek66/AutoClip",
     demoUrl: "",
     imageUrl: "/projects/AutoClip1.png",
@@ -159,4 +163,9 @@ export const projects: Project[] = [
     },
   },
 ];
+
+export const projects: Project[] = rawProjects.map((p) => ({
+  ...p,
+  updatedAt: (projectCommits as Record<string, string>)[p.title] || undefined,
+}));
 

@@ -63,6 +63,10 @@ export function AboutSection() {
               <h2 className="font-display text-3xl font-semibold tracking-normal text-white sm:text-4xl">
                 Начинающий IT-специалист, который растет через реальные проекты.
               </h2>
+              <div className="mt-4 inline-flex items-center gap-2 rounded-full border border-cyan-500/20 bg-cyan-500/10 px-3.5 py-1 text-sm font-medium text-cyan-300">
+                <span className="size-1.5 rounded-full bg-cyan-400 animate-pulse" />
+                В IT-направлении с сентября 2024
+              </div>
             </div>
             <div className="text-lg leading-8 text-slate-300 lg:mt-[34px]">
               Мне интересны роли на стыке технической поддержки, QA, автоматизации,

@@ -16,7 +16,14 @@ export function ProjectCard({ project }: { project: Project }) {
           <h3 className="font-display text-2xl font-semibold tracking-normal text-white">
             {project.title}
           </h3>
-          <StatusBadge status={project.status} />
+          <div className="flex items-center gap-2">
+            <StatusBadge status={project.status} />
+            {project.updatedAt && (
+              <span className="rounded-full border border-slate-500/20 bg-slate-500/10 px-2.5 py-1 text-[11px] font-medium text-slate-400">
+                обновлено: {project.updatedAt}
+              </span>
+            )}
+          </div>
         </div>
         <p className="mt-4 leading-7 text-slate-300">{project.description}</p>
         <div className="mt-5">

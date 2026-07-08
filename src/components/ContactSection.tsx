@@ -25,23 +25,15 @@ export function ContactSection() {
               <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-1">
                 {contactItems.map((contact) =>
                   contact.type === "email" ? (
-                    <button
+                    <a
                       key={contact.label}
-                      type="button"
-                      aria-label={`Скопировать email ${CONTACTS.email}`}
-                      onClick={() => {
-                        navigator.clipboard.writeText(CONTACTS.email);
-                        window.dispatchEvent(
-                          new CustomEvent("show-toast", {
-                            detail: `Email ${CONTACTS.email} скопирован!`,
-                          }),
-                        );
-                      }}
+                      href={contact.href}
+                      aria-label={`Отправить письмо на ${CONTACTS.email}`}
                       className="inline-flex w-full items-center justify-between gap-4 rounded-2xl border border-white/12 bg-white/[0.055] px-5 py-4 text-left font-semibold text-white transition hover:border-cyan-200/40 hover:bg-white/10"
                     >
                       {contact.label}
                       <ArrowUpRight size={18} />
-                    </button>
+                    </a>
                   ) : (
                     <a
                       key={contact.label}
