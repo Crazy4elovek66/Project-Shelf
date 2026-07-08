@@ -154,7 +154,7 @@ const rawProjects: Project[] = [
       "Telegram WebApp API",
     ],
     repoUrl: "https://t.me/BabushkaMagicBot/app",
-    demoUrl: "",
+    demoUrl: "https://github.com/Crazy4elovek66/Project-Shelf/blob/main/docs/case-study-magic.md",
     imageUrl: "/projects/Magic.png",
     visual: {
       label: "бот / ИИ / гадания",

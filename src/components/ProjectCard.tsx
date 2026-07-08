@@ -66,7 +66,7 @@ export function ProjectCard({ project }: { project: Project }) {
               className="inline-flex items-center gap-2 rounded-full bg-white px-4 py-2 text-sm font-semibold text-slate-950 transition hover:bg-cyan-100"
             >
               <ExternalLink size={16} />
-              Смотреть проект
+              {project.demoUrl?.endsWith(".md") ? "Архитектура (Case Study)" : "Смотреть проект"}
             </a>
           )}
         </div>
