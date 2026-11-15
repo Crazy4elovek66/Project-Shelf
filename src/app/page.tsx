@@ -1,12 +1,13 @@
-import { AboutSection } from "@/components/AboutSection";
-import { ContactSection } from "@/components/ContactSection";
-import { Footer } from "@/components/Footer";
 import { Header } from "@/components/Header";
 import { HeroSection } from "@/components/HeroSection";
+import { CapabilitiesSection } from "@/components/CapabilitiesSection";
 import { ProjectsSection } from "@/components/ProjectsSection";
-import { ScrollToTop } from "@/components/ScrollToTop";
-import { SkillsSection } from "@/components/SkillsSection";
+import { AiConsoleSection } from "@/components/AiConsoleSection";
 import { WorkProcessSection } from "@/components/WorkProcessSection";
+import { ContactSection } from "@/components/ContactSection";
+import { Footer } from "@/components/Footer";
+import { ScrollToTop } from "@/components/ScrollToTop";
+import { CommandPaletteModal } from "@/components/CommandPaletteModal";
 
 export default function Home() {
   return (
@@ -14,14 +15,15 @@ export default function Home() {
       <Header />
       <main>
         <HeroSection />
-        <AboutSection />
+        <CapabilitiesSection />
         <ProjectsSection />
-        <SkillsSection />
+        <AiConsoleSection />
         <WorkProcessSection />
         <ContactSection />
       </main>
       <Footer />
       <ScrollToTop />
+      <CommandPaletteModal />
     </>
   );
 }

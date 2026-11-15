@@ -15,3 +15,7 @@ dist
 desktop.ini
 .claude/
 task.md
+portfolio.xml
+*.tsbuildinfo
+
+

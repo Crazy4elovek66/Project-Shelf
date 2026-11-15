@@ -1,161 +1,210 @@
 "use client";
 
-import { ArrowDown, Briefcase, Mail, Sparkles } from "lucide-react";
-import type { MouseEvent } from "react";
-import { motion } from "framer-motion";
+import { useRef } from "react";
+import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
+import { ArrowDown, Bot, Send, Terminal, Sparkles, Activity } from "lucide-react";
 import { CONTACTS } from "@/data/contacts";
-import { getProjectId, projects } from "@/data/projects";
-import { Reveal } from "./Reveal";
+import { FannedProjectDeck } from "./FannedProjectDeck";
+
+const tickerItems = [
+  "NEXT.JS 15",
+  "REACT 19",
+  "PYTHON 3.12",
+  "MULTI-AGENT SYSTEMS",
+  "TELEGRAM MINI APPS",
+  "OPENCV & MEDIAPIPE",
+  "FASTAPI",
+  "SUPABASE POSTGRESQL",
+  "LLM FALLBACK ROUTING",
+  "WHISPER STT",
+  "FFMPEG PIPELINES",
+  "FRAMER MOTION",
+  "DOCKER & LINUX VPS",
+];
 
 export function HeroSection() {
-  const scrollToProject = (event: MouseEvent<HTMLAnchorElement>, id: string) => {
-    event.preventDefault();
-    const element = document.getElementById(id);
+  const containerRef = useRef<HTMLDivElement>(null);
 
-    if (element) {
-      element.scrollIntoView({ behavior: "smooth", block: "center" });
+  // Mouse Parallax coordinates for kinetic typography
+  const mouseX = useMotionValue(0);
+  const mouseY = useMotionValue(0);
+
+  const springConfig = { damping: 25, stiffness: 120 };
+  const smoothX = useSpring(mouseX, springConfig);
+  const smoothY = useSpring(mouseY, springConfig);
+
+  // Offset layers
+  const echoX = useTransform(smoothX, [-400, 400], [-14, 14]);
+  const echoY = useTransform(smoothY, [-400, 400], [-8, 8]);
+  const glowX = useTransform(smoothX, [-400, 400], [-22, 22]);
+  const glowY = useTransform(smoothY, [-400, 400], [-12, 12]);
+
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (!containerRef.current) return;
+    const rect = containerRef.current.getBoundingClientRect();
+    const centerX = rect.left + rect.width / 2;
+    const centerY = rect.top + rect.height / 2;
+    mouseX.set(e.clientX - centerX);
+    mouseY.set(e.clientY - centerY);
+  };
+
+  const handleMouseLeave = () => {
+    mouseX.set(0);
+    mouseY.set(0);
+  };
+
+  const scrollTo = (id: string) => {
+    const el = document.getElementById(id);
+    if (el) {
+      el.scrollIntoView({ behavior: "smooth", block: "start" });
     }
   };
 
-  const titleText = "Project Shelf";
-  const titleLetters = Array.from(titleText);
-
-  const letterContainerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: { staggerChildren: 0.05, delayChildren: 0.1 },
-    },
-  };
-
-  const letterVariants = {
-    hidden: { opacity: 0, y: 30, scale: 0.8 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      scale: 1,
-      transition: {
-        type: "spring" as const,
-        damping: 15,
-        stiffness: 150,
-      },
-    },
-  };
-
   return (
-    <section id="top" className="relative flex min-h-screen items-center overflow-hidden pt-20">
-      <div className="absolute left-1/2 top-28 h-[40rem] w-[40rem] -translate-x-1/2 rounded-full bg-cyan-500/5 blur-3xl pointer-events-none" />
+    <section
+      id="top"
+      ref={containerRef}
+      onMouseMove={handleMouseMove}
+      onMouseLeave={handleMouseLeave}
+      className="relative pt-24 md:pt-32 pb-12 overflow-hidden"
+    >
+      {/* Background ambient lighting */}
+      <div className="absolute top-16 left-1/2 -translate-x-1/2 w-[700px] h-[340px] bg-gradient-to-b from-accentCyan/12 via-accentViolet/8 to-transparent rounded-full blur-[90px] pointer-events-none -z-10" />
 
-      <div className="section-shell py-12 flex flex-col gap-6 lg:grid lg:grid-cols-12 lg:items-stretch w-full">
-        {/* Карточка 1: Описание и кнопки */}
-        <div className="glass-panel col-span-8 rounded-[32px] p-8 lg:p-12 flex flex-col justify-center relative overflow-hidden">
-          <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/5 via-transparent to-purple-500/5 opacity-50" />
-          <div className="relative z-10">
-            <Reveal>
-              <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.04] px-4 py-2 text-xs text-slate-300">
-                <Sparkles size={14} className="text-cyan-400 animate-pulse" />
-                Личная витрина проектов
-              </div>
-            </Reveal>
+      <div className="section-shell">
+        {/* HUD Technical Coordinate Top Bar */}
+        <div className="flex flex-wrap items-center justify-between gap-3 border-b border-white/10 pb-4 mb-8 text-xs font-mono text-slate-400">
+          <div className="flex items-center gap-3">
+            <span className="text-accentCyan font-bold">SYS.ARCH</span>
+            <span className="text-white/20">/</span>
+            <span>VOLZHSKY → REMOTE</span>
+            <span className="text-white/20 hidden sm:inline">/</span>
+            <span className="hidden sm:inline text-slate-500">UTC+3 MOSCOW</span>
+          </div>
 
-            <motion.h1
-              variants={letterContainerVariants}
-              initial="hidden"
-              animate="visible"
-              className="font-display text-5xl font-bold leading-[1.03] tracking-normal text-white sm:text-7xl flex flex-wrap"
+          <div className="flex items-center gap-2 rounded-full border border-accentEmerald/30 bg-accentEmerald/10 px-3 py-1 text-[11px] font-mono text-accentEmerald">
+            <span className="size-2 rounded-full bg-accentEmerald animate-pulse shadow-[0_0_8px_#10b981]" />
+            <span className="tracking-wide">ONLINE // AVAILABLE FOR AI & FULL-STACK</span>
+          </div>
+        </div>
+
+        {/* Main Kinetic Display Typography Hero */}
+        <div className="relative py-4 lg:py-8">
+          {/* Technical crosshairs (+) */}
+          <span className="absolute -top-2 -left-2 text-white/30 font-mono text-sm select-none">+</span>
+          <span className="absolute -top-2 -right-2 text-white/30 font-mono text-sm select-none">+</span>
+
+          {/* Multilayer kinetic typography */}
+          <div className="relative select-none">
+            {/* Outline Echo Parallax Layer (behind) */}
+            <motion.div
+              style={{ x: echoX, y: echoY }}
+              className="absolute inset-0 pointer-events-none hidden sm:block opacity-40 will-change-transform"
+              aria-hidden="true"
             >
-              {titleLetters.map((char, index) => (
-                <motion.span
-                  key={index}
-                  variants={letterVariants}
-                  className={`inline-block origin-bottom ${char === " " ? "w-4" : ""}`}
-                >
-                  {char}
-                </motion.span>
-              ))}
-            </motion.h1>
+              <h1 className="font-display text-5xl sm:text-7xl lg:text-9xl font-bold tracking-tight uppercase leading-[0.95] text-stroke-cyan">
+                <div>FULL-STACK</div>
+                <div>AI DEVELOPER</div>
+              </h1>
+            </motion.div>
 
-            <Reveal delay={0.2}>
-              <p className="mt-6 max-w-2xl text-lg leading-8 text-slate-200">
-                Создаю Telegram-ботов, веб-сервисы и инструменты автоматизации.
-              </p>
-              <p className="mt-4 max-w-2xl text-sm leading-7 text-slate-400 sm:text-base">
-                Здесь собраны мои работы: от интеграций с API до экспериментов с ИИ. Рассказываю о
-                сути задач, используемом стеке и прикладываю ссылки на открытый код.
-              </p>
-            </Reveal>
+            {/* Glowing Depth Parallax Layer */}
+            <motion.div
+              style={{ x: glowX, y: glowY }}
+              className="absolute inset-0 pointer-events-none hidden sm:block opacity-20 will-change-transform"
+              aria-hidden="true"
+            >
+              <h1 className="font-display text-5xl sm:text-7xl lg:text-9xl font-bold tracking-tight uppercase leading-[0.95] text-stroke-echo">
+                <div>FULL-STACK</div>
+                <div>AI DEVELOPER</div>
+              </h1>
+            </motion.div>
 
-            <Reveal delay={0.35}>
-              <div className="mt-10 flex flex-col gap-3 sm:flex-row">
-                <a
-                  href="#projects"
-                  onClick={(e) => scrollToProject(e, "projects")}
-                  aria-label="Перейти к блоку проектов"
-                  className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-white px-5 py-3 text-sm font-semibold text-slate-950 shadow-glow transition hover:bg-cyan-100 sm:w-auto sm:min-w-[180px]"
-                >
-                  Смотреть проекты
-                  <ArrowDown size={16} />
-                </a>
-                <a
-                  href={CONTACTS.hh_resume}
-                  aria-label="Открыть резюме на HH"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex w-full items-center justify-center gap-2 rounded-full border border-white/12 bg-white/[0.04] px-5 py-3 text-sm font-semibold text-white transition hover:border-cyan-400/40 hover:bg-white/10 sm:w-auto sm:min-w-[180px]"
-                >
-                  <Briefcase size={16} />
-                  Открыть резюме
-                </a>
-                <button
-                  type="button"
-                  aria-label="Скопировать email для связи"
-                  onClick={() => {
-                    navigator.clipboard.writeText(CONTACTS.email);
-                    window.dispatchEvent(
-                      new CustomEvent("show-toast", {
-                        detail: `Email ${CONTACTS.email} скопирован!`,
-                      }),
-                    );
-                  }}
-                  className="inline-flex w-full items-center justify-center gap-2 rounded-full border border-white/12 px-5 py-3 text-sm font-semibold text-slate-200 transition hover:border-cyan-400/40 hover:text-white sm:w-auto sm:min-w-[180px]"
-                >
-                  <Mail size={16} />
-                  Связаться
-                </button>
+            {/* Front Solid Typography Layer */}
+            <h1 className="relative z-10 font-display text-5xl sm:text-7xl lg:text-9xl font-bold tracking-tight uppercase leading-[0.95] text-white">
+              <span className="block bg-gradient-to-r from-white via-slate-100 to-slate-300 bg-clip-text text-transparent">
+                FULL-STACK
+              </span>
+              <span className="block bg-gradient-to-r from-accentCyan via-sky-300 to-indigo-300 bg-clip-text text-transparent">
+                AI DEVELOPER
+              </span>
+            </h1>
+          </div>
+
+          {/* Subtitle / Engineer Offer and Identity */}
+          <div className="mt-8 grid gap-8 lg:grid-cols-12 lg:items-end">
+            <div className="lg:col-span-8">
+              <p className="font-display text-xl sm:text-2xl font-semibold text-slate-100 leading-snug">
+                Архитектура мультиагентных систем, отказоустойчивые LLM-роутеры, Telegram Mini Apps и кинетические веб-интерфейсы.
+              </p>
+              <p className="mt-3 max-w-2xl text-sm sm:text-base leading-relaxed text-slate-400 font-sans">
+                Привет, я <span className="text-white font-medium">Илья (idleON)</span>. Разрабатываю практические AI-инструменты и Full-Stack веб-сервисы с 100% открытым кодом: от компьютерного зрения в OpenCV до сложных prompt-пайплайнов и реактивных интерфейсов на Next.js 15.
+              </p>
+            </div>
+
+            {/* Micro stats counter */}
+            <div className="lg:col-span-4 flex items-center justify-between lg:justify-end gap-6 font-mono text-xs border-t lg:border-t-0 border-white/10 pt-4 lg:pt-0">
+              <div>
+                <div className="text-2xl font-bold font-display text-white">6+</div>
+                <div className="text-slate-500 uppercase text-[10px]">Кейсов в портфолио</div>
               </div>
-            </Reveal>
+              <div className="w-[1px] h-8 bg-white/10" />
+              <div>
+                <div className="text-2xl font-bold font-display text-accentCyan">24/7</div>
+                <div className="text-slate-500 uppercase text-[10px]">Автономные пайплайны</div>
+              </div>
+              <div className="w-[1px] h-8 bg-white/10" />
+              <div>
+                <div className="text-2xl font-bold font-display text-accentEmerald">7-14д</div>
+                <div className="text-slate-500 uppercase text-[10px]">Срок запуска MVP</div>
+              </div>
+            </div>
+          </div>
+
+          {/* CTA Magnetic Buttons */}
+          <div className="mt-8 flex flex-wrap items-center gap-3">
+            <button
+              onClick={() => scrollTo("projects")}
+              className="group inline-flex items-center gap-2.5 rounded-full bg-white px-6 py-3.5 text-sm font-semibold text-slate-950 shadow-glow transition-all hover:bg-accentCyan hover:shadow-[0_0_30px_rgba(56,189,248,0.4)]"
+            >
+              <span>Смотреть проекты (01-06)</span>
+              <ArrowDown size={15} className="group-hover:translate-y-0.5 transition-transform" />
+            </button>
+
+            <button
+              onClick={() => scrollTo("console")}
+              className="inline-flex items-center gap-2.5 rounded-full border border-white/15 bg-white/[0.05] px-6 py-3.5 text-sm font-semibold text-white transition-all hover:border-accentCyan/50 hover:bg-accentCyan/10 backdrop-blur-md"
+            >
+              <Terminal size={15} className="text-accentCyan" />
+              <span>Запустить AI-консоль</span>
+            </button>
+
+            <a
+              href={CONTACTS.telegram}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-transparent px-5 py-3.5 text-sm font-semibold text-slate-300 transition-all hover:border-accentEmerald/40 hover:text-white"
+            >
+              <Send size={14} className="text-accentEmerald" />
+              <span>Обсудить проект</span>
+            </a>
           </div>
         </div>
 
-        {/* Карточка 2: Быстрый хаб проектов */}
-        <div className="glass-panel col-span-4 rounded-[32px] p-6 lg:p-8 flex flex-col justify-center relative overflow-hidden">
-          <div className="absolute inset-0 bg-gradient-to-t from-purple-500/5 to-transparent opacity-50" />
-          <div className="relative z-10 w-full">
-            <Reveal delay={0.15}>
-              <p className="mb-6 font-display text-xs uppercase tracking-wider text-cyan-400 font-bold">Быстрый навигатор</p>
-              <div className="grid gap-3 w-full">
-                {projects.map((project, index) => (
-                  <a
-                    key={project.title}
-                    href={`#${getProjectId(project.title)}`}
-                    onClick={(event) => scrollToProject(event, getProjectId(project.title))}
-                    className="group flex items-center justify-between rounded-2xl border border-white/5 bg-black/15 px-4 py-3.5 transition hover:translate-x-1.5 hover:border-cyan-500/30 hover:bg-white/[0.04]"
-                  >
-                    <div className="flex items-center gap-3">
-                      <span className="text-xs font-mono text-slate-500">0{index + 1}</span>
-                      <span className="text-sm font-medium text-slate-200 transition group-hover:text-cyan-400">
-                        {project.title}
-                      </span>
-                    </div>
-                    <span className="text-[10px] rounded-full border border-white/10 bg-white/[0.02] px-2.5 py-0.5 text-slate-500 transition group-hover:border-cyan-500/20 group-hover:text-cyan-400">
-                      →
-                    </span>
-                  </a>
-                ))}
+        {/* Technology Marquee Ticker */}
+        <div className="mt-8 border-y border-white/10 py-3 overflow-hidden select-none">
+          <div className="marquee-track flex w-max gap-8 animate-marquee-left">
+            {[...tickerItems, ...tickerItems].map((item, idx) => (
+              <div key={idx} className="flex items-center gap-6 font-mono text-xs text-slate-400">
+                <span className="hover:text-white transition-colors">{item}</span>
+                <span className="text-accentCyan/50 text-[10px]">✦</span>
               </div>
-            </Reveal>
+            ))}
           </div>
         </div>
+
+        {/* Bottom Zone: Fanned Project Deck */}
+        <FannedProjectDeck />
       </div>
     </section>
   );
