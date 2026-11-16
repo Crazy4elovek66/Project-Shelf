@@ -1,10 +1,21 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import Image from "next/image";
 
 export function SeamlessPortraitVideo() {
   const [hasError, setHasError] = useState(false);
+  const videoRef = useRef<HTMLVideoElement | null>(null);
+
+  // Guarantee that the video is completely silent programmatically
+  useEffect(() => {
+    const el = videoRef.current;
+    if (!el) return;
+    el.defaultMuted = true;
+    el.muted = true;
+    el.volume = 0;
+    el.play().catch(() => {});
+  }, []);
 
   return (
     <div className="relative w-full h-[280px] sm:h-[320px] rounded-xl border border-white/10 bg-[#050505] overflow-hidden flex items-center justify-center select-none">
@@ -14,10 +25,18 @@ export function SeamlessPortraitVideo() {
       {/* Seamless Video with mix-blend-mode: screen & radial edge mask */}
       {!hasError ? (
         <video
+          ref={videoRef}
           autoPlay
           loop
           muted
           playsInline
+          preload="auto"
+          controls={false}
+          disablePictureInPicture
+          onLoadedMetadata={(e) => {
+            e.currentTarget.muted = true;
+            e.currentTarget.volume = 0;
+          }}
           onError={() => setHasError(true)}
           className="relative z-10 w-auto h-full max-h-[320px] object-contain object-center transition-all duration-300"
           style={{
@@ -28,7 +47,8 @@ export function SeamlessPortraitVideo() {
           }}
         >
           <source src="/videos/portrait-loop.mp4" type="video/mp4" />
-          <source src="/videos/video_1.mp4" type="video/mp4" />
+          <source src="/videos/orig-silent.mp4" type="video/mp4" />
+          <source src="/videos/orig.mp4" type="video/mp4" />
         </video>
       ) : (
         /* Fallback image if video fails to load in older browsers */

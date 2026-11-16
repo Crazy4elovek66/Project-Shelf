@@ -210,11 +210,10 @@ export function AiConsoleSection() {
                 <button
                   key={scenario.id}
                   onClick={() => setSelectedId(scenario.id)}
-                  className={`text-left p-4 rounded-xl border transition-all text-xs relative overflow-hidden group ${
-                    isSelected
-                      ? "border-white bg-[#141418] text-white shadow-lg"
-                      : "border-white/10 bg-[#09090C] text-zinc-400 hover:border-white/20 hover:text-white"
-                  }`}
+                  className={`text-left p-4 rounded-xl border transition-all text-xs relative overflow-hidden group ${isSelected
+                    ? "border-white bg-[#141418] text-white shadow-lg"
+                    : "border-white/10 bg-[#09090C] text-zinc-400 hover:border-white/20 hover:text-white"
+                    }`}
                 >
                   <div className="flex items-center justify-between mb-1.5">
                     <span className="font-bold text-white">

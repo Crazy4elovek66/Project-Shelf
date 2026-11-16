@@ -207,11 +207,11 @@ export function CommandPaletteModal() {
   // Filtering
   const filteredItems = query.trim()
     ? allItems.filter(
-        (item) =>
-          item.title.toLowerCase().includes(query.toLowerCase()) ||
-          (item.subtitle && item.subtitle.toLowerCase().includes(query.toLowerCase())) ||
-          item.category.toLowerCase().includes(query.toLowerCase()),
-      )
+      (item) =>
+        item.title.toLowerCase().includes(query.toLowerCase()) ||
+        (item.subtitle && item.subtitle.toLowerCase().includes(query.toLowerCase())) ||
+        item.category.toLowerCase().includes(query.toLowerCase()),
+    )
     : allItems;
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
@@ -304,20 +304,18 @@ export function CommandPaletteModal() {
                       key={item.id}
                       onClick={item.action}
                       onMouseEnter={() => setSelectedIndex(index)}
-                      className={`w-full flex items-center justify-between p-2.5 rounded-lg text-left transition-colors font-mono ${
-                        isSelected
-                          ? "bg-white text-black"
-                          : "text-zinc-300 hover:bg-white/[0.04]"
-                      }`}
+                      className={`w-full flex items-center justify-between p-2.5 rounded-lg text-left transition-colors font-mono ${isSelected
+                        ? "bg-white text-black"
+                        : "text-zinc-300 hover:bg-white/[0.04]"
+                        }`}
                     >
                       <div className="flex items-center gap-3 min-w-0">
                         {item.code && (
                           <span
-                            className={`text-xs font-bold px-1.5 py-0.5 rounded ${
-                              isSelected
-                                ? "bg-black text-white"
-                                : "bg-white/10 text-zinc-400"
-                            }`}
+                            className={`text-xs font-bold px-1.5 py-0.5 rounded ${isSelected
+                              ? "bg-black text-white"
+                              : "bg-white/10 text-zinc-400"
+                              }`}
                           >
                             {item.code}
                           </span>
@@ -329,11 +327,10 @@ export function CommandPaletteModal() {
                             </span>
                             {item.badge && (
                               <span
-                                className={`rounded px-1.5 py-0.2 text-[9px] uppercase ${
-                                  isSelected
-                                    ? "bg-black/20 text-black font-bold"
-                                    : "border border-white/15 text-zinc-400"
-                                }`}
+                                className={`rounded px-1.5 py-0.2 text-[9px] uppercase ${isSelected
+                                  ? "bg-black/20 text-black font-bold"
+                                  : "border border-white/15 text-zinc-400"
+                                  }`}
                               >
                                 {item.badge}
                               </span>
@@ -341,9 +338,8 @@ export function CommandPaletteModal() {
                           </div>
                           {item.subtitle && (
                             <p
-                              className={`text-[11px] truncate mt-0.5 ${
-                                isSelected ? "text-zinc-700" : "text-zinc-500"
-                              }`}
+                              className={`text-[11px] truncate mt-0.5 ${isSelected ? "text-zinc-700" : "text-zinc-500"
+                                }`}
                             >
                               {item.subtitle}
                             </p>
@@ -353,9 +349,8 @@ export function CommandPaletteModal() {
 
                       <div className="flex items-center gap-2 text-xs shrink-0 ml-3">
                         <span
-                          className={`text-[10px] uppercase ${
-                            isSelected ? "text-zinc-700" : "text-zinc-600"
-                          }`}
+                          className={`text-[10px] uppercase ${isSelected ? "text-zinc-700" : "text-zinc-600"
+                            }`}
                         >
                           {item.category}
                         </span>

@@ -79,16 +79,14 @@ export function Header() {
 
   return (
     <header
-      className={`fixed inset-x-0 top-0 z-50 flex justify-center transition-all duration-300 ${
-        isScrolled ? "top-3 px-3 sm:px-4" : "top-0 px-0"
-      }`}
+      className={`fixed inset-x-0 top-0 z-50 flex justify-center transition-all duration-300 ${isScrolled ? "top-3 px-3 sm:px-4" : "top-0 px-0"
+        }`}
     >
       <div
-        className={`flex w-full items-center justify-between transition-all duration-300 ${
-          isScrolled
-            ? "section-shell rounded-xl border border-white/15 bg-[#08080A]/90 px-4 sm:px-6 py-2.5 shadow-2xl backdrop-blur-2xl"
-            : "section-shell border-b border-white/10 bg-[#050505]/80 px-4 py-3.5 backdrop-blur-xl"
-        }`}
+        className={`flex w-full items-center justify-between transition-all duration-300 ${isScrolled
+          ? "section-shell rounded-xl border border-white/15 bg-[#08080A]/90 px-4 sm:px-6 py-2.5 shadow-2xl backdrop-blur-2xl"
+          : "section-shell border-b border-white/10 bg-[#050505]/80 px-4 py-3.5 backdrop-blur-xl"
+          }`}
       >
         {/* Left: Clean Text Logo without iO box + MechanicalKeycap */}
         <div className="flex items-center gap-3">
@@ -113,9 +111,8 @@ export function Header() {
               <a
                 key={item.href}
                 href={item.href}
-                className={`relative px-3.5 py-1.5 rounded-lg transition-colors duration-200 ${
-                  isActive ? "text-white font-bold" : "text-zinc-400 hover:text-white"
-                }`}
+                className={`relative px-3.5 py-1.5 rounded-lg transition-colors duration-200 ${isActive ? "text-white font-bold" : "text-zinc-400 hover:text-white"
+                  }`}
                 onMouseEnter={() => setHoveredIndex(index)}
                 onMouseLeave={() => setHoveredIndex(null)}
               >
@@ -204,11 +201,10 @@ function MechanicalKeycap() {
         setIsPressed(true);
         setTimeout(() => setIsPressed(false), 200);
       }}
-      className={`relative inline-flex items-center justify-center px-2 py-0.5 rounded-[5px] bg-[#141418] border border-white/20 font-mono text-[10px] text-white tracking-widest transition-all select-none group cursor-pointer ${
-        isPressed
-          ? "border-b-[1px] translate-y-[2px] shadow-none bg-[#1F1F24]"
-          : "border-b-[3px] border-b-white/40 shadow-keycap hover:border-white/40"
-      }`}
+      className={`relative inline-flex items-center justify-center px-2 py-0.5 rounded-[5px] bg-[#141418] border border-white/20 font-mono text-[10px] text-white tracking-widest transition-all select-none group cursor-pointer ${isPressed
+        ? "border-b-[1px] translate-y-[2px] shadow-none bg-[#1F1F24]"
+        : "border-b-[3px] border-b-white/40 shadow-keycap hover:border-white/40"
+        }`}
       title="Mechanical Keycap (click to test press)"
       aria-label="Mechanical keycap switch"
     >
