@@ -1,9 +1,10 @@
 import { Header } from "@/components/Header";
 import { HeroSection } from "@/components/HeroSection";
-import { CapabilitiesSection } from "@/components/CapabilitiesSection";
-import { ProjectsSection } from "@/components/ProjectsSection";
+import { KineticMarquee } from "@/components/KineticMarquee";
+import { ProjectPreviewStrip } from "@/components/ProjectPreviewStrip";
+import { EngineeringBaseSection } from "@/components/EngineeringBaseSection";
+import { ProjectsTerminalSection } from "@/components/ProjectsTerminalSection";
 import { AiConsoleSection } from "@/components/AiConsoleSection";
-import { WorkProcessSection } from "@/components/WorkProcessSection";
 import { ContactSection } from "@/components/ContactSection";
 import { Footer } from "@/components/Footer";
 import { ScrollToTop } from "@/components/ScrollToTop";
@@ -14,13 +15,28 @@ export default function Home() {
     <>
       <Header />
       <main>
+        {/* 1. HeroSection */}
         <HeroSection />
-        <CapabilitiesSection />
-        <ProjectsSection />
+
+        {/* 2. KineticMarquee */}
+        <KineticMarquee />
+
+        {/* 3. ProjectPreviewStrip */}
+        <ProjectPreviewStrip />
+
+        {/* 4. EngineeringBaseSection */}
+        <EngineeringBaseSection />
+
+        {/* 5. ProjectsTerminalSection */}
+        <ProjectsTerminalSection />
+
+        {/* 6. AiConsoleSection */}
         <AiConsoleSection />
-        <WorkProcessSection />
+
+        {/* 7. ContactSection */}
         <ContactSection />
       </main>
+      {/* 8. Footer */}
       <Footer />
       <ScrollToTop />
       <CommandPaletteModal />

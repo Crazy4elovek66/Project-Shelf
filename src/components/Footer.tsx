@@ -1,20 +1,22 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { ArrowUp, Sparkles, Terminal, Heart } from "lucide-react";
+import { ArrowUp } from "lucide-react";
 import { CONTACTS } from "@/data/contacts";
 
 const stackPills = [
-  { label: "Next.js 15", color: "hover:border-white hover:text-white" },
-  { label: "React 19", color: "hover:border-cyan-400 hover:text-cyan-400" },
-  { label: "TypeScript", color: "hover:border-blue-400 hover:text-blue-400" },
-  { label: "Python", color: "hover:border-yellow-400 hover:text-yellow-400" },
-  { label: "OpenCV", color: "hover:border-emerald-400 hover:text-emerald-400" },
-  { label: "aiogram", color: "hover:border-sky-400 hover:text-sky-400" },
-  { label: "Supabase", color: "hover:border-emerald-400 hover:text-emerald-400" },
-  { label: "Framer Motion", color: "hover:border-purple-400 hover:text-purple-400" },
-  { label: "Docker", color: "hover:border-blue-400 hover:text-blue-400" },
-  { label: "Tailwind CSS", color: "hover:border-cyan-400 hover:text-cyan-400" },
+  "Next.js 15",
+  "React 19",
+  "TypeScript",
+  "Python 3.12",
+  "OpenCV",
+  "aiogram",
+  "Supabase",
+  "Framer Motion",
+  "Docker",
+  "Tailwind CSS",
+  "FFmpeg",
+  "Whisper STT",
 ];
 
 export function Footer() {
@@ -23,7 +25,6 @@ export function Footer() {
   useEffect(() => {
     const updateTime = () => {
       const now = new Date();
-      // Formatter in Europe/Moscow timezone (UTC+3)
       const formatted = new Intl.DateTimeFormat("ru-RU", {
         timeZone: "Europe/Moscow",
         hour: "2-digit",
@@ -43,20 +44,20 @@ export function Footer() {
   };
 
   return (
-    <footer className="border-t border-white/10 bg-[#050507] pt-16 pb-12 relative overflow-hidden select-none">
+    <footer className="bg-[#050505] pt-16 pb-12 relative overflow-hidden select-none font-mono">
       <div className="section-shell">
         {/* Top: Massive Kinetic Display Typography */}
         <div className="pb-12 border-b border-white/10">
           <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6">
             <div>
-              <span className="font-mono text-xs text-accentCyan uppercase tracking-widest block mb-2">
+              <span className="text-xs text-zinc-500 uppercase tracking-widest block mb-2">
                 {"//"} ARCHITECTURE & FULL-STACK ENGINEERING
               </span>
               <h2 className="font-display text-5xl sm:text-7xl lg:text-9xl font-black tracking-tight text-white leading-none uppercase">
                 <span className="block text-stroke-echo hover:text-white transition-colors duration-300">
                   LET&apos;S BUILD
                 </span>
-                <span className="block text-white hover:text-accentCyan transition-colors duration-300">
+                <span className="block text-white">
                   IDLEON {"//"} AI
                 </span>
               </h2>
@@ -65,40 +66,40 @@ export function Footer() {
             <button
               type="button"
               onClick={scrollToTop}
-              className="group self-start lg:self-end flex items-center gap-3 rounded-full border border-white/15 bg-white/[0.04] px-5 py-3 font-mono text-xs text-slate-300 hover:border-accentCyan/50 hover:text-white transition-all shadow-sm"
+              className="group self-start lg:self-end flex items-center gap-3 rounded-lg border border-white/20 bg-white/[0.04] px-5 py-3 text-xs font-bold text-zinc-300 hover:border-white hover:text-white hover:bg-white/10 transition-all shadow-sm"
             >
-              <span>НАВЕРХ</span>
-              <div className="size-6 rounded-full bg-white/10 flex items-center justify-center group-hover:-translate-y-0.5 transition-transform">
-                <ArrowUp size={12} />
+              <span>НАВЕРХ [ ^ ]</span>
+              <div className="size-5 rounded bg-white/10 flex items-center justify-center group-hover:-translate-y-0.5 transition-transform">
+                <ArrowUp size={11} />
               </div>
             </button>
           </div>
         </div>
 
-        {/* Middle: Interactive Tech Pills */}
-        <div className="py-8 border-b border-white/10 flex flex-wrap items-center justify-between gap-4">
-          <span className="font-mono text-xs text-slate-500 uppercase tracking-wider">
+        {/* Middle: Monochromatic Tech Pills */}
+        <div className="py-6 border-b border-white/10 flex flex-wrap items-center justify-between gap-4">
+          <span className="text-xs text-zinc-500 uppercase tracking-wider">
             Производственный стек:
           </span>
-          <div className="flex flex-wrap gap-2">
+          <div className="flex flex-wrap gap-1.5">
             {stackPills.map((pill) => (
               <span
-                key={pill.label}
-                className={`rounded-full border border-white/10 bg-white/[0.02] px-3 py-1 font-mono text-xs text-slate-400 transition-colors ${pill.color}`}
+                key={pill}
+                className="rounded border border-white/10 bg-white/[0.02] px-2.5 py-1 text-xs text-zinc-400 hover:border-white hover:text-white transition-colors"
               >
-                {pill.label}
+                {pill}
               </span>
             ))}
           </div>
         </div>
 
         {/* Bottom: Telemetry, Timezone, Copyright */}
-        <div className="pt-8 flex flex-col sm:flex-row sm:items-center justify-between gap-4 font-mono text-xs text-slate-500">
+        <div className="pt-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4 text-xs text-zinc-500">
           <div className="flex items-center gap-3">
-            <span className="flex size-2 rounded-full bg-accentEmerald animate-pulse" />
-            <span className="text-slate-400">SYS_STATUS: ALL SYSTEMS OPERATIONAL</span>
+            <span className="size-1.5 rounded-full bg-white animate-pulse" />
+            <span className="text-zinc-400">SYS_STATUS: ALL SYSTEMS OPERATIONAL</span>
             <span className="text-white/20">/</span>
-            <span>VOLZHSKY: {timeStr || "12:00:00"} MSK</span>
+            <span>VOLGOGRAD: {timeStr || "12:00:00"} MSK</span>
           </div>
 
           <div className="flex items-center gap-4">

@@ -2,13 +2,14 @@
 
 import { useState, useEffect, useRef } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { Search, Command, X, ArrowRight, CornerDownLeft, Terminal, Send, Mail, Github, Briefcase, ExternalLink, Sparkles } from "lucide-react";
+import { Search, X, CornerDownLeft, Terminal, Send, Mail, Github, Briefcase, Sparkles, Layers } from "lucide-react";
 import { projects, getProjectId } from "@/data/projects";
 import { CONTACTS } from "@/data/contacts";
 
 type PaletteItem = {
   id: string;
-  category: "Проекты" | "Навигация" | "Действия" | "AI-консоль";
+  category: "Проекты" | "Навигация" | "Команды";
+  code?: string;
   title: string;
   subtitle?: string;
   badge?: string;
@@ -22,14 +23,30 @@ export function CommandPaletteModal() {
   const [selectedIndex, setSelectedIndex] = useState(0);
   const inputRef = useRef<HTMLInputElement>(null);
 
-  // Open / Close events
+  // Key listeners: Slash (/), Alt+K, and CustomEvent "open-command-palette"
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "k") {
+      // Ignore if user is already typing in an input/textarea
+      const target = e.target as HTMLElement;
+      const isInput = target.tagName === "INPUT" || target.tagName === "TEXTAREA" || target.isContentEditable;
+
+      // Open on '/' (when not in an input)
+      if (e.key === "/" && !isInput && !e.ctrlKey && !e.metaKey && !e.altKey) {
+        e.preventDefault();
+        setIsOpen(true);
+        return;
+      }
+
+      // Open on Alt+K
+      if (e.altKey && e.key.toLowerCase() === "k") {
         e.preventDefault();
         setIsOpen((prev) => !prev);
+        return;
       }
-      if (e.key === "Escape") {
+
+      // Close on Escape
+      if (e.key === "Escape" && isOpen) {
+        e.preventDefault();
         setIsOpen(false);
       }
     };
@@ -45,7 +62,7 @@ export function CommandPaletteModal() {
       window.removeEventListener("keydown", handleKeyDown);
       window.removeEventListener("open-command-palette", handleCustomOpen);
     };
-  }, []);
+  }, [isOpen]);
 
   useEffect(() => {
     if (isOpen) {
@@ -79,40 +96,36 @@ export function CommandPaletteModal() {
     {
       id: "nav-projects",
       category: "Навигация",
-      title: "Смотреть проекты (01-06)",
-      subtitle: "Sticky Stacking карточки всех кейсов",
-      icon: Sparkles,
+      code: "NAV_01",
+      title: "Проекты и реализации",
+      subtitle: "Оболочка AI Architect Terminal с 6 проектами",
+      icon: Layers,
       action: () => scrollTo("projects"),
     },
     {
-      id: "nav-capabilities",
+      id: "nav-engineering",
       category: "Навигация",
-      title: "Компетенции и стек",
-      subtitle: "Светлая архитектурная секция + Bento профиль",
+      code: "NAV_02",
+      title: "Инженерная база и стек",
+      subtitle: "Видео-портрет, направления и фильтруемый стек",
       icon: Terminal,
-      action: () => scrollTo("capabilities"),
+      action: () => scrollTo("engineering"),
     },
     {
       id: "nav-console",
       category: "Навигация",
+      code: "NAV_03",
       title: "AI-консоль архитектора",
-      subtitle: "Интерактивный AI Twin с телеметрией",
-      icon: Terminal,
+      subtitle: "Интерактивный симулятор архитектурных решений",
+      icon: Sparkles,
       action: () => scrollTo("console"),
-    },
-    {
-      id: "nav-process",
-      category: "Навигация",
-      title: "Процесс разработки",
-      subtitle: "4 этапа от идеи до продакшена",
-      icon: ArrowRight,
-      action: () => scrollTo("process"),
     },
     {
       id: "nav-contacts",
       category: "Навигация",
+      code: "NAV_04",
       title: "Контакты для связи",
-      subtitle: "Telegram, Email, GitHub, HH",
+      subtitle: "Telegram, Email, GitHub, резюме",
       icon: Send,
       action: () => scrollTo("contacts"),
     },
@@ -121,20 +134,25 @@ export function CommandPaletteModal() {
     ...projects.map((p, idx) => ({
       id: `proj-${p.title}`,
       category: "Проекты" as const,
-      title: `0${idx + 1} // ${p.title}`,
+      code: `0${idx + 1}`,
+      title: p.title,
       subtitle: p.description,
       badge: p.status,
-      icon: Sparkles,
-      action: () => scrollTo(getProjectId(p.title)),
+      icon: Terminal,
+      action: () => {
+        scrollTo("projects");
+        window.dispatchEvent(new CustomEvent("select-project-tab", { detail: idx }));
+      },
     })),
 
-    // Actions
+    // Commands
     {
-      id: "action-tg",
-      category: "Действия",
+      id: "cmd-tg",
+      category: "Команды",
+      code: "EXEC",
       title: "Написать в Telegram",
       subtitle: CONTACTS.telegramHandle,
-      badge: "Быстрый ответ",
+      badge: "< 15 мин",
       icon: Send,
       action: () => {
         window.open(CONTACTS.telegram, "_blank");
@@ -142,26 +160,29 @@ export function CommandPaletteModal() {
       },
     },
     {
-      id: "action-copy-tg",
-      category: "Действия",
+      id: "cmd-copy-tg",
+      category: "Команды",
+      code: "CLIP",
       title: "Скопировать Telegram",
       subtitle: CONTACTS.telegramHandle,
       icon: Send,
       action: () => copyText(CONTACTS.telegram, "Telegram"),
     },
     {
-      id: "action-copy-email",
-      category: "Действия",
+      id: "cmd-copy-email",
+      category: "Команды",
+      code: "CLIP",
       title: "Скопировать Email",
       subtitle: CONTACTS.email,
       icon: Mail,
       action: () => copyText(CONTACTS.email, "Email"),
     },
     {
-      id: "action-github",
-      category: "Действия",
+      id: "cmd-github",
+      category: "Команды",
+      code: "HTTP",
       title: "Открыть GitHub профиль",
-      subtitle: "Crazy4elovek66",
+      subtitle: "Crazy4elovek66 // Все открытые исходники",
       badge: "Open Source",
       icon: Github,
       action: () => {
@@ -170,8 +191,9 @@ export function CommandPaletteModal() {
       },
     },
     {
-      id: "action-hh",
-      category: "Действия",
+      id: "cmd-hh",
+      category: "Команды",
+      code: "HTTP",
       title: "Открыть резюме на HeadHunter",
       subtitle: "Подробный опыт и образование",
       icon: Briefcase,
@@ -215,20 +237,36 @@ export function CommandPaletteModal() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={() => setIsOpen(false)}
-            className="fixed inset-0 bg-black/75 backdrop-blur-md"
+            className="fixed inset-0 bg-black/85 backdrop-blur-md"
           />
 
-          {/* Dialog Window */}
+          {/* Dialog Terminal Window */}
           <motion.div
-            initial={{ opacity: 0, scale: 0.96, y: -10 }}
+            initial={{ opacity: 0, scale: 0.97, y: -8 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.96, y: -10 }}
+            exit={{ opacity: 0, scale: 0.97, y: -8 }}
             transition={{ type: "spring", damping: 25, stiffness: 350 }}
-            className="relative z-10 w-full max-w-2xl rounded-2xl border border-white/15 bg-[#0C0D12] shadow-2xl overflow-hidden flex flex-col"
+            className="relative z-10 w-full max-w-2xl rounded-xl border border-white/20 bg-[#0B0B0D] shadow-2xl overflow-hidden flex flex-col font-mono"
           >
-            {/* Search Input Bar */}
-            <div className="flex items-center gap-3 px-4 py-3.5 border-b border-white/10 bg-[#13151E]">
-              <Search size={18} className="text-accentCyan shrink-0" />
+            {/* Terminal Window Bar */}
+            <div className="flex items-center justify-between px-4 py-2.5 border-b border-white/10 bg-[#121215] text-xs text-zinc-400">
+              <div className="flex items-center gap-2">
+                <span className="size-2.5 rounded-full bg-white/20" />
+                <span className="size-2.5 rounded-full bg-white/20" />
+                <span className="size-2.5 rounded-full bg-white/20" />
+                <span className="ml-2 font-bold text-white tracking-wider">&gt;_ CLI NAVIGATOR // IDLEON</span>
+              </div>
+              <div className="flex items-center gap-2 text-[10px] text-zinc-500">
+                <span>[ / ] ИЛИ [ Alt+K ]</span>
+                <kbd className="rounded border border-white/15 bg-white/5 px-1.5 py-0.5 text-zinc-300">
+                  ESC
+                </kbd>
+              </div>
+            </div>
+
+            {/* Terminal Prompt Input Bar */}
+            <div className="flex items-center gap-3 px-4 py-3.5 border-b border-white/10 bg-[#070709]">
+              <span className="text-white font-bold">&gt;</span>
               <input
                 ref={inputRef}
                 type="text"
@@ -238,66 +276,90 @@ export function CommandPaletteModal() {
                   setSelectedIndex(0);
                 }}
                 onKeyDown={handleKeyDown}
-                placeholder="Поиск по проектам, навыкам, консоли или контактам..."
-                className="w-full bg-transparent text-sm sm:text-base text-white placeholder-slate-500 focus:outline-none font-sans"
+                placeholder="Ввод команды или поиск по проектам, навыкам, контактам..."
+                className="w-full bg-transparent text-sm text-white placeholder-zinc-600 focus:outline-none font-mono"
               />
               {query && (
                 <button
                   type="button"
                   onClick={() => setQuery("")}
-                  className="p-1 text-slate-500 hover:text-white"
+                  className="p-1 text-zinc-500 hover:text-white"
                 >
                   <X size={14} />
                 </button>
               )}
-              <kbd className="hidden sm:inline-block rounded border border-white/10 bg-white/5 px-2 py-0.5 text-[10px] font-mono text-slate-400">
-                ESC
-              </kbd>
             </div>
 
             {/* Results List */}
-            <div className="max-h-[380px] overflow-y-auto p-2 space-y-1">
+            <div className="max-h-[360px] overflow-y-auto p-2 space-y-1">
               {filteredItems.length === 0 ? (
-                <div className="p-8 text-center font-mono text-xs text-slate-500">
-                  Ничего не найдено по запросу «{query}»
+                <div className="p-8 text-center text-xs text-zinc-500 font-mono">
+                  [!] Команда или проект «{query}» не найдены в индексе
                 </div>
               ) : (
                 filteredItems.map((item, index) => {
                   const isSelected = index === selectedIndex;
-                  const Icon = item.icon;
                   return (
                     <button
                       key={item.id}
                       onClick={item.action}
                       onMouseEnter={() => setSelectedIndex(index)}
-                      className={`w-full flex items-center justify-between p-3 rounded-xl text-left transition-colors font-sans ${
+                      className={`w-full flex items-center justify-between p-2.5 rounded-lg text-left transition-colors font-mono ${
                         isSelected
-                          ? "bg-white/10 text-white"
-                          : "text-slate-300 hover:bg-white/[0.04]"
+                          ? "bg-white text-black"
+                          : "text-zinc-300 hover:bg-white/[0.04]"
                       }`}
                     >
                       <div className="flex items-center gap-3 min-w-0">
-                        <div className={`p-2 rounded-lg ${isSelected ? "bg-accentCyan/20 text-accentCyan" : "bg-white/5 text-slate-400"}`}>
-                          <Icon size={15} />
-                        </div>
+                        {item.code && (
+                          <span
+                            className={`text-xs font-bold px-1.5 py-0.5 rounded ${
+                              isSelected
+                                ? "bg-black text-white"
+                                : "bg-white/10 text-zinc-400"
+                            }`}
+                          >
+                            {item.code}
+                          </span>
+                        )}
                         <div className="min-w-0">
                           <div className="flex items-center gap-2">
-                            <span className="font-semibold text-sm truncate">{item.title}</span>
+                            <span className="font-bold text-xs sm:text-sm truncate">
+                              {item.title}
+                            </span>
                             {item.badge && (
-                              <span className="rounded-full border border-white/10 bg-white/5 px-2 py-0.5 text-[10px] font-mono text-slate-300">
+                              <span
+                                className={`rounded px-1.5 py-0.2 text-[9px] uppercase ${
+                                  isSelected
+                                    ? "bg-black/20 text-black font-bold"
+                                    : "border border-white/15 text-zinc-400"
+                                }`}
+                              >
                                 {item.badge}
                               </span>
                             )}
                           </div>
                           {item.subtitle && (
-                            <p className="text-xs text-slate-400 truncate mt-0.5">{item.subtitle}</p>
+                            <p
+                              className={`text-[11px] truncate mt-0.5 ${
+                                isSelected ? "text-zinc-700" : "text-zinc-500"
+                              }`}
+                            >
+                              {item.subtitle}
+                            </p>
                           )}
                         </div>
                       </div>
 
-                      <div className="flex items-center gap-2 text-xs font-mono text-slate-500 shrink-0 ml-3">
-                        <span className="text-[10px]">{item.category}</span>
-                        {isSelected && <CornerDownLeft size={13} className="text-accentCyan" />}
+                      <div className="flex items-center gap-2 text-xs shrink-0 ml-3">
+                        <span
+                          className={`text-[10px] uppercase ${
+                            isSelected ? "text-zinc-700" : "text-zinc-600"
+                          }`}
+                        >
+                          {item.category}
+                        </span>
+                        {isSelected && <CornerDownLeft size={13} className="text-black" />}
                       </div>
                     </button>
                   );
@@ -305,13 +367,14 @@ export function CommandPaletteModal() {
               )}
             </div>
 
-            {/* Modal Footer Hotkeys */}
-            <div className="px-4 py-2.5 border-t border-white/10 bg-[#07090E] flex items-center justify-between text-[11px] font-mono text-slate-500">
+            {/* Terminal Window Footer */}
+            <div className="px-4 py-2 border-t border-white/10 bg-[#070709] flex items-center justify-between text-[11px] text-zinc-500">
               <div className="flex items-center gap-4">
-                <span>↑↓ Навигация</span>
-                <span>↵ Выбрать</span>
+                <span>[↑↓] ВЫБОР</span>
+                <span>[ENTER] ЗАПУСК</span>
+                <span>[ESC] ВЫХОД</span>
               </div>
-              <span>idleON // Command Palette</span>
+              <span className="text-zinc-600">IDLEON_CLI_OS v3.0</span>
             </div>
           </motion.div>
         </div>

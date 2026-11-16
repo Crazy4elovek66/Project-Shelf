@@ -1,21 +1,18 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { Terminal, Cpu, Play, CheckCircle2, ArrowRight, CornerDownLeft, Sparkles, RefreshCw, Send } from "lucide-react";
+import { Terminal, Cpu, Sparkles, Send } from "lucide-react";
 import { CONTACTS } from "@/data/contacts";
-import { getProjectId } from "@/data/projects";
 
 type Scenario = {
   id: string;
   code: string;
   title: string;
   subtitle: string;
-  relatedProjectId?: string;
   relatedAction?: {
     label: string;
     url?: string;
-    targetId?: string;
+    targetTab?: number;
   };
   telemetry: {
     model: string;
@@ -33,13 +30,12 @@ const scenarios: Scenario[] = [
     code: "01",
     title: "Архитектура AI-агентов и мультипровайдерный роутинг",
     subtitle: "Отказоустойчивость, fallback-шлюзы и оркестрация контекста",
-    relatedProjectId: "Магия Бабушки",
     relatedAction: {
       label: "Изучить Case Study (Babushka Magic) →",
-      targetId: "project-магия-бабушки",
+      targetTab: 5,
     },
     telemetry: {
-      model: "router-v2.4 // multi-provider",
+      model: "router-v3.0 // multi-provider",
       latency: "38ms",
       ttft: "24ms",
       tps: "92 tok/s",
@@ -60,10 +56,9 @@ const scenarios: Scenario[] = [
     code: "02",
     title: "Кейс AutoClip: Computer Vision + автоматизация Shorts",
     subtitle: "Трехэтапный трекинг лиц, FFmpeg аппаратный рендер и 9:16",
-    relatedProjectId: "AutoClip",
     relatedAction: {
       label: "Смотреть карточку AutoClip →",
-      targetId: "project-autoclip",
+      targetTab: 4,
     },
     telemetry: {
       model: "cv-pipeline // caffe-dnn + mediapipe",
@@ -86,7 +81,6 @@ const scenarios: Scenario[] = [
     code: "03",
     title: "Full-Stack Web & Telegram Mini Apps под ключ",
     subtitle: "Next.js 15, React 19, TypeScript, aiogram, Supabase",
-    relatedProjectId: "ProfitCheck",
     relatedAction: {
       label: "Протестировать ProfitCheck в Telegram →",
       url: "https://t.me/ProfitCheckkbot",
@@ -141,8 +135,6 @@ export function AiConsoleSection() {
   const [isStreaming, setIsStreaming] = useState<boolean>(false);
   const streamTimerRef = useRef<NodeJS.Timeout | null>(null);
 
-  const currentScenario = scenarios.find((s) => s.id === selectedId) || scenarios[0];
-
   const startStreaming = (scenario: Scenario) => {
     if (streamTimerRef.current) clearInterval(streamTimerRef.current);
     setIsStreaming(true);
@@ -151,7 +143,6 @@ export function AiConsoleSection() {
     const fullText = scenario.responseChunks.join("");
     let charIndex = 0;
 
-    // Typewriter streaming chunk by chunk
     streamTimerRef.current = setInterval(() => {
       charIndex += 4;
       if (charIndex >= fullText.length) {
@@ -172,45 +163,45 @@ export function AiConsoleSection() {
     };
   }, [selectedId]);
 
+  const currentScenario = scenarios.find((s) => s.id === selectedId) || scenarios[0];
+
   const handleActionClick = (action: Scenario["relatedAction"]) => {
     if (!action) return;
     if (action.url) {
       window.open(action.url, "_blank");
-    } else if (action.targetId) {
-      const el = document.getElementById(action.targetId);
+    } else if (typeof action.targetTab === "number") {
+      const el = document.getElementById("projects");
       if (el) {
         el.scrollIntoView({ behavior: "smooth", block: "start" });
       }
+      window.dispatchEvent(new CustomEvent("select-project-tab", { detail: action.targetTab }));
     }
   };
 
   return (
-    <section id="console" className="py-24 relative overflow-hidden">
-      {/* Background radial glow */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[400px] bg-accentCyan/5 rounded-full blur-[100px] pointer-events-none -z-10" />
-
+    <section id="console" className="py-24 border-b border-white/10 relative font-mono">
       <div className="section-shell">
         {/* Section Header */}
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12 pb-6 border-b border-white/10">
           <div>
-            <div className="inline-flex items-center gap-2 rounded-full border border-accentCyan/30 bg-accentCyan/10 px-3.5 py-1 text-xs font-mono text-accentCyan mb-3">
+            <div className="inline-flex items-center gap-2 rounded border border-white/15 bg-white/[0.04] px-3 py-1 text-xs text-zinc-300 mb-3">
               <Terminal size={13} />
               <span>INTERACTIVE AI TWIN // ASK ARCHITECTURE</span>
             </div>
-            <h2 className="font-display text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-white">
+            <h2 className="font-display text-3xl sm:text-4xl font-bold tracking-tight text-white uppercase">
               Интерактивная AI-консоль архитектора
             </h2>
           </div>
-          <p className="max-w-md text-sm font-mono text-slate-400">
+          <p className="max-w-md text-xs sm:text-sm text-zinc-400 leading-relaxed">
             Симулятор архитектурных решений. Выберите инженерный сценарий для мгновенного стриминга ответа и телеметрии пайплайна.
           </p>
         </div>
 
-        {/* Console Layout: Grid with Scenario Selectors + Terminal Box */}
+        {/* Console Layout */}
         <div className="grid gap-6 lg:grid-cols-12 items-start">
           {/* Left Column: Preset Scenarios */}
           <div className="lg:col-span-5 flex flex-col gap-2.5">
-            <span className="font-mono text-xs text-slate-500 uppercase tracking-wider mb-1 px-1">
+            <span className="text-xs text-zinc-500 uppercase tracking-wider mb-1 px-1">
               Выберите сценарий диалога:
             </span>
             {scenarios.map((scenario) => {
@@ -219,31 +210,24 @@ export function AiConsoleSection() {
                 <button
                   key={scenario.id}
                   onClick={() => setSelectedId(scenario.id)}
-                  className={`text-left p-4 rounded-2xl border transition-all duration-200 relative overflow-hidden group ${
+                  className={`text-left p-4 rounded-xl border transition-all text-xs relative overflow-hidden group ${
                     isSelected
-                      ? "border-accentCyan/50 bg-[#0C0D12] shadow-[0_0_24px_rgba(56,189,248,0.12)]"
-                      : "border-white/10 bg-white/[0.02] hover:border-white/20 hover:bg-white/[0.04]"
+                      ? "border-white bg-[#141418] text-white shadow-lg"
+                      : "border-white/10 bg-[#09090C] text-zinc-400 hover:border-white/20 hover:text-white"
                   }`}
                 >
-                  {isSelected && (
-                    <motion.div
-                      layoutId="activeScenarioPill"
-                      className="absolute inset-y-0 left-0 w-1 bg-accentCyan"
-                      transition={{ type: "spring", stiffness: 400, damping: 30 }}
-                    />
-                  )}
-                  <div className="flex items-center justify-between mb-1">
-                    <span className="font-mono text-xs font-bold text-accentCyan">
+                  <div className="flex items-center justify-between mb-1.5">
+                    <span className="font-bold text-white">
                       {"//"} {scenario.code}
                     </span>
-                    <span className="font-mono text-[10px] text-slate-500 group-hover:text-slate-400">
-                      {isSelected ? "АКТИВЕН" : "ВЫБРАТЬ →"}
+                    <span className="text-[10px] text-zinc-500 group-hover:text-zinc-300">
+                      {isSelected ? "[ АКТИВЕН ]" : "[ ВЫБРАТЬ ]"}
                     </span>
                   </div>
-                  <h3 className="font-display text-sm font-semibold text-white group-hover:text-accentCyan transition-colors leading-snug">
+                  <h3 className="font-bold text-white leading-snug">
                     {scenario.title}
                   </h3>
-                  <p className="mt-1 text-xs text-slate-400 line-clamp-1">
+                  <p className="mt-1 text-[11px] text-zinc-400 line-clamp-1">
                     {scenario.subtitle}
                   </p>
                 </button>
@@ -252,61 +236,61 @@ export function AiConsoleSection() {
           </div>
 
           {/* Right Column: Terminal Window */}
-          <div className="lg:col-span-7 rounded-2xl border border-white/10 bg-[#07090E] shadow-2xl overflow-hidden flex flex-col min-h-[460px]">
+          <div className="lg:col-span-7 rounded-xl border border-white/15 bg-[#07070A] shadow-2xl overflow-hidden flex flex-col min-h-[440px]">
             {/* Terminal Window Header */}
-            <div className="flex items-center justify-between px-4 py-3 border-b border-white/10 bg-[#0C0D12]">
+            <div className="flex items-center justify-between px-4 py-2.5 border-b border-white/10 bg-[#121215] text-xs">
               <div className="flex items-center gap-2">
-                <div className="size-3 rounded-full bg-red-500/80" />
-                <div className="size-3 rounded-full bg-amber-500/80" />
-                <div className="size-3 rounded-full bg-emerald-500/80" />
-                <span className="ml-2 font-mono text-xs text-slate-400 hidden sm:inline">
+                <span className="size-2 rounded-full bg-white/20" />
+                <span className="size-2 rounded-full bg-white/20" />
+                <span className="size-2 rounded-full bg-white/20" />
+                <span className="ml-2 text-zinc-400 hidden sm:inline">
                   idleon-ai-twin@node-01: ~
                 </span>
               </div>
-              <div className="flex items-center gap-2 font-mono text-[11px] text-accentCyan">
+              <div className="flex items-center gap-1.5 text-xs text-zinc-300 font-bold">
                 <Cpu size={12} />
                 <span>{currentScenario.telemetry.model}</span>
               </div>
             </div>
 
             {/* Telemetry Status Strip */}
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 px-4 py-2 border-b border-white/5 bg-black/40 font-mono text-[10px] text-slate-400">
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 px-4 py-2 border-b border-white/5 bg-black/40 text-[10px] text-zinc-400">
               <div>
-                <span className="text-slate-600">TTFT:</span>{" "}
-                <span className="text-accentEmerald font-bold">{currentScenario.telemetry.ttft}</span>
+                <span className="text-zinc-600">TTFT:</span>{" "}
+                <span className="text-white font-bold">{currentScenario.telemetry.ttft}</span>
               </div>
               <div>
-                <span className="text-slate-600">LATENCY:</span>{" "}
-                <span className="text-accentCyan font-bold">{currentScenario.telemetry.latency}</span>
+                <span className="text-zinc-600">LATENCY:</span>{" "}
+                <span className="text-white font-bold">{currentScenario.telemetry.latency}</span>
               </div>
               <div>
-                <span className="text-slate-600">SPEED:</span>{" "}
+                <span className="text-zinc-600">SPEED:</span>{" "}
                 <span className="text-white font-bold">{currentScenario.telemetry.tps}</span>
               </div>
               <div className="truncate">
-                <span className="text-slate-600">STATUS:</span>{" "}
-                <span className="text-accentEmerald">VERIFIED</span>
+                <span className="text-zinc-600">STATUS:</span>{" "}
+                <span className="text-zinc-300">VERIFIED</span>
               </div>
             </div>
 
             {/* Pipeline Route Badge */}
-            <div className="px-4 py-1.5 border-b border-white/5 bg-white/[0.01] font-mono text-[10px] text-slate-500 flex items-center gap-2">
-              <span className="text-accentCyan">маршрут:</span>
-              <span className="truncate text-slate-400">{currentScenario.telemetry.pipeline}</span>
+            <div className="px-4 py-1.5 border-b border-white/5 bg-white/[0.01] text-[10px] text-zinc-500 flex items-center gap-2">
+              <span className="text-white font-bold">маршрут:</span>
+              <span className="truncate text-zinc-400">{currentScenario.telemetry.pipeline}</span>
             </div>
 
             {/* Terminal Body Content */}
-            <div className="p-5 flex-1 font-mono text-xs leading-relaxed text-slate-200 overflow-y-auto whitespace-pre-wrap select-text">
+            <div className="p-5 flex-1 text-xs leading-relaxed text-zinc-200 overflow-y-auto whitespace-pre-wrap select-text">
               {displayedText}
               {isStreaming && (
-                <span className="inline-block w-2 h-4 ml-1 bg-accentCyan animate-terminal-blink align-middle" />
+                <span className="inline-block w-2 h-4 ml-1 bg-white animate-terminal-blink align-middle" />
               )}
             </div>
 
             {/* Action Footer */}
-            <div className="p-4 border-t border-white/10 bg-[#0C0D12] flex flex-wrap items-center justify-between gap-3">
-              <div className="flex items-center gap-2 text-[11px] font-mono text-slate-400">
-                <Sparkles size={13} className="text-accentCyan" />
+            <div className="p-4 border-t border-white/10 bg-[#0E0E12] flex flex-wrap items-center justify-between gap-3 text-xs">
+              <div className="flex items-center gap-2 text-zinc-400">
+                <Sparkles size={13} className="text-white" />
                 <span>Готов к реализации аналогичной архитектуры</span>
               </div>
 
@@ -314,7 +298,7 @@ export function AiConsoleSection() {
                 {currentScenario.relatedAction && (
                   <button
                     onClick={() => handleActionClick(currentScenario.relatedAction)}
-                    className="inline-flex items-center gap-1.5 rounded-full border border-accentCyan/40 bg-accentCyan/10 px-3.5 py-1.5 text-xs font-mono text-accentCyan hover:bg-accentCyan hover:text-slate-950 transition-colors"
+                    className="inline-flex items-center gap-1.5 rounded-lg border border-white/20 bg-white/[0.04] px-3.5 py-1.5 font-bold text-white hover:bg-white hover:text-black transition-colors"
                   >
                     <span>{currentScenario.relatedAction.label}</span>
                   </button>
@@ -323,7 +307,7 @@ export function AiConsoleSection() {
                   href={CONTACTS.telegram}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1.5 rounded-full bg-white px-3.5 py-1.5 text-xs font-mono font-bold text-slate-950 hover:bg-accentEmerald hover:text-white transition-colors"
+                  className="inline-flex items-center gap-1.5 rounded-lg bg-white px-3.5 py-1.5 font-bold text-black hover:bg-zinc-200 transition-colors"
                 >
                   <Send size={11} />
                   <span>Обсудить задачу</span>

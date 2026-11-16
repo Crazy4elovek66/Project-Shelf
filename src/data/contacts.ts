@@ -2,7 +2,7 @@ export const CONTACTS = {
   name: "Илья",
   handle: "idleON",
   role: "Full-Stack AI Developer & Systems Engineer",
-  location: "Волжский // Remote (любая таймзона)",
+  location: "Волгоград // Remote (любая таймзона)",
   email: "apalladiumtv@gmail.com",
   telegram: "https://t.me/Crazy4elovek",
   telegramHandle: "@Crazy4elovek",

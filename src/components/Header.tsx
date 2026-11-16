@@ -1,16 +1,15 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { Command, Mail, Send, Sparkles } from "lucide-react";
+import { motion } from "framer-motion";
+import { Terminal, Send, Mail, Sparkles } from "lucide-react";
 import { CONTACTS } from "@/data/contacts";
 
 const navItems = [
-  { label: "Кейсы", href: "#projects", id: "projects" },
-  { label: "Компетенции", href: "#capabilities", id: "capabilities" },
-  { label: "AI-консоль", href: "#console", id: "console" },
-  { label: "Процесс", href: "#process", id: "process" },
-  { label: "Контакты", href: "#contacts", id: "contacts" },
+  { label: "[/] КЕЙСЫ", href: "#projects", id: "projects" },
+  { label: "[/] СТЕК", href: "#engineering", id: "engineering" },
+  { label: "[/] AI-КОНСОЛЬ", href: "#console", id: "console" },
+  { label: "[/] КОНТАКТЫ", href: "#contacts", id: "contacts" },
 ];
 
 export function Header() {
@@ -20,7 +19,7 @@ export function Header() {
 
   useEffect(() => {
     const handleScroll = () => {
-      setIsScrolled(window.scrollY > 30);
+      setIsScrolled(window.scrollY > 25);
     };
 
     window.addEventListener("scroll", handleScroll, { passive: true });
@@ -42,7 +41,7 @@ export function Header() {
       });
     }, observerOptions);
 
-    const sectionIds = ["projects", "capabilities", "console", "process", "contacts"];
+    const sectionIds = ["projects", "engineering", "console", "contacts"];
     sectionIds.forEach((id) => {
       const el = document.getElementById(id);
       if (el) observer.observe(el);
@@ -56,7 +55,7 @@ export function Header() {
     };
   }, []);
 
-  const openPalette = () => {
+  const openCli = () => {
     window.dispatchEvent(new CustomEvent("open-command-palette"));
   };
 
@@ -87,30 +86,26 @@ export function Header() {
       <div
         className={`flex w-full items-center justify-between transition-all duration-300 ${
           isScrolled
-            ? "section-shell rounded-full border border-white/10 bg-[#0C0D12]/85 px-4 sm:px-6 py-2.5 shadow-dock backdrop-blur-2xl"
-            : "section-shell border-b border-white/10 bg-[#050507]/80 px-4 py-3.5 backdrop-blur-xl"
+            ? "section-shell rounded-xl border border-white/15 bg-[#08080A]/90 px-4 sm:px-6 py-2.5 shadow-2xl backdrop-blur-2xl"
+            : "section-shell border-b border-white/10 bg-[#050505]/80 px-4 py-3.5 backdrop-blur-xl"
         }`}
       >
-        {/* Left: Brand Monogram & Live Status Indicator */}
-        <a
-          href="#top"
-          className="group flex items-center gap-2.5 font-display text-sm sm:text-base font-bold tracking-tight text-white transition-opacity hover:opacity-90"
-        >
-          <div className="flex size-7 items-center justify-center rounded-lg border border-white/15 bg-white/[0.06] text-accentCyan group-hover:border-accentCyan/50 transition-colors">
-            <span className="font-mono text-xs font-black">iO</span>
-          </div>
-          <div className="flex items-center gap-2">
+        {/* Left: Clean Text Logo without iO box + MechanicalKeycap */}
+        <div className="flex items-center gap-3">
+          <a
+            href="#top"
+            className="flex items-center gap-2 font-mono text-sm sm:text-base font-bold tracking-tight text-white transition-opacity hover:opacity-80"
+          >
             <span>idleON</span>
-            <span className="text-white/20 font-mono text-xs">{"//"}</span>
-            <span className="font-mono text-xs text-accentCyan font-medium">AI</span>
-          </div>
-          <span className="relative flex size-2">
-            <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-accentEmerald opacity-75" />
-            <span className="relative inline-flex size-2 rounded-full bg-accentEmerald" />
-          </span>
-        </a>
+            <span className="text-white/30 font-mono text-xs">{"//"}</span>
+            <span className="font-mono text-xs text-white/90 font-medium">AI</span>
+          </a>
 
-        {/* Center: Desktop Navigation Dock */}
+          {/* Mechanical Keyboard Keycap Indicator */}
+          <MechanicalKeycap />
+        </div>
+
+        {/* Center: Monochromatic Desktop Terminal Nav */}
         <nav className="hidden lg:flex items-center gap-1 text-xs font-mono">
           {navItems.map((item, index) => {
             const isActive = activeSection === item.id;
@@ -118,8 +113,8 @@ export function Header() {
               <a
                 key={item.href}
                 href={item.href}
-                className={`relative px-3.5 py-1.5 rounded-full transition-colors duration-200 ${
-                  isActive ? "text-white font-semibold" : "text-slate-400 hover:text-white"
+                className={`relative px-3.5 py-1.5 rounded-lg transition-colors duration-200 ${
+                  isActive ? "text-white font-bold" : "text-zinc-400 hover:text-white"
                 }`}
                 onMouseEnter={() => setHoveredIndex(index)}
                 onMouseLeave={() => setHoveredIndex(null)}
@@ -128,15 +123,15 @@ export function Header() {
                 {hoveredIndex === index && (
                   <motion.span
                     layoutId="navHover"
-                    className="absolute inset-0 z-0 rounded-full bg-white/[0.07]"
-                    transition={{ type: "spring", stiffness: 350, damping: 30 }}
+                    className="absolute inset-0 z-0 rounded-lg bg-white/[0.08]"
+                    transition={{ type: "spring", stiffness: 400, damping: 30 }}
                   />
                 )}
                 {isActive && (
                   <motion.span
                     layoutId="activeNavPill"
-                    className="absolute inset-0 z-0 rounded-full bg-white/10 border border-white/15 shadow-[0_0_12px_rgba(255,255,255,0.06)]"
-                    transition={{ type: "spring", stiffness: 350, damping: 30 }}
+                    className="absolute inset-0 z-0 rounded-lg bg-white/10 border border-white/20"
+                    transition={{ type: "spring", stiffness: 400, damping: 30 }}
                   />
                 )}
               </a>
@@ -144,20 +139,21 @@ export function Header() {
           })}
         </nav>
 
-        {/* Right: Quick actions & Palette */}
-        <div className="flex items-center gap-1.5 sm:gap-2">
-          {/* Quick Palette Trigger Ctrl+K */}
+        {/* Right: CLI Launcher Button >_ CLI [ / ] + Quick Actions */}
+        <div className="flex items-center gap-2">
+          {/* CLI Terminal Launcher */}
           <button
             type="button"
-            onClick={openPalette}
-            aria-label="Открыть командную палитру (Ctrl+K)"
-            className="flex items-center gap-1.5 rounded-full border border-white/10 bg-white/[0.04] px-2.5 sm:px-3 py-1.5 text-xs font-mono text-slate-300 transition-all hover:border-accentCyan/40 hover:text-white hover:bg-white/[0.08]"
+            onClick={openCli}
+            aria-label="Открыть терминальный навигатор (нажмите / или Alt+K)"
+            className="flex items-center gap-1.5 rounded-lg border border-white/20 bg-white/[0.04] px-2.5 sm:px-3 py-1.5 text-xs font-mono text-white transition-all hover:bg-white hover:text-black hover:border-white group"
+            title="Быстрый CLI-лаунчер (клавиша /)"
           >
-            <Command size={13} className="text-accentCyan" />
-            <span className="hidden sm:inline">Палитра</span>
-            <kbd className="hidden md:inline rounded bg-white/10 px-1.5 py-0.5 text-[9px] text-slate-400 font-sans">
-              ⌘K
-            </kbd>
+            <span className="text-zinc-400 group-hover:text-black font-pixel text-[10px]">&gt;_</span>
+            <span className="font-bold tracking-wider">CLI</span>
+            <span className="rounded bg-white/10 group-hover:bg-black/10 px-1 py-0.2 text-[10px] text-zinc-300 group-hover:text-black font-mono">
+              [ / ]
+            </span>
           </button>
 
           {/* Quick Copy Telegram */}
@@ -165,7 +161,7 @@ export function Header() {
             type="button"
             onClick={copyTelegram}
             aria-label="Скопировать контакт Telegram"
-            className="grid size-8 place-items-center rounded-full border border-white/10 bg-white/[0.04] text-slate-300 transition hover:border-accentCyan/40 hover:text-white hover:bg-white/[0.08]"
+            className="grid size-8 place-items-center rounded-lg border border-white/15 bg-white/[0.03] text-zinc-300 transition hover:border-white hover:text-white hover:bg-white/10"
             title="Скопировать Telegram"
           >
             <Send size={13} className="-ml-0.5" />
@@ -176,24 +172,50 @@ export function Header() {
             type="button"
             onClick={copyEmail}
             aria-label="Скопировать почту"
-            className="hidden sm:grid size-8 place-items-center rounded-full border border-white/10 bg-white/[0.04] text-slate-300 transition hover:border-accentCyan/40 hover:text-white hover:bg-white/[0.08]"
+            className="hidden sm:grid size-8 place-items-center rounded-lg border border-white/15 bg-white/[0.03] text-zinc-300 transition hover:border-white hover:text-white hover:bg-white/10"
             title="Скопировать Email"
           >
             <Mail size={13} />
           </button>
 
-          {/* CTA Button */}
+          {/* Direct Contact Button */}
           <a
             href={CONTACTS.telegram}
             target="_blank"
             rel="noopener noreferrer"
-            className="hidden md:inline-flex items-center gap-1.5 rounded-full bg-white px-3.5 py-1.5 text-xs font-semibold text-slate-950 transition hover:bg-accentCyan shadow-[0_0_15px_rgba(255,255,255,0.15)]"
+            className="hidden md:inline-flex items-center gap-1.5 rounded-lg bg-white px-3.5 py-1.5 text-xs font-mono font-bold text-black transition hover:bg-zinc-200"
           >
-            <Sparkles size={12} />
-            <span>Обсудить</span>
+            <span>СВЯЗАТЬСЯ</span>
           </a>
         </div>
       </div>
     </header>
+  );
+}
+
+// Interactive Mechanical Keycap Component
+function MechanicalKeycap() {
+  const [isPressed, setIsPressed] = useState(false);
+
+  return (
+    <button
+      type="button"
+      onClick={() => {
+        setIsPressed(true);
+        setTimeout(() => setIsPressed(false), 200);
+      }}
+      className={`relative inline-flex items-center justify-center px-2 py-0.5 rounded-[5px] bg-[#141418] border border-white/20 font-mono text-[10px] text-white tracking-widest transition-all select-none group cursor-pointer ${
+        isPressed
+          ? "border-b-[1px] translate-y-[2px] shadow-none bg-[#1F1F24]"
+          : "border-b-[3px] border-b-white/40 shadow-keycap hover:border-white/40"
+      }`}
+      title="Mechanical Keycap (click to test press)"
+      aria-label="Mechanical keycap switch"
+    >
+      <span className="text-zinc-400 group-hover:text-white transition-colors text-[9px] font-bold">
+        &gt;_
+      </span>
+      <span className="size-1 rounded-full bg-white ml-1.5 animate-pulse" />
+    </button>
   );
 }
