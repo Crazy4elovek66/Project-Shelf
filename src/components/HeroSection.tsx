@@ -56,7 +56,7 @@ export function HeroSection() {
       className="relative pt-16 sm:pt-[72px] pb-6 sm:pb-8 overflow-x-clip"
     >
       {/* HUD Technical Coordinate Top Bar (Overlaying the upper area of hands, z-30) */}
-      <div className="pointer-events-none absolute inset-x-0 top-[76px] sm:top-[90px] lg:top-[98px] z-30">
+      <div className="pointer-events-none absolute inset-x-0 top-[76px] sm:top-[88px] lg:top-[96px] z-30">
         <div className="section-shell">
           <div className="pointer-events-auto flex flex-wrap items-center justify-between gap-3 border-b border-white/10 pb-3 text-xs font-mono text-zinc-400">
             <div className="flex items-center gap-3">
@@ -129,10 +129,10 @@ export function HeroSection() {
       </div>
 
       <div className="section-shell">
-        {/* Full-bleed Hands Video Scene: zero overflow-hidden, zero z-index, natural object-contain, direct mix-blend-screen */}
+        {/* Full-bleed Hands Video Scene: true 100vw edge-to-edge scale without finger clipping */}
         <div
           aria-hidden="true"
-          className="pointer-events-none relative left-1/2 right-1/2 -ml-[50vw] -mr-[50vw] w-screen select-none"
+          className="pointer-events-none relative left-1/2 right-1/2 -ml-[50vw] -mr-[50vw] -mt-4 -mb-6 w-screen select-none sm:-mt-[13vw] sm:-mb-[15.5vw]"
         >
           <video
             autoPlay
@@ -146,7 +146,7 @@ export function HeroSection() {
               e.currentTarget.muted = true;
               e.currentTarget.volume = 0;
             }}
-            className="mx-auto block h-auto max-h-[260px] w-full object-contain mix-blend-screen contrast-[1.28] brightness-[1.06] sm:max-h-[330px] md:max-h-[380px] lg:max-h-[420px]"
+            className="block h-auto w-full mix-blend-screen contrast-[1.28] brightness-[1.06] select-none"
           >
             <source src="/videos/hero-hands-loop.webm" type="video/webm" />
             <source src="/videos/hero-hands-loop.mp4" type="video/mp4" />
@@ -154,7 +154,7 @@ export function HeroSection() {
         </div>
 
         {/* Main Monochromatic Kinetic Display Typography Hero */}
-        <div className="relative py-1 lg:py-2 -mt-6 sm:-mt-10 lg:-mt-12 z-20">
+        <div className="relative py-1 lg:py-2 z-20">
           {/* Technical crosshairs (+) */}
           <span className="absolute -top-2 -left-2 text-white/20 font-mono text-sm select-none z-10">+</span>
           <span className="absolute -top-2 -right-2 text-white/20 font-mono text-sm select-none z-10">+</span>
