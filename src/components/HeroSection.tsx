@@ -154,7 +154,7 @@ export function HeroSection() {
         </div>
 
         {/* Main Monochromatic Kinetic Display Typography Hero */}
-        <div className="relative z-20 -mt-6 sm:-mt-16 md:-mt-20 lg:-mt-24 xl:-mt-28 py-0.5">
+        <div className="relative z-20 -mt-10 sm:-mt-24 md:-mt-32 lg:-mt-36 xl:-mt-44 py-0.5">
           {/* Technical crosshairs (+) */}
           <span className="absolute -top-2 -left-2 text-white/20 font-mono text-sm select-none z-10">+</span>
           <span className="absolute -top-2 -right-2 text-white/20 font-mono text-sm select-none z-10">+</span>
@@ -167,7 +167,7 @@ export function HeroSection() {
               className="absolute inset-0 pointer-events-none hidden sm:block opacity-20 will-change-transform"
               aria-hidden="true"
             >
-              <h1 className="font-display text-5xl sm:text-7xl lg:text-[clamp(2.6rem,5.8vw,5.1rem)] font-black tracking-tight uppercase leading-[0.86] text-stroke-echo-deep">
+              <h1 className="font-display text-5xl sm:text-7xl lg:text-9xl font-black tracking-tight uppercase leading-[0.88] text-stroke-echo-deep">
                 <div>FULL-STACK</div>
                 <div>AI DEVELOPER</div>
               </h1>
@@ -179,14 +179,14 @@ export function HeroSection() {
               className="absolute inset-0 pointer-events-none hidden sm:block opacity-45 will-change-transform"
               aria-hidden="true"
             >
-              <h1 className="font-display text-5xl sm:text-7xl lg:text-[clamp(2.6rem,5.8vw,5.1rem)] font-black tracking-tight uppercase leading-[0.86] text-stroke-echo">
+              <h1 className="font-display text-5xl sm:text-7xl lg:text-9xl font-black tracking-tight uppercase leading-[0.88] text-stroke-echo">
                 <div>FULL-STACK</div>
                 <div>AI DEVELOPER</div>
               </h1>
             </motion.div>
 
             {/* Front Solid Monochrome Typography Layer */}
-            <h1 className="relative z-10 font-display text-5xl sm:text-7xl lg:text-[clamp(2.6rem,5.8vw,5.1rem)] font-black tracking-tight uppercase leading-[0.86] text-white">
+            <h1 className="relative z-10 font-display text-5xl sm:text-7xl lg:text-9xl font-black tracking-tight uppercase leading-[0.88] text-white">
               <span className="block text-white">
                 FULL-STACK
               </span>
@@ -197,15 +197,15 @@ export function HeroSection() {
           </div>
 
           {/* Subtitle / Engineer Offer and Identity */}
-          <div className="mt-2 sm:mt-2.5 grid gap-3 lg:grid-cols-12 lg:items-end relative z-10">
+          <div className="mt-2.5 sm:mt-3 grid gap-3 lg:grid-cols-12 lg:items-end relative z-10">
             <div className="lg:col-span-8">
               <SmoothModeText as="div">
-                <p className="font-mono text-sm sm:text-base lg:text-lg font-bold text-white leading-snug">
+                <p className="font-mono text-base sm:text-lg lg:text-xl font-bold text-white leading-snug">
                   {isSimple
                     ? "Создаю умных ботов, сайты и веб-приложения с нейросетью, которые автоматизируют рутину, экономят время и помогают бизнесу расти."
                     : "Архитектура мультиагентных систем, отказоустойчивые LLM-роутеры, Telegram Mini Apps и веб-интерфейсы."}
                 </p>
-                <p className="mt-1.5 max-w-2xl text-xs sm:text-[13px] leading-relaxed text-zinc-400 font-mono">
+                <p className="mt-2 max-w-2xl text-xs sm:text-sm leading-relaxed text-zinc-400 font-mono">
                   {isSimple ? (
                     <>
                       Привет, я <span className="text-white font-bold">Илья</span>. Помогаю предпринимателям и компаниям внедрять искусственный интеллект: создаю ботов в Telegram, современные сайты и системы автоматизации под ключ.
