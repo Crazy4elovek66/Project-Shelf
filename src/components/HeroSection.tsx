@@ -49,15 +49,15 @@ export function HeroSection() {
 
   return (
     <section
-      id="top"
+      id="hero"
       ref={containerRef}
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
-      className="relative pt-24 md:pt-32 pb-12 overflow-hidden"
+      className="relative pt-24 md:pt-32 pb-12 overflow-x-clip"
     >
       <div className="section-shell">
         {/* HUD Technical Coordinate Top Bar */}
-        <div className="flex flex-wrap items-center justify-between gap-3 border-b border-white/10 pb-4 mb-8 text-xs font-mono text-zinc-400">
+        <div className="flex flex-wrap items-center justify-between gap-3 border-b border-white/10 pb-4 mb-4 sm:mb-6 text-xs font-mono text-zinc-400">
           <div className="flex items-center gap-3">
             <SmoothModeText as="span" className="text-white font-bold tracking-wider">
               {isSimple ? "ЛОКАЦИЯ" : "SYS.ARCH"}
@@ -125,35 +125,38 @@ export function HeroSection() {
           </div>
         </div>
 
-        {/* Main Monochromatic Kinetic Display Typography Hero */}
-        <div className="relative py-4 lg:py-6">
-          {/* Seamless Ambient Hands Animation (Creation of Adam aesthetic) */}
-          <div className="pointer-events-none absolute inset-x-0 -top-6 sm:-top-8 lg:-top-10 z-0 mx-auto flex h-[340px] sm:h-[420px] lg:h-[480px] max-w-6xl items-center justify-center overflow-hidden select-none">
-            <video
-              autoPlay
-              loop
-              muted
-              playsInline
-              preload="auto"
-              controls={false}
-              disablePictureInPicture
-              onLoadedMetadata={(e) => {
-                e.currentTarget.muted = true;
-                e.currentTarget.volume = 0;
-              }}
-              className="h-full w-full object-cover object-center mix-blend-screen contrast-[1.15] brightness-[1.08] opacity-[0.42]"
-              style={{
-                maskImage:
-                  "radial-gradient(ellipse 75% 65% at 50% 50%, #000 35%, transparent 95%)",
-                WebkitMaskImage:
-                  "radial-gradient(ellipse 75% 65% at 50% 50%, #000 35%, transparent 95%)",
-              }}
-            >
-              <source src="/videos/hero-hands-loop.webm" type="video/webm" />
-              <source src="/videos/hero-hands-loop.mp4" type="video/mp4" />
-            </video>
-          </div>
+        {/* Full-bleed Edge-to-Edge Hands Animation Scene (Elevated above headline) */}
+        <div
+          aria-hidden="true"
+          className="pointer-events-none relative left-1/2 right-1/2 z-10 -ml-[50vw] -mr-[50vw] my-2 sm:my-3 h-[190px] w-screen overflow-hidden sm:h-[260px] md:h-[320px] lg:h-[370px] xl:h-[410px]"
+        >
+          <video
+            autoPlay
+            loop
+            muted
+            playsInline
+            preload="auto"
+            controls={false}
+            disablePictureInPicture
+            onLoadedMetadata={(e) => {
+              e.currentTarget.muted = true;
+              e.currentTarget.volume = 0;
+            }}
+            className="h-full w-full object-cover object-center mix-blend-screen opacity-[0.82] contrast-[1.18] brightness-[1.12] select-none"
+            style={{
+              maskImage:
+                "linear-gradient(to bottom, transparent 0%, #000 14%, #000 84%, transparent 100%)",
+              WebkitMaskImage:
+                "linear-gradient(to bottom, transparent 0%, #000 14%, #000 84%, transparent 100%)",
+            }}
+          >
+            <source src="/videos/hero-hands-loop.webm" type="video/webm" />
+            <source src="/videos/hero-hands-loop.mp4" type="video/mp4" />
+          </video>
+        </div>
 
+        {/* Main Monochromatic Kinetic Display Typography Hero */}
+        <div className="relative py-2 lg:py-4 -mt-2 sm:-mt-4">
           {/* Technical crosshairs (+) */}
           <span className="absolute -top-2 -left-2 text-white/20 font-mono text-sm select-none z-10">+</span>
           <span className="absolute -top-2 -right-2 text-white/20 font-mono text-sm select-none z-10">+</span>
