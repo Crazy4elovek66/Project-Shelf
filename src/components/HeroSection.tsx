@@ -53,82 +53,86 @@ export function HeroSection() {
       ref={containerRef}
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
-      className="relative pt-16 sm:pt-[74px] pb-6 sm:pb-8 overflow-x-clip"
+      className="relative pt-16 sm:pt-[72px] pb-6 sm:pb-8 overflow-x-clip"
     >
-      <div className="section-shell">
-        {/* HUD Technical Coordinate Top Bar */}
-        <div className="flex flex-wrap items-center justify-between gap-3 border-b border-white/10 pb-3 mb-2 sm:mb-3 text-xs font-mono text-zinc-400">
-          <div className="flex items-center gap-3">
-            <SmoothModeText as="span" className="text-white font-bold tracking-wider">
-              {isSimple ? "ЛОКАЦИЯ" : "SYS.ARCH"}
-            </SmoothModeText>
-            <span className="text-white/20">/</span>
+      {/* HUD Technical Coordinate Top Bar (Overlaying the upper area of hands, z-30) */}
+      <div className="pointer-events-none absolute inset-x-0 top-[76px] sm:top-[90px] lg:top-[98px] z-30">
+        <div className="section-shell">
+          <div className="pointer-events-auto flex flex-wrap items-center justify-between gap-3 border-b border-white/10 pb-3 text-xs font-mono text-zinc-400">
+            <div className="flex items-center gap-3">
+              <SmoothModeText as="span" className="text-white font-bold tracking-wider">
+                {isSimple ? "ЛОКАЦИЯ" : "SYS.ARCH"}
+              </SmoothModeText>
+              <span className="text-white/20">/</span>
 
-            {/* VOLGOGRAD with Full-Width Contour Crown Easter Egg */}
-            <span
-              onMouseEnter={() => setIsVolgogradHovered(true)}
-              onMouseLeave={() => setIsVolgogradHovered(false)}
-              className="relative inline-flex items-center text-zinc-100 border-b border-dashed border-white/35 pb-0.5 cursor-pointer select-none"
-            >
-              <motion.span
-                aria-hidden="true"
-                initial={{ opacity: 0, y: 7, scale: 0.9 }}
-                animate={
-                  isVolgogradHovered
-                    ? { opacity: 1, y: 0, scale: 1 }
-                    : { opacity: 0, y: 7, scale: 0.9 }
-                }
-                transition={{ type: "spring", stiffness: 360, damping: 24 }}
-                className="pointer-events-none absolute bottom-full left-0 right-0 mb-1 flex w-full justify-center text-white drop-shadow-[0_0_10px_rgba(255,255,255,0.45)]"
+              {/* VOLGOGRAD with Full-Width Contour Crown Easter Egg */}
+              <span
+                onMouseEnter={() => setIsVolgogradHovered(true)}
+                onMouseLeave={() => setIsVolgogradHovered(false)}
+                className="relative inline-flex items-center text-zinc-100 border-b border-dashed border-white/35 pb-0.5 cursor-pointer select-none"
               >
-                <svg
-                  viewBox="0 0 120 28"
-                  fill="none"
-                  className="w-full h-5 overflow-visible"
-                  preserveAspectRatio="none"
+                <motion.span
+                  aria-hidden="true"
+                  initial={{ opacity: 0, y: 7, scale: 0.9 }}
+                  animate={
+                    isVolgogradHovered
+                      ? { opacity: 1, y: 0, scale: 1 }
+                      : { opacity: 0, y: 7, scale: 0.9 }
+                  }
+                  transition={{ type: "spring", stiffness: 360, damping: 24 }}
+                  className="pointer-events-none absolute bottom-full left-0 right-0 mb-1 flex w-full justify-center text-white drop-shadow-[0_0_10px_rgba(255,255,255,0.45)] z-40"
                 >
-                  <path
-                    d="M4 23L12 7L36 17L60 3L84 17L108 7L116 23H4Z"
-                    stroke="currentColor"
-                    strokeWidth="1.8"
-                    strokeLinejoin="round"
-                  />
-                  <line
-                    x1="4"
-                    y1="26.5"
-                    x2="116"
-                    y2="26.5"
-                    stroke="currentColor"
-                    strokeWidth="1.6"
-                    strokeLinecap="round"
-                  />
-                </svg>
-              </motion.span>
-              VOLGOGRAD
-            </span>
+                  <svg
+                    viewBox="0 0 120 28"
+                    fill="none"
+                    className="w-full h-5 overflow-visible"
+                    preserveAspectRatio="none"
+                  >
+                    <path
+                      d="M4 23L12 7L36 17L60 3L84 17L108 7L116 23H4Z"
+                      stroke="currentColor"
+                      strokeWidth="1.8"
+                      strokeLinejoin="round"
+                    />
+                    <line
+                      x1="4"
+                      y1="26.5"
+                      x2="116"
+                      y2="26.5"
+                      stroke="currentColor"
+                      strokeWidth="1.6"
+                      strokeLinecap="round"
+                    />
+                  </svg>
+                </motion.span>
+                VOLGOGRAD
+              </span>
 
-            <span>→ REMOTE</span>
-            <span className="text-white/20 hidden sm:inline">/</span>
-            <span className="hidden sm:inline text-zinc-500">UTC+3 MOSCOW</span>
-          </div>
+              <span>→ REMOTE</span>
+              <span className="text-white/20 hidden sm:inline">/</span>
+              <span className="hidden sm:inline text-zinc-500">UTC+3 MOSCOW</span>
+            </div>
 
-          <div className="flex items-center gap-2 rounded-md border border-white/20 bg-white/[0.04] px-3 py-1 text-[11px] font-mono text-zinc-300">
-            <span
-              aria-hidden="true"
-              className="inline-block font-mono text-sm font-bold leading-none text-white animate-terminal-blink"
-            >
-              _
-            </span>
-            <SmoothModeText as="span" className="tracking-wide text-white">
-              {isSimple ? "ДОСТУПЕН ДЛЯ НОВЫХ ПРОЕКТОВ" : "ONLINE // AVAILABLE FOR AI & FULL-STACK"}
-            </SmoothModeText>
+            <div className="flex items-center gap-2 rounded-md border border-white/20 bg-white/[0.04] px-3 py-1 text-[11px] font-mono text-zinc-300">
+              <span
+                aria-hidden="true"
+                className="inline-block font-mono text-sm font-bold leading-none text-white animate-terminal-blink"
+              >
+                _
+              </span>
+              <SmoothModeText as="span" className="tracking-wide text-white">
+                {isSimple ? "ДОСТУПЕН ДЛЯ НОВЫХ ПРОЕКТОВ" : "ONLINE // AVAILABLE FOR AI & FULL-STACK"}
+              </SmoothModeText>
+            </div>
           </div>
         </div>
+      </div>
 
-        {/* Full-bleed Edge-to-Edge Hands Animation Scene (Zero masks, pure high-clarity mix-blend-screen) */}
+      <div className="section-shell">
+        {/* Full-bleed Hands Video Scene: zero overflow-hidden, zero z-index, natural object-contain, direct mix-blend-screen */}
         <div
           aria-hidden="true"
-          className="pointer-events-none relative left-1/2 right-1/2 z-10 -ml-[50vw] -mr-[50vw] mt-1 h-[210px] w-screen overflow-hidden sm:h-[270px] md:h-[320px] lg:h-[360px] xl:h-[390px]"
+          className="pointer-events-none relative left-1/2 right-1/2 -ml-[50vw] -mr-[50vw] w-screen select-none"
         >
           <video
             autoPlay
@@ -142,7 +146,7 @@ export function HeroSection() {
               e.currentTarget.muted = true;
               e.currentTarget.volume = 0;
             }}
-            className="h-full w-full object-cover object-center mix-blend-screen opacity-[0.86] contrast-[1.18] brightness-[1.12] select-none"
+            className="mx-auto block h-auto max-h-[260px] w-full object-contain mix-blend-screen contrast-[1.28] brightness-[1.06] sm:max-h-[330px] md:max-h-[380px] lg:max-h-[420px]"
           >
             <source src="/videos/hero-hands-loop.webm" type="video/webm" />
             <source src="/videos/hero-hands-loop.mp4" type="video/mp4" />
@@ -150,7 +154,7 @@ export function HeroSection() {
         </div>
 
         {/* Main Monochromatic Kinetic Display Typography Hero */}
-        <div className="relative py-1 lg:py-2 -mt-3 sm:-mt-5 lg:-mt-7 z-20">
+        <div className="relative py-1 lg:py-2 -mt-6 sm:-mt-10 lg:-mt-12 z-20">
           {/* Technical crosshairs (+) */}
           <span className="absolute -top-2 -left-2 text-white/20 font-mono text-sm select-none z-10">+</span>
           <span className="absolute -top-2 -right-2 text-white/20 font-mono text-sm select-none z-10">+</span>

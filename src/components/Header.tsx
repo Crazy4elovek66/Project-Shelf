@@ -169,8 +169,10 @@ export function Header() {
             <button
               type="button"
               onClick={() => setMode("tech")}
-              className={`relative z-10 flex items-center px-2 sm:px-2.5 py-0.5 font-bold transition-colors cursor-pointer rounded-md ${
-                !isSimple ? "text-black" : "text-zinc-400 hover:text-white"
+              className={`relative z-10 flex items-center px-2 sm:px-2.5 py-0.5 font-bold transition-all cursor-pointer rounded-md ${
+                !isSimple
+                  ? "text-black"
+                  : "animate-geek-zone overflow-hidden text-zinc-300 hover:text-white"
               }`}
             >
               {!isSimple && (
@@ -181,11 +183,9 @@ export function Header() {
                 />
               )}
               {isSimple && (
-                <motion.span
+                <span
                   aria-hidden="true"
-                  animate={{ opacity: [0.25, 0.95, 0.25], scale: [0.92, 1.08, 0.92] }}
-                  transition={{ duration: 3.4, repeat: Infinity, ease: "easeInOut" }}
-                  className="mr-1.5 inline-block size-1.5 rounded-full bg-white shadow-[0_0_8px_rgba(255,255,255,0.85)]"
+                  className="pointer-events-none absolute inset-y-0 left-0 w-1/2 bg-gradient-to-r from-transparent via-white/15 to-transparent animate-geek-sheen"
                 />
               )}
               <span className="relative z-10 whitespace-nowrap">ДЛЯ ГИКОВ</span>
