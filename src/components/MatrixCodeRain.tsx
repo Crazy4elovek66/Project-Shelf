@@ -53,7 +53,7 @@ export function MatrixCodeRain() {
       }
       lastTime = time;
 
-      ctx.fillStyle = "rgba(5, 5, 5, 0.16)";
+      ctx.fillStyle = "rgba(5, 5, 5, 0.10)";
       ctx.fillRect(0, 0, width, height);
 
       ctx.font = `400 ${fontSize}px var(--font-mono), monospace`;
@@ -65,11 +65,11 @@ export function MatrixCodeRain() {
         const char = GLYPHS[Math.floor(Math.random() * GLYPHS.length)];
 
         if (y > -fontSize && y < height) {
-          ctx.fillStyle = "rgba(250, 250, 250, 0.42)";
+          ctx.fillStyle = "rgba(255, 255, 255, 0.58)";
           ctx.fillText(char, x, y);
 
           const trailChar = GLYPHS[Math.floor(Math.random() * GLYPHS.length)];
-          ctx.fillStyle = "rgba(161, 161, 170, 0.18)";
+          ctx.fillStyle = "rgba(212, 212, 216, 0.30)";
           ctx.fillText(trailChar, x, y - fontSize);
         }
 
@@ -98,12 +98,12 @@ export function MatrixCodeRain() {
     <canvas
       ref={canvasRef}
       aria-hidden="true"
-      className="pointer-events-none absolute inset-0 z-0 opacity-80"
+      className="pointer-events-none absolute inset-0 z-0 opacity-90"
       style={{
         maskImage:
-          "radial-gradient(ellipse 90% 88% at 50% 50%, rgba(0,0,0,0.45) 0%, #000 68%, transparent 100%)",
+          "radial-gradient(ellipse 95% 92% at 50% 48%, rgba(0,0,0,0.6) 0%, #000 55%, transparent 100%)",
         WebkitMaskImage:
-          "radial-gradient(ellipse 90% 88% at 50% 50%, rgba(0,0,0,0.45) 0%, #000 68%, transparent 100%)",
+          "radial-gradient(ellipse 95% 92% at 50% 48%, rgba(0,0,0,0.6) 0%, #000 55%, transparent 100%)",
       }}
     />
   );

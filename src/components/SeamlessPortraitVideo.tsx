@@ -23,9 +23,9 @@ export function SeamlessPortraitVideo() {
       {/* Layer 0: Delicate Black & White Matrix Code Rain Background */}
       <MatrixCodeRain />
 
-      {/* Layer 1: Scaled Video Flush to Bottom Edge */}
+      {/* Layer 1: Natural Scale Video Flush to Bottom Edge */}
       {!hasError ? (
-        <div className="absolute inset-x-0 bottom-0 h-full w-full flex items-end justify-center pointer-events-none z-10 overflow-hidden">
+        <div className="pointer-events-none absolute inset-x-0 bottom-0 top-0 z-10 flex items-end justify-center translate-y-[3%] sm:translate-y-[4%] overflow-hidden">
           <video
             ref={videoRef}
             autoPlay
@@ -40,14 +40,14 @@ export function SeamlessPortraitVideo() {
               e.currentTarget.volume = 0;
             }}
             onError={() => setHasError(true)}
-            className="w-full h-full object-cover object-bottom scale-[1.16] origin-bottom transition-all duration-300"
+            className="w-full h-full object-cover object-bottom transition-all duration-300"
             style={{
               mixBlendMode: "screen",
               filter: "contrast(1.08) brightness(0.96)",
               maskImage:
-                "linear-gradient(to top, #000 0%, #000 78%, transparent 100%), linear-gradient(to right, transparent 0%, #000 12%, #000 88%, transparent 100%)",
+                "linear-gradient(to top, #000 0%, #000 92%, transparent 100%), linear-gradient(to right, transparent 0%, #000 10%, #000 90%, transparent 100%)",
               WebkitMaskImage:
-                "linear-gradient(to top, #000 0%, #000 78%, transparent 100%), linear-gradient(to right, transparent 0%, #000 12%, #000 88%, transparent 100%)",
+                "linear-gradient(to top, #000 0%, #000 92%, transparent 100%), linear-gradient(to right, transparent 0%, #000 10%, #000 90%, transparent 100%)",
               maskComposite: "intersect",
               WebkitMaskComposite: "source-in",
             }}
@@ -59,7 +59,7 @@ export function SeamlessPortraitVideo() {
         </div>
       ) : (
         /* Fallback image if video fails to load in older environments */
-        <div className="absolute inset-x-0 bottom-0 h-full w-full flex items-end justify-center pointer-events-none z-10 overflow-hidden">
+        <div className="pointer-events-none absolute inset-x-0 bottom-0 top-0 z-10 flex items-end justify-center translate-y-[3%] sm:translate-y-[4%] overflow-hidden">
           <Image
             src="/images/hero-portrait-cutout.png"
             alt="Илья - Full-Stack AI Developer"
@@ -68,9 +68,9 @@ export function SeamlessPortraitVideo() {
             className="w-auto h-full max-h-[380px] object-contain object-bottom opacity-85"
             style={{
               maskImage:
-                "linear-gradient(to top, #000 0%, #000 78%, transparent 100%), linear-gradient(to right, transparent 0%, #000 12%, #000 88%, transparent 100%)",
+                "linear-gradient(to top, #000 0%, #000 92%, transparent 100%), linear-gradient(to right, transparent 0%, #000 10%, #000 90%, transparent 100%)",
               WebkitMaskImage:
-                "linear-gradient(to top, #000 0%, #000 78%, transparent 100%), linear-gradient(to right, transparent 0%, #000 12%, #000 88%, transparent 100%)",
+                "linear-gradient(to top, #000 0%, #000 92%, transparent 100%), linear-gradient(to right, transparent 0%, #000 10%, #000 90%, transparent 100%)",
             }}
           />
         </div>
