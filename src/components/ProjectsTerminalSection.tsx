@@ -23,6 +23,7 @@ import {
 import { projects, getProjectId, type Project } from "@/data/projects";
 import { ProjectVisual } from "./ProjectVisual";
 import { useLanguageMode } from "@/context/LanguageModeContext";
+import { SmoothModeText } from "./SmoothModeText";
 
 const tabNames = [
   "01_jobradar.py",
@@ -81,15 +82,15 @@ export function ProjectsTerminalSection() {
           <div>
             <div className="inline-flex items-center gap-2 rounded border border-white/15 bg-white/[0.04] px-3 py-1 text-xs text-zinc-300 mb-3">
               <span className="font-pixel text-[10px] text-white">[ / ]</span>
-              <span>
+              <SmoothModeText as="span">
                 {isSimple
                   ? "ИНСПЕКТОР ПРОЕКТОВ // 01 – 06 РАБОТ"
                   : "PROJECT INSPECTOR // 01 – 06 ИНЖЕНЕРНЫХ КЕЙСОВ"}
-              </span>
+              </SmoothModeText>
             </div>
-            <h2 className="font-display text-3xl sm:text-4xl font-bold tracking-tight text-white uppercase">
+            <SmoothModeText as="h2" className="font-display text-3xl sm:text-4xl font-bold tracking-tight text-white uppercase">
               {isSimple ? "Примеры работ и результаты" : "Проекты и реализации"}
-            </h2>
+            </SmoothModeText>
           </div>
 
           <div className="flex items-center gap-2">
@@ -101,7 +102,9 @@ export function ProjectsTerminalSection() {
                   : "border border-white/15 text-zinc-400 hover:text-white"
               }`}
             >
-              {isSimple ? "ИНСПЕКТОР" : "ТЕРМИНАЛ"}
+              <SmoothModeText as="span">
+                {isSimple ? "ИНСПЕКТОР" : "ТЕРМИНАЛ"}
+              </SmoothModeText>
             </button>
             <button
               onClick={() => setViewMode("all")}
@@ -111,7 +114,9 @@ export function ProjectsTerminalSection() {
                   : "border border-white/15 text-zinc-400 hover:text-white"
               }`}
             >
-              {isSimple ? "ВСЕ 6 ПРОЕКТОВ" : "ВСЕ 6 КЕЙСОВ"}
+              <SmoothModeText as="span">
+                {isSimple ? "ВСЕ 6 ПРОЕКТОВ" : "ВСЕ 6 КЕЙСОВ"}
+              </SmoothModeText>
             </button>
           </div>
         </div>
@@ -448,7 +453,7 @@ function SingleProjectInspector({ project, index }: { project: Project; index: n
 
         {/* RIGHT COLUMN: TECHNICAL DOSSIER */}
         <div className="lg:col-span-6 flex flex-col justify-between">
-          <div>
+          <SmoothModeText as="div">
             {/* Dossier Header */}
             <div className="flex items-center justify-between pb-3 border-b border-white/10 mb-4">
               <div className="flex items-center gap-2 text-xs">
@@ -537,7 +542,7 @@ function SingleProjectInspector({ project, index }: { project: Project; index: n
                 </span>
               ))}
             </div>
-          </div>
+          </SmoothModeText>
 
           {/* Action Buttons */}
           <div className="mt-6 pt-5 border-t border-white/10 flex flex-wrap items-center gap-3">

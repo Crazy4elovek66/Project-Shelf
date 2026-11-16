@@ -73,7 +73,13 @@ body::before {
 
 /* Kinetic display text outline strokes */
 .text-stroke-echo {
-  -webkit-text-stroke: 1.5px rgba(255, 255, 255, 0.3);
+  -webkit-text-stroke: 1.5px rgba(255, 255, 255, 0.36);
+  color: transparent;
+  filter: drop-shadow(0 0 18px rgba(255, 255, 255, 0.12));
+}
+
+.text-stroke-echo-deep {
+  -webkit-text-stroke: 1px rgba(255, 255, 255, 0.16);
   color: transparent;
 }
 
@@ -97,10 +103,39 @@ body::before {
   -webkit-backdrop-filter: blur(16px);
 }
 
+/* Custom Vector Cursor */
+@media (hover: hover) and (pointer: fine) {
+  html, body {
+    cursor: url("/cursors/cursor-default.svg") 4 3, auto;
+  }
+
+  a, button, [role="button"], [role="switch"], select, label[for] {
+    cursor: url("/cursors/cursor-pointer.svg") 4 3, pointer;
+  }
+
+  input[type="text"], textarea {
+    cursor: text;
+  }
+}
+
+/* Terminal Cursor Blink */
+@keyframes terminal-blink {
+  0%, 49% {
+    opacity: 1;
+  }
+  50%, 100% {
+    opacity: 0;
+  }
+}
+
+.animate-terminal-blink {
+  animation: terminal-blink 1.05s infinite;
+}
+
 /* Seamless Infinite Marquee */
-@keyframes marquee-seamless {
+@keyframes marquee-infinite {
   0% {
-    transform: translate3d(0%, 0, 0);
+    transform: translate3d(0, 0, 0);
   }
   100% {
     transform: translate3d(-50%, 0, 0);
@@ -112,16 +147,7 @@ body::before {
   width: max-content;
   will-change: transform;
   backface-visibility: hidden;
-  animation: marquee-seamless 34s linear infinite;
-}
-
-.marquee-wrapper:hover .animate-marquee-seamless {
-  animation-play-state: paused;
-}
-
-/* Hover pause for all marquees */
-.marquee-track:hover {
-  animation-play-state: paused !important;
+  animation: marquee-infinite 36s linear infinite;
 }
 
 /* Reduced motion */

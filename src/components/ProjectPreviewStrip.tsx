@@ -5,6 +5,7 @@ import { motion } from "framer-motion";
 import { ArrowUpRight } from "lucide-react";
 import { projects } from "@/data/projects";
 import { useLanguageMode } from "@/context/LanguageModeContext";
+import { SmoothModeText } from "./SmoothModeText";
 
 export function ProjectPreviewStrip() {
   const { isSimple } = useLanguageMode();
@@ -24,15 +25,15 @@ export function ProjectPreviewStrip() {
         <div className="flex items-center justify-between mb-6 pb-2 border-b border-white/10">
           <div className="flex items-center gap-2 font-mono text-xs text-zinc-400 uppercase tracking-wider">
             <span className="text-white font-bold">&gt;_</span>
-            <span>
+            <SmoothModeText as="span">
               {isSimple
                 ? "КАТАЛОГ ПРОЕКТОВ // 01 – 06 КРАТКИЙ ОБЗОР"
                 : "КАТАЛОГ ПРОЕКТОВ // 01 – 06 БЫСТРОЕ ОЗНАКОМЛЕНИЕ"}
-            </span>
+            </SmoothModeText>
           </div>
-          <span className="hidden sm:inline-block font-mono text-[11px] text-zinc-500">
+          <SmoothModeText as="span" className="hidden sm:inline-block font-mono text-[11px] text-zinc-500">
             {isSimple ? "Нажмите на строку для подробностей ↓" : "Клик открывает проект в терминале инспектора ↓"}
-          </span>
+          </SmoothModeText>
         </div>
 
         {/* Clean Monochromatic Horizontal Strip Rows */}
@@ -70,11 +71,11 @@ export function ProjectPreviewStrip() {
                         {project.status}
                       </span>
                     </div>
-                    <p className="font-mono text-xs text-zinc-400 truncate mt-0.5 max-w-xl">
+                    <SmoothModeText as="p" className="font-mono text-xs text-zinc-400 truncate mt-0.5 max-w-xl">
                       {isSimple && project.simpleDescription
                         ? project.simpleDescription
                         : project.description}
-                    </p>
+                    </SmoothModeText>
                   </div>
                 </div>
 

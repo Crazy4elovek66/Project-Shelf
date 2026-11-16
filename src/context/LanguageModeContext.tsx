@@ -14,22 +14,24 @@ interface LanguageModeContextType {
 const STORAGE_KEY = "idleon-content-mode";
 
 const LanguageModeContext = createContext<LanguageModeContextType>({
-  mode: "tech",
-  isSimple: false,
+  mode: "simple",
+  isSimple: true,
   toggleMode: () => {},
   setMode: () => {},
 });
 
 export function LanguageModeProvider({ children }: { children: React.ReactNode }) {
-  const [mode, setModeState] = useState<LanguageMode>("tech");
+  const [mode, setModeState] = useState<LanguageMode>("simple");
   const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
     setIsMounted(true);
     try {
       const saved = localStorage.getItem(STORAGE_KEY);
-      if (saved === "simple" || saved === "tech") {
-        setModeState(saved);
+      if (saved === "tech") {
+        setModeState("tech");
+      } else if (saved === "simple") {
+        setModeState("simple");
       }
     } catch {
       // localStorage may fail in restricted/private browser modes
@@ -46,13 +48,13 @@ export function LanguageModeProvider({ children }: { children: React.ReactNode }
   };
 
   const toggleMode = () => {
-    setMode(mode === "tech" ? "simple" : "tech");
+    setMode(mode === "simple" ? "tech" : "simple");
   };
 
   const value: LanguageModeContextType = {
-    // Before mounting on the client, always use "tech" to ensure 100% hydration match with SSR
-    mode: isMounted ? mode : "tech",
-    isSimple: isMounted && mode === "simple",
+    // Both SSR and initial client render start with "simple" (zero hydration mismatch)
+    mode: isMounted ? mode : "simple",
+    isSimple: isMounted ? mode === "simple" : true,
     toggleMode,
     setMode,
   };

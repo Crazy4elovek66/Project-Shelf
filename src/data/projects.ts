@@ -71,8 +71,8 @@ const rawProjects: Project[] = [
     stack: ["Python", "aiogram", "HH API", "SQLite", "Supabase", "PostgreSQL"],
     repoUrl: "https://github.com/Crazy4elovek66/JobRadar",
     demoUrl: "",
-    imageUrl: "/projects/JobRadar1.png",
-    images: ["/projects/JobRadar1.png", "/projects/JobRadar2.png"],
+    imageUrl: "/projects/JobRadar1.webp",
+    images: ["/projects/JobRadar1.webp", "/projects/JobRadar2.webp"],
     visual: {
       label: "поиск / вакансии / радар",
       accent: "from-cyan-400 via-sky-500 to-indigo-600",
@@ -185,8 +185,8 @@ const rawProjects: Project[] = [
     stack: ["TypeScript", "React", "Tailwind CSS", "Telegram WebApp API"],
     repoUrl: "https://github.com/Crazy4elovek66/ProfitCheck",
     demoUrl: "https://t.me/ProfitCheckkbot",
-    imageUrl: "/projects/ProfitCheck.png",
-    images: ["/projects/ProfitCheck.png"],
+    imageUrl: "/projects/ProfitCheck.webp",
+    images: ["/projects/ProfitCheck.webp"],
     visual: {
       label: "калькулятор / финансы",
       accent: "from-lime-300 via-emerald-400 to-teal-500",
@@ -270,8 +270,8 @@ const rawProjects: Project[] = [
     ],
     repoUrl: "https://t.me/BabushkaMagicBot/app",
     demoUrl: "https://github.com/Crazy4elovek66/Project-Shelf/blob/main/docs/case-study-magic.md",
-    imageUrl: "/projects/Magic.png",
-    images: ["/projects/Magic.png"],
+    imageUrl: "/projects/Magic.webp",
+    images: ["/projects/Magic.webp"],
     visual: {
       label: "ИИ / Telegram Mini App / WebApp",
       accent: "from-indigo-600 via-purple-600 to-pink-500",

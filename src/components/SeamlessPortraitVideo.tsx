@@ -36,10 +36,10 @@ export function SeamlessPortraitVideo() {
               e.currentTarget.volume = 0;
             }}
             onError={() => setHasError(true)}
-            className="w-full h-full object-cover object-bottom transition-all duration-300"
+            className="w-full h-full object-cover object-bottom transition-all duration-300 grayscale contrast-[1.14] brightness-[1.04]"
             style={{
               mixBlendMode: "screen",
-              filter: "contrast(1.08) brightness(0.96)",
+              filter: "grayscale(100%) contrast(1.14) brightness(1.04)",
               maskImage:
                 "linear-gradient(to top, #000 0%, #000 92%, transparent 100%), linear-gradient(to right, transparent 0%, #000 10%, #000 90%, transparent 100%)",
               WebkitMaskImage:
@@ -61,7 +61,7 @@ export function SeamlessPortraitVideo() {
             alt="Илья - Full-Stack AI Developer"
             width={380}
             height={480}
-            className="w-auto h-full max-h-[380px] object-contain object-bottom opacity-85"
+            className="w-auto h-full max-h-[380px] object-contain object-bottom opacity-85 grayscale contrast-[1.14] brightness-[1.04]"
             style={{
               maskImage:
                 "linear-gradient(to top, #000 0%, #000 92%, transparent 100%), linear-gradient(to right, transparent 0%, #000 10%, #000 90%, transparent 100%)",

@@ -6,6 +6,7 @@ import { Terminal, Cpu, Layers, Video, Database, CheckCircle2, ChevronRight, Spa
 import { skillGroups, skillRelations, skillFilterTabs, type SkillCategory } from "@/data/skills";
 import { SeamlessPortraitVideo } from "./SeamlessPortraitVideo";
 import { useLanguageMode } from "@/context/LanguageModeContext";
+import { SmoothModeText } from "./SmoothModeText";
 
 const techDirections = [
   {
@@ -84,17 +85,19 @@ export function EngineeringBaseSection() {
           <div>
             <div className="inline-flex items-center gap-2 rounded border border-white/15 bg-white/[0.04] px-3 py-1 text-xs font-mono text-zinc-300 mb-3">
               <span className="font-pixel text-[10px] text-white">[ / ]</span>
-              <span>{isSimple ? "ОБО МНЕ // НАВЫКИ И ВОЗМОЖНОСТИ" : "ИНЖЕНЕРНАЯ БАЗА // ПРОФИЛЬ И СТЕК"}</span>
+              <SmoothModeText as="span">
+                {isSimple ? "ОБО МНЕ // НАВЫКИ И ВОЗМОЖНОСТИ" : "ИНЖЕНЕРНАЯ БАЗА // ПРОФИЛЬ И СТЕК"}
+              </SmoothModeText>
             </div>
-            <h2 className="font-display text-3xl sm:text-4xl font-bold tracking-tight text-white uppercase">
+            <SmoothModeText as="h2" className="font-display text-3xl sm:text-4xl font-bold tracking-tight text-white uppercase">
               {isSimple ? "Обо мне и мои возможности" : "Инженерная база и стек навыков"}
-            </h2>
+            </SmoothModeText>
           </div>
-          <p className="max-w-md text-xs sm:text-sm font-mono text-zinc-400 leading-relaxed">
+          <SmoothModeText as="p" className="max-w-md text-xs sm:text-sm font-mono text-zinc-400 leading-relaxed">
             {isSimple
               ? "Комплексный подход: от идеи и логики до готового работающего продукта для вас и ваших клиентов."
               : "Практический стек для создания автономных AI-систем, Telegram-ботов и высоконагруженных веб-сервисов."}
-          </p>
+          </SmoothModeText>
         </div>
 
         {/* Bento Grid Layout */}
@@ -103,21 +106,21 @@ export function EngineeringBaseSection() {
           <div className="lg:col-span-5 rounded-2xl border border-white/10 bg-[#0B0B0E] p-6 sm:p-7 flex flex-col justify-between shadow-2xl relative">
             <div>
               <div className="flex items-center justify-between mb-3 text-xs">
-                <span className="font-bold text-white tracking-wider">
+                <SmoothModeText as="span" className="font-bold text-white tracking-wider">
                   {isSimple ? ">_ РАЗРАБОТЧИК // ИЛЬЯ" : ">_ LEAD ENGINEER // IDLEON"}
-                </span>
-                <span className="rounded border border-white/15 bg-white/[0.05] px-2 py-0.5 text-[10px] text-zinc-300">
+                </SmoothModeText>
+                <SmoothModeText as="span" className="rounded border border-white/15 bg-white/[0.05] px-2 py-0.5 text-[10px] text-zinc-300">
                   {isSimple ? "ОТКРЫТ К ЗАКАЗАМ" : "OPEN FOR WORK"}
-                </span>
+                </SmoothModeText>
               </div>
-              <h3 className="font-mono text-xl sm:text-2xl font-bold text-white leading-tight">
+              <SmoothModeText as="h3" className="font-mono text-xl sm:text-2xl font-bold text-white leading-tight">
                 {isSimple ? "Илья // Создатель ИИ и веб-сервисов" : "Илья // Full-Stack AI Developer"}
-              </h3>
-              <p className="mt-2 text-xs text-zinc-400 leading-relaxed">
+              </SmoothModeText>
+              <SmoothModeText as="p" className="mt-2 text-xs text-zinc-400 leading-relaxed">
                 {isSimple
                   ? "Волгоград, Россия · Работаю удаленно с любыми городами и странами. Создаю Telegram-ботов, сайты и системы на базе нейросетей под ключ."
                   : "Волгоград, Россия · Работаю удаленно с любыми часовыми поясами. Разрабатываю отказоустойчивые LLM-роутеры, Telegram Mini Apps и веб-сервисы."}
-              </p>
+              </SmoothModeText>
             </div>
 
             {/* Seamless Video Portrait Box */}
@@ -129,27 +132,27 @@ export function EngineeringBaseSection() {
             <div className="grid grid-cols-2 gap-2.5 pt-4 border-t border-white/10 text-xs">
               <div className="p-3 rounded-lg border border-white/10 bg-white/[0.02]">
                 <div className="text-xl font-bold text-white">6+</div>
-                <div className="text-[10px] text-zinc-400 mt-0.5">
+                <SmoothModeText as="div" className="text-[10px] text-zinc-400 mt-0.5">
                   {isSimple ? "ГОТОВЫХ ПРОЕКТОВ" : "ПРОЕКТОВ В ПРОДЕ"}
-                </div>
+                </SmoothModeText>
               </div>
               <div className="p-3 rounded-lg border border-white/10 bg-white/[0.02]">
                 <div className="text-xl font-bold text-white">24/7</div>
-                <div className="text-[10px] text-zinc-400 mt-0.5">
+                <SmoothModeText as="div" className="text-[10px] text-zinc-400 mt-0.5">
                   {isSimple ? "РАБОТАЮТ 24/7" : "АВТОНОМНЫЕ БОТЫ"}
-                </div>
+                </SmoothModeText>
               </div>
               <div className="p-3 rounded-lg border border-white/10 bg-white/[0.02]">
                 <div className="text-xl font-bold text-white">7-14д</div>
-                <div className="text-[10px] text-zinc-400 mt-0.5">
+                <SmoothModeText as="div" className="text-[10px] text-zinc-400 mt-0.5">
                   {isSimple ? "СРОК ЗАПУСКА" : "СРОК СБОРКИ MVP"}
-                </div>
+                </SmoothModeText>
               </div>
               <div className="p-3 rounded-lg border border-white/10 bg-white/[0.02]">
                 <div className="text-xl font-bold text-white">100%</div>
-                <div className="text-[10px] text-zinc-400 mt-0.5">
+                <SmoothModeText as="div" className="text-[10px] text-zinc-400 mt-0.5">
                   {isSimple ? "ЧЕСТНЫЙ ПОДХОД" : "ОТКРЫТЫЙ КОД"}
-                </div>
+                </SmoothModeText>
               </div>
             </div>
           </div>
@@ -159,15 +162,15 @@ export function EngineeringBaseSection() {
             {/* Core Engineering Directions Strip */}
             <div className="rounded-2xl border border-white/10 bg-[#0B0B0E] p-6 shadow-xl">
               <div className="flex items-center justify-between mb-4 pb-2 border-b border-white/10 text-xs">
-                <span className="font-bold text-white tracking-wider uppercase">
+                <SmoothModeText as="span" className="font-bold text-white tracking-wider uppercase">
                   {isSimple ? "Ключевые направления разработки:" : "Ключевые архитектурные направления:"}
-                </span>
+                </SmoothModeText>
                 <span className="text-zinc-500 text-[10px]">
                   {isSimple ? "4 НАПРАВЛЕНИЯ" : "4 НАПРАВЛЕНИЯ"}
                 </span>
               </div>
 
-              <div className="grid gap-3 sm:grid-cols-2">
+              <SmoothModeText as="div" className="grid gap-3 sm:grid-cols-2">
                 {coreDirections.map((dir) => {
                   const Icon = dir.icon;
                   return (
@@ -189,7 +192,7 @@ export function EngineeringBaseSection() {
                     </div>
                   );
                 })}
-              </div>
+              </SmoothModeText>
             </div>
 
             {/* Filterable Skill Matrix */}
@@ -197,9 +200,9 @@ export function EngineeringBaseSection() {
               <div>
                 {/* Tabs */}
                 <div className="flex flex-wrap items-center justify-between gap-3 mb-5 pb-3 border-b border-white/10">
-                  <span className="text-xs font-bold text-white uppercase tracking-wider">
+                  <SmoothModeText as="span" className="text-xs font-bold text-white uppercase tracking-wider">
                     {isSimple ? "Используемые технологии:" : "Матрица технологий:"}
-                  </span>
+                  </SmoothModeText>
                   <div className="flex flex-wrap gap-1 p-0.5 rounded-lg border border-white/10 bg-[#141418]">
                     {skillFilterTabs.map((tab) => {
                       const isActive = activeCategory === tab.id;

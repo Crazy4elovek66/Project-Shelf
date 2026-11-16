@@ -5,6 +5,7 @@ import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
 import { ArrowDown, Terminal, Send } from "lucide-react";
 import { CONTACTS } from "@/data/contacts";
 import { useLanguageMode } from "@/context/LanguageModeContext";
+import { SmoothModeText } from "./SmoothModeText";
 
 export function HeroSection() {
   const { isSimple } = useLanguageMode();
@@ -19,9 +20,11 @@ export function HeroSection() {
   const smoothX = useSpring(mouseX, springConfig);
   const smoothY = useSpring(mouseY, springConfig);
 
-  // Offset layers
-  const echoX = useTransform(smoothX, [-400, 400], [-12, 12]);
-  const echoY = useTransform(smoothY, [-400, 400], [-6, 6]);
+  // Offset layers: horizontal [-20, 20] and vertical [-10, 10] (half strength of X)
+  const echoX = useTransform(smoothX, [-400, 400], [-20, 20]);
+  const echoY = useTransform(smoothY, [-400, 400], [-10, 10]);
+  const deepEchoX = useTransform(smoothX, [-400, 400], [-32, 32]);
+  const deepEchoY = useTransform(smoothY, [-400, 400], [-16, 16]);
 
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
     if (!containerRef.current) return;
@@ -56,7 +59,9 @@ export function HeroSection() {
         {/* HUD Technical Coordinate Top Bar */}
         <div className="flex flex-wrap items-center justify-between gap-3 border-b border-white/10 pb-4 mb-8 text-xs font-mono text-zinc-400">
           <div className="flex items-center gap-3">
-            <span className="text-white font-bold tracking-wider">{isSimple ? "ЛОКАЦИЯ" : "SYS.ARCH"}</span>
+            <SmoothModeText as="span" className="text-white font-bold tracking-wider">
+              {isSimple ? "ЛОКАЦИЯ" : "SYS.ARCH"}
+            </SmoothModeText>
             <span className="text-white/20">/</span>
 
             {/* VOLGOGRAD with Full-Width Contour Crown Easter Egg */}
@@ -108,25 +113,69 @@ export function HeroSection() {
           </div>
 
           <div className="flex items-center gap-2 rounded-md border border-white/20 bg-white/[0.04] px-3 py-1 text-[11px] font-mono text-zinc-300">
-            <span className="size-1.5 rounded-full bg-white animate-pulse" />
-            <span className="tracking-wide text-white">
-              {isSimple ? "ДОСТУПЕН ДЛЯ НОВЫХ ПРОЕКТОВ" : "ONLINE // AVAILABLE FOR AI & FULL-STACK"}
+            <span
+              aria-hidden="true"
+              className="inline-block font-mono text-sm font-bold leading-none text-white animate-terminal-blink"
+            >
+              _
             </span>
+            <SmoothModeText as="span" className="tracking-wide text-white">
+              {isSimple ? "ДОСТУПЕН ДЛЯ НОВЫХ ПРОЕКТОВ" : "ONLINE // AVAILABLE FOR AI & FULL-STACK"}
+            </SmoothModeText>
           </div>
         </div>
 
         {/* Main Monochromatic Kinetic Display Typography Hero */}
         <div className="relative py-4 lg:py-6">
+          {/* Seamless Ambient Hands Animation (Creation of Adam aesthetic) */}
+          <div className="pointer-events-none absolute inset-x-0 -top-6 sm:-top-8 lg:-top-10 z-0 mx-auto flex h-[340px] sm:h-[420px] lg:h-[480px] max-w-6xl items-center justify-center overflow-hidden select-none">
+            <video
+              autoPlay
+              loop
+              muted
+              playsInline
+              preload="auto"
+              controls={false}
+              disablePictureInPicture
+              onLoadedMetadata={(e) => {
+                e.currentTarget.muted = true;
+                e.currentTarget.volume = 0;
+              }}
+              className="h-full w-full object-cover object-center mix-blend-screen contrast-[1.15] brightness-[1.08] opacity-[0.42]"
+              style={{
+                maskImage:
+                  "radial-gradient(ellipse 75% 65% at 50% 50%, #000 35%, transparent 95%)",
+                WebkitMaskImage:
+                  "radial-gradient(ellipse 75% 65% at 50% 50%, #000 35%, transparent 95%)",
+              }}
+            >
+              <source src="/videos/hero-hands-loop.webm" type="video/webm" />
+              <source src="/videos/hero-hands-loop.mp4" type="video/mp4" />
+            </video>
+          </div>
+
           {/* Technical crosshairs (+) */}
-          <span className="absolute -top-2 -left-2 text-white/20 font-mono text-sm select-none">+</span>
-          <span className="absolute -top-2 -right-2 text-white/20 font-mono text-sm select-none">+</span>
+          <span className="absolute -top-2 -left-2 text-white/20 font-mono text-sm select-none z-10">+</span>
+          <span className="absolute -top-2 -right-2 text-white/20 font-mono text-sm select-none z-10">+</span>
 
           {/* Multilayer kinetic typography */}
-          <div className="relative select-none">
-            {/* Outline Echo Parallax Layer */}
+          <div className="relative select-none z-10">
+            {/* Deep Outline Echo Layer */}
+            <motion.div
+              style={{ x: deepEchoX, y: deepEchoY }}
+              className="absolute inset-0 pointer-events-none hidden sm:block opacity-20 will-change-transform"
+              aria-hidden="true"
+            >
+              <h1 className="font-display text-5xl sm:text-7xl lg:text-9xl font-black tracking-tight uppercase leading-[0.92] text-stroke-echo-deep">
+                <div>FULL-STACK</div>
+                <div>AI DEVELOPER</div>
+              </h1>
+            </motion.div>
+
+            {/* Bright Outline Echo Parallax Layer */}
             <motion.div
               style={{ x: echoX, y: echoY }}
-              className="absolute inset-0 pointer-events-none hidden sm:block opacity-35 will-change-transform"
+              className="absolute inset-0 pointer-events-none hidden sm:block opacity-45 will-change-transform"
               aria-hidden="true"
             >
               <h1 className="font-display text-5xl sm:text-7xl lg:text-9xl font-black tracking-tight uppercase leading-[0.92] text-stroke-echo">
@@ -147,58 +196,62 @@ export function HeroSection() {
           </div>
 
           {/* Subtitle / Engineer Offer and Identity */}
-          <div className="mt-8 grid gap-8 lg:grid-cols-12 lg:items-end">
+          <div className="mt-8 grid gap-8 lg:grid-cols-12 lg:items-end relative z-10">
             <div className="lg:col-span-8">
-              <p className="font-mono text-lg sm:text-xl font-bold text-white leading-snug">
-                {isSimple
-                  ? "Создаю умных ботов, сайты и веб-приложения с нейросетью, которые автоматизируют рутину, экономят время и помогают бизнесу расти."
-                  : "Архитектура мультиагентных систем, отказоустойчивые LLM-роутеры, Telegram Mini Apps и веб-интерфейсы."}
-              </p>
-              <p className="mt-3 max-w-2xl text-xs sm:text-sm leading-relaxed text-zinc-400 font-mono">
-                {isSimple ? (
-                  <>
-                    Привет, я <span className="text-white font-bold">Илья</span>. Помогаю предпринимателям и компаниям внедрять искусственный интеллект: создаю ботов в Telegram, современные сайты и системы автоматизации под ключ.
-                  </>
-                ) : (
-                  <>
-                    Привет, я <span className="text-white font-bold">Илья (idleON)</span>. Разрабатываю практические AI-инструменты и Full-Stack веб-сервисы с 100% открытым кодом: от компьютерного зрения в OpenCV до сложных prompt-пайплайнов и реактивных интерфейсов на Next.js 15.
-                  </>
-                )}
-              </p>
+              <SmoothModeText as="div">
+                <p className="font-mono text-lg sm:text-xl font-bold text-white leading-snug">
+                  {isSimple
+                    ? "Создаю умных ботов, сайты и веб-приложения с нейросетью, которые автоматизируют рутину, экономят время и помогают бизнесу расти."
+                    : "Архитектура мультиагентных систем, отказоустойчивые LLM-роутеры, Telegram Mini Apps и веб-интерфейсы."}
+                </p>
+                <p className="mt-3 max-w-2xl text-xs sm:text-sm leading-relaxed text-zinc-400 font-mono">
+                  {isSimple ? (
+                    <>
+                      Привет, я <span className="text-white font-bold">Илья</span>. Помогаю предпринимателям и компаниям внедрять искусственный интеллект: создаю ботов в Telegram, современные сайты и системы автоматизации под ключ.
+                    </>
+                  ) : (
+                    <>
+                      Привет, я <span className="text-white font-bold">Илья (idleON)</span>. Разрабатываю практические AI-инструменты и Full-Stack веб-сервисы с 100% открытым кодом: от компьютерного зрения в OpenCV до сложных prompt-пайплайнов и реактивных интерфейсов на Next.js 15.
+                    </>
+                  )}
+                </p>
+              </SmoothModeText>
             </div>
 
             {/* Micro stats counter */}
             <div className="lg:col-span-4 flex items-center justify-between lg:justify-end gap-6 font-mono text-xs border-t lg:border-t-0 border-white/10 pt-4 lg:pt-0">
               <div>
                 <div className="text-2xl font-bold font-mono text-white">6+</div>
-                <div className="text-zinc-500 uppercase text-[10px]">
+                <SmoothModeText as="div" className="text-zinc-500 uppercase text-[10px]">
                   {isSimple ? "ГОТОВЫХ ПРОЕКТОВ" : "КЕЙСОВ В ПРОДЕ"}
-                </div>
+                </SmoothModeText>
               </div>
               <div className="w-[1px] h-8 bg-white/10" />
               <div>
                 <div className="text-2xl font-bold font-mono text-white">24/7</div>
-                <div className="text-zinc-500 uppercase text-[10px]">
+                <SmoothModeText as="div" className="text-zinc-500 uppercase text-[10px]">
                   {isSimple ? "РАБОТА БЕЗ СБОЕВ" : "АВТОНОМНЫЕ ПАЙПЛАЙНЫ"}
-                </div>
+                </SmoothModeText>
               </div>
               <div className="w-[1px] h-8 bg-white/10" />
               <div>
                 <div className="text-2xl font-bold font-mono text-white">7-14д</div>
-                <div className="text-zinc-500 uppercase text-[10px]">
+                <SmoothModeText as="div" className="text-zinc-500 uppercase text-[10px]">
                   {isSimple ? "СРОК ЗАПУСКА" : "СРОК СБОРКИ MVP"}
-                </div>
+                </SmoothModeText>
               </div>
             </div>
           </div>
 
           {/* Minimalist High-Contrast Action Buttons */}
-          <div className="mt-8 flex flex-wrap items-center gap-3">
+          <div className="mt-8 flex flex-wrap items-center gap-3 relative z-10">
             <button
               onClick={() => scrollTo("projects")}
               className="group inline-flex items-center gap-2 rounded-lg bg-white px-6 py-3.5 text-xs font-mono font-bold text-black transition-all hover:bg-zinc-200 shadow-md cursor-pointer"
             >
-              <span>{isSimple ? ">_ СМОТРЕТЬ РАБОТЫ" : ">_ СМОТРЕТЬ КЕЙСЫ (01-06)"}</span>
+              <SmoothModeText as="span">
+                {isSimple ? ">_ СМОТРЕТЬ РАБОТЫ" : ">_ СМОТРЕТЬ КЕЙСЫ (01-06)"}
+              </SmoothModeText>
               <ArrowDown size={14} className="group-hover:translate-y-0.5 transition-transform" />
             </button>
 
@@ -207,7 +260,9 @@ export function HeroSection() {
               className="inline-flex items-center gap-2 rounded-lg border border-white/20 bg-white/[0.04] px-6 py-3.5 text-xs font-mono font-bold text-white transition-all hover:bg-white hover:text-black hover:border-white cursor-pointer"
             >
               <Terminal size={14} />
-              <span>{isSimple ? "[/] ЗАДАТЬ ВОПРОС ИИ" : "[/] AI-КОНСОЛЬ"}</span>
+              <SmoothModeText as="span">
+                {isSimple ? "[/] ЗАДАТЬ ВОПРОС ИИ" : "[/] AI-КОНСОЛЬ"}
+              </SmoothModeText>
             </button>
 
             <a
@@ -217,7 +272,9 @@ export function HeroSection() {
               className="inline-flex items-center gap-2 rounded-lg border border-white/15 bg-transparent px-5 py-3.5 text-xs font-mono text-zinc-300 transition-all hover:border-white hover:text-white"
             >
               <Send size={13} />
-              <span>{isSimple ? "^S НАПИСАТЬ МНЕ" : "^S СВЯЗАТЬСЯ"}</span>
+              <SmoothModeText as="span">
+                {isSimple ? "^S НАПИСАТЬ МНЕ" : "^S СВЯЗАТЬСЯ"}
+              </SmoothModeText>
             </a>
           </div>
         </div>

@@ -23,15 +23,17 @@ const simpleTickerItems = [
 ];
 
 export function KineticMarquee() {
-  const { isSimple } = useLanguageMode();
+  const { isSimple, mode } = useLanguageMode();
   const items = isSimple ? simpleTickerItems : techTickerItems;
+  // Duplicate array inside track to guarantee width > 3000px on 2K/4K displays
+  const trackItems = [...items, ...items];
 
   return (
     <div className="marquee-wrapper w-full border-y border-white/10 py-3 bg-[#08080A] overflow-hidden select-none">
-      <div className="animate-marquee-seamless flex w-max">
+      <div key={mode} className="animate-marquee-seamless flex w-max">
         {/* Track 1 */}
         <div className="flex shrink-0 items-center gap-8 pr-8">
-          {items.map((item, idx) => (
+          {trackItems.map((item, idx) => (
             <div key={`track1-${idx}`} className="flex items-center gap-8 font-mono text-xs text-zinc-400">
               <span className="hover:text-white transition-colors tracking-wide font-medium whitespace-nowrap">
                 {item}
@@ -43,7 +45,7 @@ export function KineticMarquee() {
 
         {/* Track 2 (Exact duplicate for seamless infinite loop) */}
         <div className="flex shrink-0 items-center gap-8 pr-8" aria-hidden="true">
-          {items.map((item, idx) => (
+          {trackItems.map((item, idx) => (
             <div key={`track2-${idx}`} className="flex items-center gap-8 font-mono text-xs text-zinc-400">
               <span className="hover:text-white transition-colors tracking-wide font-medium whitespace-nowrap">
                 {item}

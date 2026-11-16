@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { ArrowUp } from "lucide-react";
 import { CONTACTS } from "@/data/contacts";
 import { useLanguageMode } from "@/context/LanguageModeContext";
+import { SmoothModeText } from "./SmoothModeText";
 
 const stackPills = [
   "Next.js 15",
@@ -52,9 +53,9 @@ export function Footer() {
         <div className="pb-12 border-b border-white/10">
           <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6">
             <div>
-              <span className="text-xs text-zinc-500 uppercase tracking-widest block mb-2">
+              <SmoothModeText as="span" className="text-xs text-zinc-500 uppercase tracking-widest block mb-2">
                 {isSimple ? "// РАЗРАБОТКА ИИ И ВЕБ-СЕРВИСОВ" : "// ARCHITECTURE & FULL-STACK ENGINEERING"}
-              </span>
+              </SmoothModeText>
               <h2 className="font-display text-5xl sm:text-7xl lg:text-9xl font-black tracking-tight text-white leading-none uppercase">
                 <span className="block text-stroke-echo hover:text-white transition-colors duration-300">
                   LET&apos;S BUILD
@@ -80,9 +81,9 @@ export function Footer() {
 
         {/* Middle: Monochromatic Tech Pills */}
         <div className="py-6 border-b border-white/10 flex flex-wrap items-center justify-between gap-4">
-          <span className="text-xs text-zinc-500 uppercase tracking-wider">
+          <SmoothModeText as="span" className="text-xs text-zinc-500 uppercase tracking-wider">
             {isSimple ? "Используемые технологии:" : "Производственный стек:"}
-          </span>
+          </SmoothModeText>
           <div className="flex flex-wrap gap-1.5">
             {stackPills.map((pill) => (
               <span
@@ -99,9 +100,9 @@ export function Footer() {
         <div className="pt-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4 text-xs text-zinc-500">
           <div className="flex items-center gap-3">
             <span className="size-1.5 rounded-full bg-white animate-pulse" />
-            <span className="text-zinc-400">
+            <SmoothModeText as="span" className="text-zinc-400">
               {isSimple ? "СТАТУС: ГОТОВ К СОТРУДНИЧЕСТВУ" : "SYS_STATUS: ALL SYSTEMS OPERATIONAL"}
-            </span>
+            </SmoothModeText>
             <span className="text-white/20">/</span>
             <span>VOLGOGRAD: {timeStr || "12:00:00"} MSK</span>
           </div>

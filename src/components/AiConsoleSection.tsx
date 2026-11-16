@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import { Terminal, Cpu, Sparkles, Send } from "lucide-react";
 import { CONTACTS } from "@/data/contacts";
 import { useLanguageMode } from "@/context/LanguageModeContext";
+import { SmoothModeText } from "./SmoothModeText";
 
 type Scenario = {
   id: string;
@@ -295,28 +296,28 @@ export function AiConsoleSection() {
           <div>
             <div className="inline-flex items-center gap-2 rounded border border-white/15 bg-white/[0.04] px-3 py-1 text-xs text-zinc-300 mb-3">
               <Terminal size={13} />
-              <span>
+              <SmoothModeText as="span">
                 {isSimple ? "ИНТЕРАКТИВНЫЙ ПОМОЩНИК // ВОПРОСЫ И ОТВЕТЫ" : "INTERACTIVE AI TWIN // ASK ARCHITECTURE"}
-              </span>
+              </SmoothModeText>
             </div>
-            <h2 className="font-display text-3xl sm:text-4xl font-bold tracking-tight text-white uppercase">
+            <SmoothModeText as="h2" className="font-display text-3xl sm:text-4xl font-bold tracking-tight text-white uppercase">
               {isSimple ? "Частые вопросы и ответы" : "Интерактивная AI-консоль архитектора"}
-            </h2>
+            </SmoothModeText>
           </div>
-          <p className="max-w-md text-xs sm:text-sm text-zinc-400 leading-relaxed">
+          <SmoothModeText as="p" className="max-w-md text-xs sm:text-sm text-zinc-400 leading-relaxed">
             {isSimple
               ? "Выберите интересующий вопрос, чтобы мгновенно получить подробный ответ о процессе работы, пользе для бизнеса и сроках."
               : "Симулятор архитектурных решений. Выберите инженерный сценарий для мгновенного стриминга ответа и телеметрии пайплайна."}
-          </p>
+          </SmoothModeText>
         </div>
 
         {/* Console Layout */}
         <div className="grid gap-6 lg:grid-cols-12 items-start">
           {/* Left Column: Preset Scenarios */}
           <div className="lg:col-span-5 flex flex-col gap-2.5">
-            <span className="text-xs text-zinc-500 uppercase tracking-wider mb-1 px-1">
+            <SmoothModeText as="span" className="text-xs text-zinc-500 uppercase tracking-wider mb-1 px-1">
               {isSimple ? "Популярные темы:" : "Выберите сценарий диалога:"}
-            </span>
+            </SmoothModeText>
             {scenarios.map((scenario) => {
               const isSelected = scenario.id === selectedId;
               return (

@@ -1,13 +1,13 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { motion } from "framer-motion";
+import { motion, useAnimationControls } from "framer-motion";
 import { Terminal, Send, Mail, Sparkles } from "lucide-react";
 import { CONTACTS } from "@/data/contacts";
 import { useLanguageMode } from "@/context/LanguageModeContext";
 
 export function Header() {
-  const { mode, isSimple, toggleMode } = useLanguageMode();
+  const { mode, isSimple, setMode } = useLanguageMode();
   const [isScrolled, setIsScrolled] = useState(false);
   const [activeSection, setActiveSection] = useState("projects");
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
@@ -147,39 +147,50 @@ export function Header() {
 
         {/* Right: CLI Launcher Button >_ CLI [ / ] + Mode Switch + Quick Actions */}
         <div className="flex items-center gap-1.5 sm:gap-2">
-          {/* Tech / Simple Mode Switch */}
-          <button
-            type="button"
-            onClick={toggleMode}
-            role="switch"
-            aria-checked={isSimple}
-            title={isSimple ? "Переключить на технический язык" : "Переключить на простой язык"}
-            className="relative inline-flex h-7 items-center rounded-lg border border-white/20 bg-[#0E0E12] p-0.5 text-[10px] sm:text-[11px] font-mono select-none cursor-pointer"
-          >
-            <span
-              className={`relative z-10 px-1.5 sm:px-2 py-0.5 font-bold transition-colors ${
-                !isSimple ? "text-black" : "text-zinc-400 hover:text-white"
-              }`}
-            >
-              ТЕХ
-            </span>
-            <span
-              className={`relative z-10 px-1.5 sm:px-2 py-0.5 font-bold transition-colors ${
+          {/* Mode Switch: ПО-ПРОСТОМУ / ДЛЯ ГИКОВ */}
+          <div className="relative inline-flex h-7 items-center rounded-lg border border-white/20 bg-[#0E0E12] p-0.5 text-[10px] sm:text-[11px] font-mono select-none">
+            <button
+              type="button"
+              onClick={() => setMode("simple")}
+              className={`relative z-10 px-2 sm:px-2.5 py-0.5 font-bold transition-colors cursor-pointer rounded-md ${
                 isSimple ? "text-black" : "text-zinc-400 hover:text-white"
               }`}
             >
-              ПРОСТО
-            </span>
-            <motion.span
-              layoutId="language-mode-thumb"
-              className="absolute inset-y-0.5 rounded-md bg-white shadow-sm"
-              style={{
-                width: "calc(50% - 2px)",
-                left: isSimple ? "calc(50%)" : "2px",
-              }}
-              transition={{ type: "spring", stiffness: 450, damping: 32 }}
-            />
-          </button>
+              {isSimple && (
+                <motion.span
+                  layoutId="mode-pill"
+                  transition={{ type: "spring", stiffness: 420, damping: 32 }}
+                  className="absolute inset-0 rounded-md bg-white shadow-sm"
+                />
+              )}
+              <span className="relative z-10 whitespace-nowrap">ПО-ПРОСТОМУ</span>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => setMode("tech")}
+              className={`relative z-10 flex items-center px-2 sm:px-2.5 py-0.5 font-bold transition-colors cursor-pointer rounded-md ${
+                !isSimple ? "text-black" : "text-zinc-400 hover:text-white"
+              }`}
+            >
+              {!isSimple && (
+                <motion.span
+                  layoutId="mode-pill"
+                  transition={{ type: "spring", stiffness: 420, damping: 32 }}
+                  className="absolute inset-0 rounded-md bg-white shadow-sm"
+                />
+              )}
+              {isSimple && (
+                <motion.span
+                  aria-hidden="true"
+                  animate={{ opacity: [0.25, 0.95, 0.25], scale: [0.92, 1.08, 0.92] }}
+                  transition={{ duration: 3.4, repeat: Infinity, ease: "easeInOut" }}
+                  className="mr-1.5 inline-block size-1.5 rounded-full bg-white shadow-[0_0_8px_rgba(255,255,255,0.85)]"
+                />
+              )}
+              <span className="relative z-10 whitespace-nowrap">ДЛЯ ГИКОВ</span>
+            </button>
+          </div>
 
           {/* CLI Terminal Launcher */}
           <button
@@ -233,18 +244,30 @@ export function Header() {
   );
 }
 
-// Interactive Mechanical Keycap Component with Hover Press & Smooth Scroll Top
+// Interactive Mechanical Keycap Component with Single Press Impulse & Smooth Scroll Top
 function MechanicalKeycap() {
+  const keyControls = useAnimationControls();
+
+  const triggerKeyPress = () => {
+    keyControls.start({
+      y: [0, 3, 0],
+      scale: [1, 0.97, 1],
+      transition: { duration: 0.26, times: [0, 0.45, 1], ease: "easeOut" },
+    });
+  };
+
   return (
     <motion.button
       type="button"
-      onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-      whileHover={{ y: 1.5 }}
-      whileTap={{ y: 3 }}
-      transition={{ type: "spring", stiffness: 520, damping: 28 }}
+      animate={keyControls}
+      onMouseEnter={triggerKeyPress}
+      onClick={() => {
+        triggerKeyPress();
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      }}
       aria-label="Наверх"
       title="Наверх"
-      className="inline-flex h-7 min-w-[34px] items-center justify-center rounded-md border border-white/20 border-b-[3px] border-b-zinc-500 bg-[#121215] px-2 font-mono text-xs font-semibold tracking-tight text-zinc-100 shadow-[inset_0_1px_0_rgba(255,255,255,0.18)] transition-colors duration-150 hover:border-b-[1.5px] hover:border-white/40 hover:bg-[#19191E] hover:text-white active:border-b cursor-pointer select-none"
+      className="inline-flex h-7 min-w-[34px] items-center justify-center rounded-md border border-white/20 border-b-[3px] border-b-zinc-500 bg-[#121215] px-2 font-mono text-xs font-semibold tracking-tight text-zinc-100 shadow-[inset_0_1px_0_rgba(255,255,255,0.18)] transition-colors duration-150 hover:border-white/40 hover:bg-[#19191E] hover:text-white cursor-pointer select-none"
     >
       &gt;_
     </motion.button>
