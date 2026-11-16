@@ -11,7 +11,7 @@ export function ProjectVisual({ project }: { project: Project }) {
   return (
     <div 
       ref={ref} 
-      className="group relative min-h-[260px] overflow-hidden rounded-2xl border border-white/10 bg-black/25 p-0 flex items-center justify-center"
+      className="group relative min-h-[440px] sm:min-h-[480px] lg:min-h-[500px] w-full overflow-hidden rounded-2xl border border-white/10 bg-black/25 p-0 flex items-center justify-center"
     >
       <div className={`absolute inset-0 bg-gradient-to-br ${project.visual.accent} opacity-10`} />
 

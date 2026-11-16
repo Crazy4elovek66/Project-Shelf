@@ -239,11 +239,9 @@ function AdaptiveScreenshotFrame({
   const defaultRatio = src.includes("JobRadar1")
     ? 1.05
     : src.includes("JobRadar2") || src.includes("ProfitCheck") || src.includes("Magic")
-    ? 0.45
+    ? 9 / 19.5
     : 1.6;
 
-  const width = dimensions?.width || (defaultRatio > 1 ? 1600 : 800);
-  const height = dimensions?.height || (defaultRatio > 1 ? 1000 : Math.round(800 / defaultRatio));
   const ratio = dimensions ? dimensions.width / dimensions.height : defaultRatio;
 
   // Case 1: Wide Desktop / Web Mockup (ratio >= 1.15)
@@ -251,7 +249,7 @@ function AdaptiveScreenshotFrame({
     return (
       <div
         onClick={onClick}
-        className="relative z-10 w-full max-w-[500px] aspect-[16/10] rounded-xl border border-white/15 bg-black shadow-2xl overflow-hidden cursor-zoom-in group flex flex-col transition-all duration-300 hover:border-white/30"
+        className="relative z-10 w-full max-w-[520px] aspect-[16/10] rounded-xl border border-white/15 bg-black shadow-2xl overflow-hidden cursor-zoom-in group flex flex-col transition-all duration-300 hover:border-white/30"
       >
         <div className="h-6 bg-[#16161A] border-b border-white/10 flex items-center px-3 gap-1.5 shrink-0">
           <span className="size-2 rounded-full bg-zinc-600" />
@@ -266,7 +264,7 @@ function AdaptiveScreenshotFrame({
             src={src}
             alt={alt}
             fill
-            sizes="500px"
+            sizes="520px"
             className="object-cover object-top"
           />
         </div>
@@ -280,8 +278,8 @@ function AdaptiveScreenshotFrame({
     return (
       <div
         onClick={onClick}
-        className="relative z-10 w-full max-w-[440px] max-h-[380px] rounded-xl border border-white/15 bg-[#09090B] shadow-2xl overflow-hidden cursor-zoom-in group flex flex-col transition-all duration-300 hover:border-white/30"
-        style={{ aspectRatio: `${width} / ${height}` }}
+        className="relative z-10 w-full max-w-[460px] rounded-xl border border-white/15 bg-[#09090B] shadow-2xl overflow-hidden cursor-zoom-in group flex flex-col transition-all duration-300 hover:border-white/30"
+        style={{ aspectRatio: `${ratio}` }}
       >
         <div className="h-6 bg-[#16161C] border-b border-white/10 flex items-center px-3 gap-2 shrink-0">
           <div className="size-2 rounded-full bg-emerald-500/80" />
@@ -299,7 +297,7 @@ function AdaptiveScreenshotFrame({
             src={src}
             alt={alt}
             fill
-            sizes="440px"
+            sizes="460px"
             className="object-contain object-top"
           />
         </div>
@@ -312,32 +310,27 @@ function AdaptiveScreenshotFrame({
   return (
     <div
       onClick={onClick}
-      className="relative z-10 mx-auto max-h-[410px] w-auto rounded-[26px] border border-white/20 p-1.5 bg-[#08080A] shadow-[0_20px_50px_rgba(0,0,0,0.85)] overflow-hidden cursor-zoom-in group flex flex-col transition-all duration-300 hover:border-white/40"
-      style={{ aspectRatio: `${width} / ${height}` }}
+      style={{ aspectRatio: `${ratio}` }}
+      className="relative z-10 mx-auto flex h-[430px] sm:h-[470px] lg:h-[500px] w-auto max-w-full items-center justify-center rounded-[28px] border border-white/25 bg-[#09090B] p-1.5 shadow-[0_24px_60px_rgba(0,0,0,0.9)] cursor-zoom-in group transition-all duration-300 hover:border-white/40"
     >
-      <div className="relative flex-1 w-full rounded-[20px] overflow-hidden bg-black flex flex-col">
-        {/* Phone Notch */}
-        <div className="h-4 bg-black/90 flex items-center justify-center shrink-0 z-20">
-          <div className="w-12 h-1 rounded-full bg-zinc-800" />
-        </div>
-
-        <div className="relative flex-1 w-full bg-black">
-          <Image
-            src={src}
-            alt={alt}
-            fill
-            sizes="280px"
-            className="object-cover object-top"
-          />
-        </div>
-
-        {/* Home Indicator */}
-        <div className="h-3 bg-black/90 flex items-center justify-center shrink-0 z-20">
-          <div className="w-14 h-0.5 rounded-full bg-zinc-700" />
-        </div>
-
-        <div className="absolute inset-0 bg-white/5 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-30" />
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute top-2.5 left-1/2 z-20 h-1 w-12 -translate-x-1/2 rounded-full bg-white/20"
+      />
+      <div className="relative h-full w-full overflow-hidden rounded-[22px] bg-[#050505]">
+        <Image
+          src={src}
+          alt={alt}
+          fill
+          sizes="340px"
+          className="h-full w-full object-cover object-top transition-transform duration-300 group-hover:scale-[1.01]"
+        />
       </div>
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute bottom-2.5 left-1/2 z-20 h-1 w-16 -translate-x-1/2 rounded-full bg-white/20"
+      />
+      <div className="absolute inset-0 bg-white/5 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-30 rounded-[28px]" />
     </div>
   );
 }
@@ -414,7 +407,7 @@ function SingleProjectInspector({ project, index }: { project: Project; index: n
           </div>
 
           {/* Media Stage Canvas */}
-          <div className="relative min-h-[340px] sm:min-h-[400px] rounded-xl border border-white/10 bg-[#050507] p-4 flex items-center justify-center overflow-hidden">
+          <div className="relative min-h-[470px] sm:min-h-[510px] lg:min-h-[540px] rounded-xl border border-white/10 bg-[#050507] p-4 flex items-center justify-center overflow-hidden">
             {/* Background Grid */}
             <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:16px_16px] pointer-events-none" />
 

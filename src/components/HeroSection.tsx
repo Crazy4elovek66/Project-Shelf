@@ -53,11 +53,11 @@ export function HeroSection() {
       ref={containerRef}
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
-      className="relative pt-24 md:pt-32 pb-12 overflow-x-clip"
+      className="relative pt-16 sm:pt-[74px] pb-6 sm:pb-8 overflow-x-clip"
     >
       <div className="section-shell">
         {/* HUD Technical Coordinate Top Bar */}
-        <div className="flex flex-wrap items-center justify-between gap-3 border-b border-white/10 pb-4 mb-4 sm:mb-6 text-xs font-mono text-zinc-400">
+        <div className="flex flex-wrap items-center justify-between gap-3 border-b border-white/10 pb-3 mb-2 sm:mb-3 text-xs font-mono text-zinc-400">
           <div className="flex items-center gap-3">
             <SmoothModeText as="span" className="text-white font-bold tracking-wider">
               {isSimple ? "ЛОКАЦИЯ" : "SYS.ARCH"}
@@ -125,10 +125,10 @@ export function HeroSection() {
           </div>
         </div>
 
-        {/* Full-bleed Edge-to-Edge Hands Animation Scene (Elevated above headline) */}
+        {/* Full-bleed Edge-to-Edge Hands Animation Scene (Zero masks, pure high-clarity mix-blend-screen) */}
         <div
           aria-hidden="true"
-          className="pointer-events-none relative left-1/2 right-1/2 z-10 -ml-[50vw] -mr-[50vw] my-2 sm:my-3 h-[190px] w-screen overflow-hidden sm:h-[260px] md:h-[320px] lg:h-[370px] xl:h-[410px]"
+          className="pointer-events-none relative left-1/2 right-1/2 z-10 -ml-[50vw] -mr-[50vw] mt-1 h-[210px] w-screen overflow-hidden sm:h-[270px] md:h-[320px] lg:h-[360px] xl:h-[390px]"
         >
           <video
             autoPlay
@@ -142,13 +142,7 @@ export function HeroSection() {
               e.currentTarget.muted = true;
               e.currentTarget.volume = 0;
             }}
-            className="h-full w-full object-cover object-center mix-blend-screen opacity-[0.82] contrast-[1.18] brightness-[1.12] select-none"
-            style={{
-              maskImage:
-                "linear-gradient(to bottom, transparent 0%, #000 14%, #000 84%, transparent 100%)",
-              WebkitMaskImage:
-                "linear-gradient(to bottom, transparent 0%, #000 14%, #000 84%, transparent 100%)",
-            }}
+            className="h-full w-full object-cover object-center mix-blend-screen opacity-[0.86] contrast-[1.18] brightness-[1.12] select-none"
           >
             <source src="/videos/hero-hands-loop.webm" type="video/webm" />
             <source src="/videos/hero-hands-loop.mp4" type="video/mp4" />
@@ -156,7 +150,7 @@ export function HeroSection() {
         </div>
 
         {/* Main Monochromatic Kinetic Display Typography Hero */}
-        <div className="relative py-2 lg:py-4 -mt-2 sm:-mt-4">
+        <div className="relative py-1 lg:py-2 -mt-3 sm:-mt-5 lg:-mt-7 z-20">
           {/* Technical crosshairs (+) */}
           <span className="absolute -top-2 -left-2 text-white/20 font-mono text-sm select-none z-10">+</span>
           <span className="absolute -top-2 -right-2 text-white/20 font-mono text-sm select-none z-10">+</span>
@@ -169,7 +163,7 @@ export function HeroSection() {
               className="absolute inset-0 pointer-events-none hidden sm:block opacity-20 will-change-transform"
               aria-hidden="true"
             >
-              <h1 className="font-display text-5xl sm:text-7xl lg:text-9xl font-black tracking-tight uppercase leading-[0.92] text-stroke-echo-deep">
+              <h1 className="font-display text-5xl sm:text-7xl lg:text-9xl font-black tracking-tight uppercase leading-[0.88] text-stroke-echo-deep">
                 <div>FULL-STACK</div>
                 <div>AI DEVELOPER</div>
               </h1>
@@ -181,14 +175,14 @@ export function HeroSection() {
               className="absolute inset-0 pointer-events-none hidden sm:block opacity-45 will-change-transform"
               aria-hidden="true"
             >
-              <h1 className="font-display text-5xl sm:text-7xl lg:text-9xl font-black tracking-tight uppercase leading-[0.92] text-stroke-echo">
+              <h1 className="font-display text-5xl sm:text-7xl lg:text-9xl font-black tracking-tight uppercase leading-[0.88] text-stroke-echo">
                 <div>FULL-STACK</div>
                 <div>AI DEVELOPER</div>
               </h1>
             </motion.div>
 
             {/* Front Solid Monochrome Typography Layer */}
-            <h1 className="relative z-10 font-display text-5xl sm:text-7xl lg:text-9xl font-black tracking-tight uppercase leading-[0.92] text-white">
+            <h1 className="relative z-10 font-display text-5xl sm:text-7xl lg:text-9xl font-black tracking-tight uppercase leading-[0.88] text-white">
               <span className="block text-white">
                 FULL-STACK
               </span>
@@ -199,15 +193,15 @@ export function HeroSection() {
           </div>
 
           {/* Subtitle / Engineer Offer and Identity */}
-          <div className="mt-8 grid gap-8 lg:grid-cols-12 lg:items-end relative z-10">
+          <div className="mt-3 sm:mt-4 grid gap-4 lg:grid-cols-12 lg:items-end relative z-10">
             <div className="lg:col-span-8">
               <SmoothModeText as="div">
-                <p className="font-mono text-lg sm:text-xl font-bold text-white leading-snug">
+                <p className="font-mono text-base sm:text-lg lg:text-xl font-bold text-white leading-snug">
                   {isSimple
                     ? "Создаю умных ботов, сайты и веб-приложения с нейросетью, которые автоматизируют рутину, экономят время и помогают бизнесу расти."
                     : "Архитектура мультиагентных систем, отказоустойчивые LLM-роутеры, Telegram Mini Apps и веб-интерфейсы."}
                 </p>
-                <p className="mt-3 max-w-2xl text-xs sm:text-sm leading-relaxed text-zinc-400 font-mono">
+                <p className="mt-2 max-w-2xl text-xs sm:text-sm leading-relaxed text-zinc-400 font-mono">
                   {isSimple ? (
                     <>
                       Привет, я <span className="text-white font-bold">Илья</span>. Помогаю предпринимателям и компаниям внедрять искусственный интеллект: создаю ботов в Telegram, современные сайты и системы автоматизации под ключ.
@@ -222,7 +216,7 @@ export function HeroSection() {
             </div>
 
             {/* Micro stats counter */}
-            <div className="lg:col-span-4 flex items-center justify-between lg:justify-end gap-6 font-mono text-xs border-t lg:border-t-0 border-white/10 pt-4 lg:pt-0">
+            <div className="lg:col-span-4 flex items-center justify-between lg:justify-end gap-6 font-mono text-xs border-t lg:border-t-0 border-white/10 pt-3 lg:pt-0">
               <div>
                 <div className="text-2xl font-bold font-mono text-white">6+</div>
                 <SmoothModeText as="div" className="text-zinc-500 uppercase text-[10px]">
@@ -247,7 +241,7 @@ export function HeroSection() {
           </div>
 
           {/* Minimalist High-Contrast Action Buttons */}
-          <div className="mt-8 flex flex-wrap items-center gap-3 relative z-10">
+          <div className="mt-4 sm:mt-5 flex flex-wrap items-center gap-3 relative z-10">
             <button
               onClick={() => scrollTo("projects")}
               className="group inline-flex items-center gap-2 rounded-lg bg-white px-6 py-3.5 text-xs font-mono font-bold text-black transition-all hover:bg-zinc-200 shadow-md cursor-pointer"
