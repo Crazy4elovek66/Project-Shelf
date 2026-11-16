@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
 import { ArrowDown, Terminal, Send } from "lucide-react";
 import { CONTACTS } from "@/data/contacts";
@@ -10,7 +10,44 @@ import { SmoothModeText } from "./SmoothModeText";
 export function HeroSection() {
   const { isSimple } = useLanguageMode();
   const containerRef = useRef<HTMLDivElement>(null);
+  const leftVideoRef = useRef<HTMLVideoElement>(null);
+  const rightVideoRef = useRef<HTMLVideoElement>(null);
   const [isVolgogradHovered, setIsVolgogradHovered] = useState(false);
+
+  // Synchronize left and right hands video layers frame-perfectly
+  useEffect(() => {
+    const v1 = leftVideoRef.current;
+    const v2 = rightVideoRef.current;
+    if (!v1 || !v2) return;
+
+    const syncVideos = () => {
+      if (Math.abs(v1.currentTime - v2.currentTime) > 0.04) {
+        v2.currentTime = v1.currentTime;
+      }
+    };
+
+    const handlePlay = () => {
+      v2.play().catch(() => {});
+    };
+
+    const handlePause = () => {
+      v2.pause();
+    };
+
+    v1.addEventListener("timeupdate", syncVideos);
+    v1.addEventListener("play", handlePlay);
+    v1.addEventListener("pause", handlePause);
+
+    if (!v1.paused && v2.paused) {
+      v2.play().catch(() => {});
+    }
+
+    return () => {
+      v1.removeEventListener("timeupdate", syncVideos);
+      v1.removeEventListener("play", handlePlay);
+      v1.removeEventListener("pause", handlePause);
+    };
+  }, []);
 
   // Mouse Parallax coordinates for kinetic typography
   const mouseX = useMotionValue(0);
@@ -56,7 +93,7 @@ export function HeroSection() {
       className="relative pt-16 sm:pt-[72px] pb-1 sm:pb-1.5 lg:pb-2 overflow-x-clip"
     >
       {/* HUD Technical Coordinate Top Bar (Overlaying the upper area of hands, z-30) */}
-      <div className="pointer-events-none absolute inset-x-0 top-[76px] sm:top-[88px] lg:top-[96px] z-30">
+      <div className="pointer-events-none absolute inset-x-0 top-[90px] sm:top-[88px] lg:top-[96px] z-30">
         <div className="section-shell">
           <div className="pointer-events-auto flex flex-wrap items-center justify-between gap-3 border-b border-white/10 pb-3 text-xs font-mono text-zinc-400">
             <div className="flex items-center gap-3">
@@ -128,13 +165,41 @@ export function HeroSection() {
         </div>
       </div>
 
-      <div className="section-shell">
-        {/* Full-bleed Hands Video Scene: true 100vw edge-to-edge scale without finger clipping */}
+      <div className="section-shell relative">
+        {/* Layer 1: Left Hand (Robot) behind FULL-STACK (z-10) */}
         <div
           aria-hidden="true"
-          className="pointer-events-none relative left-1/2 right-1/2 -ml-[50vw] -mr-[50vw] mt-20 -mb-4 w-screen select-none sm:-mt-[13vw] sm:-mb-[15.5vw]"
+          className="pointer-events-none relative left-1/2 right-1/2 -ml-[50vw] -mr-[50vw] mt-20 -mb-4 w-screen select-none sm:-mt-[13vw] sm:-mb-[15.5vw] z-10"
+          style={{ clipPath: "inset(0 50% 0 0)" }}
         >
           <video
+            ref={leftVideoRef}
+            autoPlay
+            loop
+            muted
+            playsInline
+            preload="auto"
+            controls={false}
+            disablePictureInPicture
+            onLoadedMetadata={(e) => {
+              e.currentTarget.muted = true;
+              e.currentTarget.volume = 0;
+            }}
+            className="block h-auto w-full mix-blend-screen contrast-[1.28] brightness-[1.06] select-none"
+          >
+            <source src="/videos/hero-hands-loop.webm" type="video/webm" />
+            <source src="/videos/hero-hands-loop.mp4" type="video/mp4" />
+          </video>
+        </div>
+
+        {/* Layer 3: Right Hand (Human) above AI DEVELOPER (z-30) */}
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-x-0 top-0 left-1/2 right-1/2 -ml-[50vw] -mr-[50vw] mt-20 -mb-4 w-screen select-none sm:-mt-[13vw] sm:-mb-[15.5vw] z-30"
+          style={{ clipPath: "inset(0 0 0 50%)" }}
+        >
+          <video
+            ref={rightVideoRef}
             autoPlay
             loop
             muted
@@ -187,7 +252,13 @@ export function HeroSection() {
 
             {/* Front Solid Monochrome Typography Layer */}
             <h1 className="relative z-10 font-display text-5xl sm:text-7xl lg:text-9xl font-black tracking-tight uppercase leading-[0.88] text-white">
-              <span className="block text-white">
+              <span
+                className="block text-white"
+                style={{
+                  textShadow:
+                    "0 2px 10px rgba(5, 5, 5, 0.96), 0 0 22px rgba(5, 5, 5, 0.92), 0 0 2px rgba(5, 5, 5, 1)",
+                }}
+              >
                 FULL-STACK
               </span>
               <span className="block text-zinc-300">
