@@ -29,7 +29,7 @@ export function KineticMarquee() {
   const trackItems = [...items, ...items];
 
   return (
-    <div className="marquee-wrapper w-full border-y border-white/10 py-3 bg-[#08080A] overflow-hidden select-none">
+    <div className="marquee-wrapper w-full border-y border-white/10 py-2.5 sm:py-3 bg-[#08080A] overflow-hidden select-none">
       <div key={mode} className="animate-marquee-seamless flex w-max">
         {/* Track 1 */}
         <div className="flex shrink-0 items-center gap-8 pr-8">
