@@ -97,6 +97,28 @@ body::before {
   -webkit-backdrop-filter: blur(16px);
 }
 
+/* Seamless Infinite Marquee */
+@keyframes marquee-seamless {
+  0% {
+    transform: translate3d(0%, 0, 0);
+  }
+  100% {
+    transform: translate3d(-50%, 0, 0);
+  }
+}
+
+.animate-marquee-seamless {
+  display: flex;
+  width: max-content;
+  will-change: transform;
+  backface-visibility: hidden;
+  animation: marquee-seamless 34s linear infinite;
+}
+
+.marquee-wrapper:hover .animate-marquee-seamless {
+  animation-play-state: paused;
+}
+
 /* Hover pause for all marquees */
 .marquee-track:hover {
   animation-play-state: paused !important;
@@ -104,6 +126,9 @@ body::before {
 
 /* Reduced motion */
 @media (prefers-reduced-motion: reduce) {
+  .animate-marquee-seamless {
+    animation: none;
+  }
 
   *,
   *::before,

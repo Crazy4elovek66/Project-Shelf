@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { ArrowUp } from "lucide-react";
 import { CONTACTS } from "@/data/contacts";
+import { useLanguageMode } from "@/context/LanguageModeContext";
 
 const stackPills = [
   "Next.js 15",
@@ -20,6 +21,7 @@ const stackPills = [
 ];
 
 export function Footer() {
+  const { isSimple } = useLanguageMode();
   const [timeStr, setTimeStr] = useState<string>("");
 
   useEffect(() => {
@@ -51,7 +53,7 @@ export function Footer() {
           <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6">
             <div>
               <span className="text-xs text-zinc-500 uppercase tracking-widest block mb-2">
-                {"//"} ARCHITECTURE & FULL-STACK ENGINEERING
+                {isSimple ? "// РАЗРАБОТКА ИИ И ВЕБ-СЕРВИСОВ" : "// ARCHITECTURE & FULL-STACK ENGINEERING"}
               </span>
               <h2 className="font-display text-5xl sm:text-7xl lg:text-9xl font-black tracking-tight text-white leading-none uppercase">
                 <span className="block text-stroke-echo hover:text-white transition-colors duration-300">
@@ -66,9 +68,9 @@ export function Footer() {
             <button
               type="button"
               onClick={scrollToTop}
-              className="group self-start lg:self-end flex items-center gap-3 rounded-lg border border-white/20 bg-white/[0.04] px-5 py-3 text-xs font-bold text-zinc-300 hover:border-white hover:text-white hover:bg-white/10 transition-all shadow-sm"
+              className="group self-start lg:self-end flex items-center gap-3 rounded-lg border border-white/20 bg-white/[0.04] px-5 py-3 text-xs font-bold text-zinc-300 hover:border-white hover:text-white hover:bg-white/10 transition-all shadow-sm cursor-pointer"
             >
-              <span>НАВЕРХ [ ^ ]</span>
+              <span>{isSimple ? "НАВЕРХ [ ^ ]" : "НАВЕРХ [ ^ ]"}</span>
               <div className="size-5 rounded bg-white/10 flex items-center justify-center group-hover:-translate-y-0.5 transition-transform">
                 <ArrowUp size={11} />
               </div>
@@ -79,7 +81,7 @@ export function Footer() {
         {/* Middle: Monochromatic Tech Pills */}
         <div className="py-6 border-b border-white/10 flex flex-wrap items-center justify-between gap-4">
           <span className="text-xs text-zinc-500 uppercase tracking-wider">
-            Производственный стек:
+            {isSimple ? "Используемые технологии:" : "Производственный стек:"}
           </span>
           <div className="flex flex-wrap gap-1.5">
             {stackPills.map((pill) => (
@@ -97,7 +99,9 @@ export function Footer() {
         <div className="pt-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4 text-xs text-zinc-500">
           <div className="flex items-center gap-3">
             <span className="size-1.5 rounded-full bg-white animate-pulse" />
-            <span className="text-zinc-400">SYS_STATUS: ALL SYSTEMS OPERATIONAL</span>
+            <span className="text-zinc-400">
+              {isSimple ? "СТАТУС: ГОТОВ К СОТРУДНИЧЕСТВУ" : "SYS_STATUS: ALL SYSTEMS OPERATIONAL"}
+            </span>
             <span className="text-white/20">/</span>
             <span>VOLGOGRAD: {timeStr || "12:00:00"} MSK</span>
           </div>

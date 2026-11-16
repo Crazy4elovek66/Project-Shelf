@@ -3,8 +3,10 @@
 import { useState } from "react";
 import { CONTACTS, contactItems } from "@/data/contacts";
 import { ArrowUpRight, Copy, Mail, Send, Github, Briefcase, Check } from "lucide-react";
+import { useLanguageMode } from "@/context/LanguageModeContext";
 
 export function ContactSection() {
+  const { isSimple } = useLanguageMode();
   const [copiedKey, setCopiedKey] = useState<string | null>(null);
 
   const copyToClipboard = (text: string, label: string) => {
@@ -29,29 +31,35 @@ export function ContactSection() {
             <div className="lg:col-span-7">
               <div className="inline-flex items-center gap-2 rounded border border-white/20 bg-white/[0.04] px-3 py-1 text-xs text-white mb-4">
                 <span className="size-1.5 rounded-full bg-white animate-pulse" />
-                <span>ОТКРЫТ К СОТРУДНИЧЕСТВУ // ИНЖЕНЕРНЫМ ПРОЕКТАМ</span>
+                <span>
+                  {isSimple
+                    ? "СВЯЗЬ И ЗАКАЗ // ОТКРЫТ К СОТРУДНИЧЕСТВУ"
+                    : "ОТКРЫТ К СОТРУДНИЧЕСТВУ // ИНЖЕНЕРНЫМ ПРОЕКТАМ"}
+                </span>
               </div>
 
               <h2 className="font-display text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-white uppercase leading-tight">
-                Давайте соберем ваш следующий продукт
+                {isSimple ? "Готовы запустить ваш проект или бота?" : "Давайте соберем ваш следующий продукт"}
               </h2>
 
               <p className="mt-4 text-xs sm:text-sm text-zinc-400 leading-relaxed max-w-xl">
-                Ищете Full-Stack разработчика или AI Systems инженера для создания Telegram Mini App, автоматизации видео-конвейеров или интеграции мультиагентных систем?
+                {isSimple
+                  ? "Напишите мне в Telegram или на почту — обсудим вашу задачу, сроки и рассчитаем точную стоимость реализации."
+                  : "Ищете Full-Stack разработчика или AI Systems инженера для создания Telegram Mini App, автоматизации видео-конвейеров или интеграции мультиагентных систем?"}
               </p>
 
               <div className="mt-6 flex flex-wrap gap-4 text-xs text-zinc-400">
                 <div className="flex items-center gap-1.5">
                   <span className="text-white font-bold">✓</span>
-                  <span>Быстрый старт за 24ч</span>
+                  <span>{isSimple ? "Ответ в течение 15 минут" : "Быстрый старт за 24ч"}</span>
                 </div>
                 <div className="flex items-center gap-1.5">
                   <span className="text-white font-bold">✓</span>
-                  <span>Фиксированные сроки MVP (7-14д)</span>
+                  <span>{isSimple ? "Запуск за 7-14 рабочих дней" : "Фиксированные сроки MVP (7-14д)"}</span>
                 </div>
                 <div className="flex items-center gap-1.5">
                   <span className="text-white font-bold">✓</span>
-                  <span>Прямая связь в Telegram</span>
+                  <span>{isSimple ? "Понятный результат для бизнеса" : "Прямая связь в Telegram"}</span>
                 </div>
               </div>
             </div>

@@ -4,18 +4,27 @@ import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { Terminal, Send, Mail, Sparkles } from "lucide-react";
 import { CONTACTS } from "@/data/contacts";
-
-const navItems = [
-  { label: "[/] КЕЙСЫ", href: "#projects", id: "projects" },
-  { label: "[/] СТЕК", href: "#engineering", id: "engineering" },
-  { label: "[/] AI-КОНСОЛЬ", href: "#console", id: "console" },
-  { label: "[/] КОНТАКТЫ", href: "#contacts", id: "contacts" },
-];
+import { useLanguageMode } from "@/context/LanguageModeContext";
 
 export function Header() {
+  const { mode, isSimple, toggleMode } = useLanguageMode();
   const [isScrolled, setIsScrolled] = useState(false);
   const [activeSection, setActiveSection] = useState("projects");
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
+
+  const navItems = isSimple
+    ? [
+        { label: "[/] ПРОЕКТЫ", href: "#projects", id: "projects" },
+        { label: "[/] ОБО МНЕ", href: "#engineering", id: "engineering" },
+        { label: "[/] ВОПРОСЫ", href: "#console", id: "console" },
+        { label: "[/] СВЯЗЬ", href: "#contacts", id: "contacts" },
+      ]
+    : [
+        { label: "[/] КЕЙСЫ", href: "#projects", id: "projects" },
+        { label: "[/] СТЕК", href: "#engineering", id: "engineering" },
+        { label: "[/] AI-КОНСОЛЬ", href: "#console", id: "console" },
+        { label: "[/] КОНТАКТЫ", href: "#contacts", id: "contacts" },
+      ];
 
   useEffect(() => {
     const handleScroll = () => {
@@ -136,14 +145,48 @@ export function Header() {
           })}
         </nav>
 
-        {/* Right: CLI Launcher Button >_ CLI [ / ] + Quick Actions */}
-        <div className="flex items-center gap-2">
+        {/* Right: CLI Launcher Button >_ CLI [ / ] + Mode Switch + Quick Actions */}
+        <div className="flex items-center gap-1.5 sm:gap-2">
+          {/* Tech / Simple Mode Switch */}
+          <button
+            type="button"
+            onClick={toggleMode}
+            role="switch"
+            aria-checked={isSimple}
+            title={isSimple ? "Переключить на технический язык" : "Переключить на простой язык"}
+            className="relative inline-flex h-7 items-center rounded-lg border border-white/20 bg-[#0E0E12] p-0.5 text-[10px] sm:text-[11px] font-mono select-none cursor-pointer"
+          >
+            <span
+              className={`relative z-10 px-1.5 sm:px-2 py-0.5 font-bold transition-colors ${
+                !isSimple ? "text-black" : "text-zinc-400 hover:text-white"
+              }`}
+            >
+              ТЕХ
+            </span>
+            <span
+              className={`relative z-10 px-1.5 sm:px-2 py-0.5 font-bold transition-colors ${
+                isSimple ? "text-black" : "text-zinc-400 hover:text-white"
+              }`}
+            >
+              ПРОСТО
+            </span>
+            <motion.span
+              layoutId="language-mode-thumb"
+              className="absolute inset-y-0.5 rounded-md bg-white shadow-sm"
+              style={{
+                width: "calc(50% - 2px)",
+                left: isSimple ? "calc(50%)" : "2px",
+              }}
+              transition={{ type: "spring", stiffness: 450, damping: 32 }}
+            />
+          </button>
+
           {/* CLI Terminal Launcher */}
           <button
             type="button"
             onClick={openCli}
             aria-label="Открыть терминальный навигатор (нажмите / или Alt+K)"
-            className="flex items-center gap-1.5 rounded-lg border border-white/20 bg-white/[0.04] px-2.5 sm:px-3 py-1.5 text-xs font-mono text-white transition-all hover:bg-white hover:text-black hover:border-white group"
+            className="hidden sm:flex items-center gap-1.5 rounded-lg border border-white/20 bg-white/[0.04] px-2.5 sm:px-3 py-1.5 text-xs font-mono text-white transition-all hover:bg-white hover:text-black hover:border-white group"
             title="Быстрый CLI-лаунчер (клавиша /)"
           >
             <span className="text-zinc-400 group-hover:text-black font-pixel text-[10px]">&gt;_</span>
@@ -158,7 +201,7 @@ export function Header() {
             type="button"
             onClick={copyTelegram}
             aria-label="Скопировать контакт Telegram"
-            className="grid size-8 place-items-center rounded-lg border border-white/15 bg-white/[0.03] text-zinc-300 transition hover:border-white hover:text-white hover:bg-white/10"
+            className="grid size-7 sm:size-8 place-items-center rounded-lg border border-white/15 bg-white/[0.03] text-zinc-300 transition hover:border-white hover:text-white hover:bg-white/10"
             title="Скопировать Telegram"
           >
             <Send size={13} className="-ml-0.5" />
@@ -169,7 +212,7 @@ export function Header() {
             type="button"
             onClick={copyEmail}
             aria-label="Скопировать почту"
-            className="hidden sm:grid size-8 place-items-center rounded-lg border border-white/15 bg-white/[0.03] text-zinc-300 transition hover:border-white hover:text-white hover:bg-white/10"
+            className="hidden md:grid size-8 place-items-center rounded-lg border border-white/15 bg-white/[0.03] text-zinc-300 transition hover:border-white hover:text-white hover:bg-white/10"
             title="Скопировать Email"
           >
             <Mail size={13} />
@@ -182,7 +225,7 @@ export function Header() {
             rel="noopener noreferrer"
             className="hidden md:inline-flex items-center gap-1.5 rounded-lg bg-white px-3.5 py-1.5 text-xs font-mono font-bold text-black transition hover:bg-zinc-200"
           >
-            <span>СВЯЗАТЬСЯ</span>
+            <span>{isSimple ? "НАПИСАТЬ" : "СВЯЗАТЬСЯ"}</span>
           </a>
         </div>
       </div>
@@ -190,28 +233,20 @@ export function Header() {
   );
 }
 
-// Interactive Mechanical Keycap Component
+// Interactive Mechanical Keycap Component with Hover Press & Smooth Scroll Top
 function MechanicalKeycap() {
-  const [isPressed, setIsPressed] = useState(false);
-
   return (
-    <button
+    <motion.button
       type="button"
-      onClick={() => {
-        setIsPressed(true);
-        setTimeout(() => setIsPressed(false), 200);
-      }}
-      className={`relative inline-flex items-center justify-center px-2 py-0.5 rounded-[5px] bg-[#141418] border border-white/20 font-mono text-[10px] text-white tracking-widest transition-all select-none group cursor-pointer ${isPressed
-        ? "border-b-[1px] translate-y-[2px] shadow-none bg-[#1F1F24]"
-        : "border-b-[3px] border-b-white/40 shadow-keycap hover:border-white/40"
-        }`}
-      title="Mechanical Keycap (click to test press)"
-      aria-label="Mechanical keycap switch"
+      onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+      whileHover={{ y: 1.5 }}
+      whileTap={{ y: 3 }}
+      transition={{ type: "spring", stiffness: 520, damping: 28 }}
+      aria-label="Наверх"
+      title="Наверх"
+      className="inline-flex h-7 min-w-[34px] items-center justify-center rounded-md border border-white/20 border-b-[3px] border-b-zinc-500 bg-[#121215] px-2 font-mono text-xs font-semibold tracking-tight text-zinc-100 shadow-[inset_0_1px_0_rgba(255,255,255,0.18)] transition-colors duration-150 hover:border-b-[1.5px] hover:border-white/40 hover:bg-[#19191E] hover:text-white active:border-b cursor-pointer select-none"
     >
-      <span className="text-zinc-400 group-hover:text-white transition-colors text-[9px] font-bold">
-        &gt;_
-      </span>
-      <span className="size-1 rounded-full bg-white ml-1.5 animate-pulse" />
-    </button>
+      &gt;_
+    </motion.button>
   );
 }

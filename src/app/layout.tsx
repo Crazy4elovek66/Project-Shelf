@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Analytics } from "@vercel/analytics/next";
 import { JetBrains_Mono, Space_Grotesk, Silkscreen } from "next/font/google";
 import { Toast } from "@/components/Toast";
+import { LanguageModeProvider } from "@/context/LanguageModeContext";
 import "./globals.css";
 
 const jetBrainsMono = JetBrains_Mono({
@@ -83,11 +84,13 @@ export default function RootLayout({
       <body
         className={`${jetBrainsMono.variable} ${spaceGrotesk.variable} ${silkscreen.variable} bg-[#050505] text-[#FAFAFA] font-mono antialiased selection:bg-white selection:text-black`}
       >
-        <div className="relative min-h-screen overflow-x-hidden">
-          {children}
-        </div>
-        <Toast />
-        <Analytics />
+        <LanguageModeProvider>
+          <div className="relative min-h-screen overflow-x-hidden">
+            {children}
+          </div>
+          <Toast />
+          <Analytics />
+        </LanguageModeProvider>
       </body>
     </html>
   );

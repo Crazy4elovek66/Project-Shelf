@@ -22,6 +22,7 @@ import {
 } from "lucide-react";
 import { projects, getProjectId, type Project } from "@/data/projects";
 import { ProjectVisual } from "./ProjectVisual";
+import { useLanguageMode } from "@/context/LanguageModeContext";
 
 const tabNames = [
   "01_jobradar.py",
@@ -33,8 +34,20 @@ const tabNames = [
 ];
 
 export function ProjectsTerminalSection() {
+  const { isSimple } = useLanguageMode();
   const [activeProjectIdx, setActiveProjectIdx] = useState(0);
   const [viewMode, setViewMode] = useState<"inspector" | "all">("inspector");
+
+  const simpleTabNames = [
+    "01. JobRadar",
+    "02. Twitch AI",
+    "03. Aura.net",
+    "04. ProfitCheck",
+    "05. AutoClip",
+    "06. Магия Бабушки",
+  ];
+
+  const currentTabs = isSimple ? simpleTabNames : tabNames;
 
   // Listen to select-project-tab custom event
   useEffect(() => {
@@ -68,33 +81,37 @@ export function ProjectsTerminalSection() {
           <div>
             <div className="inline-flex items-center gap-2 rounded border border-white/15 bg-white/[0.04] px-3 py-1 text-xs text-zinc-300 mb-3">
               <span className="font-pixel text-[10px] text-white">[ / ]</span>
-              <span>PROJECT INSPECTOR // 01 – 06 ИНЖЕНЕРНЫХ КЕЙСОВ</span>
+              <span>
+                {isSimple
+                  ? "ИНСПЕКТОР ПРОЕКТОВ // 01 – 06 РАБОТ"
+                  : "PROJECT INSPECTOR // 01 – 06 ИНЖЕНЕРНЫХ КЕЙСОВ"}
+              </span>
             </div>
             <h2 className="font-display text-3xl sm:text-4xl font-bold tracking-tight text-white uppercase">
-              Проекты и реализации
+              {isSimple ? "Примеры работ и результаты" : "Проекты и реализации"}
             </h2>
           </div>
 
           <div className="flex items-center gap-2">
             <button
               onClick={() => setViewMode("inspector")}
-              className={`px-3 py-1.5 rounded text-xs transition-colors ${
+              className={`px-3 py-1.5 rounded text-xs transition-colors cursor-pointer ${
                 viewMode === "inspector"
                   ? "bg-white text-black font-bold"
                   : "border border-white/15 text-zinc-400 hover:text-white"
               }`}
             >
-              ТЕРМИНАЛ
+              {isSimple ? "ИНСПЕКТОР" : "ТЕРМИНАЛ"}
             </button>
             <button
               onClick={() => setViewMode("all")}
-              className={`px-3 py-1.5 rounded text-xs transition-colors ${
+              className={`px-3 py-1.5 rounded text-xs transition-colors cursor-pointer ${
                 viewMode === "all"
                   ? "bg-white text-black font-bold"
                   : "border border-white/15 text-zinc-400 hover:text-white"
               }`}
             >
-              ВСЕ 6 КЕЙСОВ
+              {isSimple ? "ВСЕ 6 ПРОЕКТОВ" : "ВСЕ 6 КЕЙСОВ"}
             </button>
           </div>
         </div>
@@ -109,7 +126,7 @@ export function ProjectsTerminalSection() {
                 <span className="size-2.5 rounded-full bg-white/20" />
                 <span className="size-2.5 rounded-full bg-white/20" />
                 <span className="ml-2 font-bold text-white tracking-wide">
-                  idleon@architect:~/projects$ inspect
+                  {isSimple ? "idleon@portfolio:~/projects$ view" : "idleon@architect:~/projects$ inspect"}
                 </span>
               </div>
 
@@ -119,7 +136,7 @@ export function ProjectsTerminalSection() {
                   type="button"
                   onClick={prevProject}
                   aria-label="Предыдущий проект"
-                  className="flex items-center gap-1 rounded border border-white/15 bg-white/[0.03] px-2 py-1 text-zinc-300 hover:bg-white hover:text-black transition-colors"
+                  className="flex items-center gap-1 rounded border border-white/15 bg-white/[0.03] px-2 py-1 text-zinc-300 hover:bg-white hover:text-black transition-colors cursor-pointer"
                 >
                   <ChevronLeft size={13} />
                   <span>PREV</span>
@@ -131,7 +148,7 @@ export function ProjectsTerminalSection() {
                   type="button"
                   onClick={nextProject}
                   aria-label="Следующий проект"
-                  className="flex items-center gap-1 rounded border border-white/15 bg-white/[0.03] px-2 py-1 text-zinc-300 hover:bg-white hover:text-black transition-colors"
+                  className="flex items-center gap-1 rounded border border-white/15 bg-white/[0.03] px-2 py-1 text-zinc-300 hover:bg-white hover:text-black transition-colors cursor-pointer"
                 >
                   <span>NEXT</span>
                   <ChevronRight size={13} />
@@ -141,14 +158,14 @@ export function ProjectsTerminalSection() {
 
             {/* File Tabs Bar */}
             <div className="flex items-center gap-1 px-3 py-2 border-b border-white/10 bg-[#0E0E12] overflow-x-auto no-scrollbar text-xs">
-              {tabNames.map((tab, idx) => {
+              {currentTabs.map((tab, idx) => {
                 const isActive = activeProjectIdx === idx;
                 return (
                   <button
                     key={tab}
                     type="button"
                     onClick={() => setActiveProjectIdx(idx)}
-                    className={`flex items-center gap-2 px-3 py-1.5 rounded transition-colors whitespace-nowrap ${
+                    className={`flex items-center gap-2 px-3 py-1.5 rounded transition-colors whitespace-nowrap cursor-pointer ${
                       isActive
                         ? "bg-[#18181D] text-white border border-white/20 font-bold"
                         : "text-zinc-400 hover:text-white hover:bg-white/[0.03]"
@@ -187,8 +204,142 @@ export function ProjectsTerminalSection() {
   );
 }
 
+// Adaptive Screenshot Frame: Desktop Browser (>= 1.15), Telegram Desktop (0.78 - 1.15), or Phone (< 0.78)
+function AdaptiveScreenshotFrame({
+  src,
+  alt,
+  title,
+  onClick,
+}: {
+  src: string;
+  alt: string;
+  title: string;
+  onClick: () => void;
+}) {
+  const [dimensions, setDimensions] = useState<{ width: number; height: number } | null>(null);
+
+  useEffect(() => {
+    if (!src) return;
+    const img = new window.Image();
+    img.src = src;
+    if (img.complete && img.naturalWidth > 0) {
+      setDimensions({ width: img.naturalWidth, height: img.naturalHeight });
+    } else {
+      img.onload = () => {
+        setDimensions({ width: img.naturalWidth, height: img.naturalHeight });
+      };
+    }
+  }, [src]);
+
+  const defaultRatio = src.includes("JobRadar1")
+    ? 1.05
+    : src.includes("JobRadar2") || src.includes("ProfitCheck") || src.includes("Magic")
+    ? 0.45
+    : 1.6;
+
+  const width = dimensions?.width || (defaultRatio > 1 ? 1600 : 800);
+  const height = dimensions?.height || (defaultRatio > 1 ? 1000 : Math.round(800 / defaultRatio));
+  const ratio = dimensions ? dimensions.width / dimensions.height : defaultRatio;
+
+  // Case 1: Wide Desktop / Web Mockup (ratio >= 1.15)
+  if (ratio >= 1.15) {
+    return (
+      <div
+        onClick={onClick}
+        className="relative z-10 w-full max-w-[500px] aspect-[16/10] rounded-xl border border-white/15 bg-black shadow-2xl overflow-hidden cursor-zoom-in group flex flex-col transition-all duration-300 hover:border-white/30"
+      >
+        <div className="h-6 bg-[#16161A] border-b border-white/10 flex items-center px-3 gap-1.5 shrink-0">
+          <span className="size-2 rounded-full bg-zinc-600" />
+          <span className="size-2 rounded-full bg-zinc-600" />
+          <span className="size-2 rounded-full bg-zinc-600" />
+          <span className="ml-2 font-mono text-[9px] text-zinc-500 truncate">
+            https://{title.toLowerCase().replace(/[^a-z0-9]/g, "")}.app
+          </span>
+        </div>
+        <div className="relative flex-1 w-full bg-black">
+          <Image
+            src={src}
+            alt={alt}
+            fill
+            sizes="500px"
+            className="object-cover object-top"
+          />
+        </div>
+        <div className="absolute inset-0 bg-white/5 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none" />
+      </div>
+    );
+  }
+
+  // Case 2: Telegram Desktop / Square Messenger Window (0.78 <= ratio < 1.15)
+  if (ratio >= 0.78) {
+    return (
+      <div
+        onClick={onClick}
+        className="relative z-10 w-full max-w-[440px] max-h-[380px] rounded-xl border border-white/15 bg-[#09090B] shadow-2xl overflow-hidden cursor-zoom-in group flex flex-col transition-all duration-300 hover:border-white/30"
+        style={{ aspectRatio: `${width} / ${height}` }}
+      >
+        <div className="h-6 bg-[#16161C] border-b border-white/10 flex items-center px-3 gap-2 shrink-0">
+          <div className="size-2 rounded-full bg-emerald-500/80" />
+          <span className="font-mono text-[9px] text-zinc-400 font-bold truncate">
+            Telegram Desktop // {title}
+          </span>
+          <div className="ml-auto flex items-center gap-1.5 text-zinc-600 text-[9px]">
+            <span>—</span>
+            <span>□</span>
+            <span>✕</span>
+          </div>
+        </div>
+        <div className="relative flex-1 w-full bg-black">
+          <Image
+            src={src}
+            alt={alt}
+            fill
+            sizes="440px"
+            className="object-contain object-top"
+          />
+        </div>
+        <div className="absolute inset-0 bg-white/5 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none" />
+      </div>
+    );
+  }
+
+  // Case 3: Adaptive Smartphone Frame (ratio < 0.78)
+  return (
+    <div
+      onClick={onClick}
+      className="relative z-10 mx-auto max-h-[410px] w-auto rounded-[26px] border border-white/20 p-1.5 bg-[#08080A] shadow-[0_20px_50px_rgba(0,0,0,0.85)] overflow-hidden cursor-zoom-in group flex flex-col transition-all duration-300 hover:border-white/40"
+      style={{ aspectRatio: `${width} / ${height}` }}
+    >
+      <div className="relative flex-1 w-full rounded-[20px] overflow-hidden bg-black flex flex-col">
+        {/* Phone Notch */}
+        <div className="h-4 bg-black/90 flex items-center justify-center shrink-0 z-20">
+          <div className="w-12 h-1 rounded-full bg-zinc-800" />
+        </div>
+
+        <div className="relative flex-1 w-full bg-black">
+          <Image
+            src={src}
+            alt={alt}
+            fill
+            sizes="280px"
+            className="object-cover object-top"
+          />
+        </div>
+
+        {/* Home Indicator */}
+        <div className="h-3 bg-black/90 flex items-center justify-center shrink-0 z-20">
+          <div className="w-14 h-0.5 rounded-full bg-zinc-700" />
+        </div>
+
+        <div className="absolute inset-0 bg-white/5 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-30" />
+      </div>
+    </div>
+  );
+}
+
 // Subcomponent: Project Inspector Details with Smart Vertical/Horizontal Image Frame
 function SingleProjectInspector({ project, index }: { project: Project; index: number }) {
+  const { isSimple } = useLanguageMode();
   const images = useMemo(() => {
     return project.images && project.images.length > 0
       ? project.images
@@ -199,18 +350,10 @@ function SingleProjectInspector({ project, index }: { project: Project; index: n
   const [activeImageIdx, setActiveImageIdx] = useState(0);
   const [viewMode, setViewMode] = useState<"screenshot" | "mockup">("screenshot");
   const [isLightboxOpen, setIsLightboxOpen] = useState(false);
-  const [isVerticalImage, setIsVerticalImage] = useState(false);
 
-  // Check if current image is vertical based on URL or image load
   useEffect(() => {
     setActiveImageIdx(0);
-    const currentSrc = images[0] || "";
-    if (currentSrc.includes("JobRadar") || currentSrc.includes("Magic")) {
-      setIsVerticalImage(true);
-    } else {
-      setIsVerticalImage(false);
-    }
-  }, [project.title, images]);
+  }, [project.title]);
 
   const hasRepo = Boolean(project.repoUrl);
   const hasDemo = Boolean(project.demoUrl);
@@ -271,74 +414,12 @@ function SingleProjectInspector({ project, index }: { project: Project; index: n
             <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:16px_16px] pointer-events-none" />
 
             {viewMode === "screenshot" && images.length > 0 ? (
-              isVerticalImage ? (
-                /* SMART VERTICAL SMARTPHONE FRAME (For Telegram Bots / Mobile Apps) */
-                <div
-                  onClick={() => setIsLightboxOpen(true)}
-                  className="relative z-10 w-[220px] sm:w-[240px] aspect-[9/19] rounded-[28px] border-[3px] border-zinc-700 bg-black shadow-2xl overflow-hidden cursor-zoom-in group flex flex-col"
-                >
-                  {/* Phone Speaker Notch */}
-                  <div className="h-5 bg-black flex items-center justify-center shrink-0 border-b border-zinc-800">
-                    <div className="w-12 h-1 rounded-full bg-zinc-800" />
-                  </div>
-
-                  {/* Screenshot filling frame naturally without cropping */}
-                  <div className="relative flex-1 w-full bg-black">
-                    <Image
-                      src={images[activeImageIdx]}
-                      alt={`${project.title} mobile screenshot`}
-                      fill
-                      sizes="240px"
-                      className="object-contain object-top"
-                      onLoadingComplete={(img) => {
-                        if (img.naturalHeight > img.naturalWidth) {
-                          setIsVerticalImage(true);
-                        }
-                      }}
-                    />
-                  </div>
-
-                  {/* Bottom Phone Bar */}
-                  <div className="h-3 bg-black flex items-center justify-center shrink-0">
-                    <div className="w-16 h-1 rounded-full bg-zinc-700" />
-                  </div>
-
-                  <div className="absolute inset-0 bg-white/5 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none" />
-                </div>
-              ) : (
-                /* SMART HORIZONTAL DESKTOP / WEB FRAME */
-                <div
-                  onClick={() => setIsLightboxOpen(true)}
-                  className="relative z-10 w-full max-w-[500px] aspect-[16/10] rounded-xl border border-zinc-700 bg-black shadow-2xl overflow-hidden cursor-zoom-in group flex flex-col"
-                >
-                  {/* Browser Bar */}
-                  <div className="h-6 bg-[#16161A] border-b border-zinc-800 flex items-center px-3 gap-1.5 shrink-0">
-                    <span className="size-2 rounded-full bg-zinc-600" />
-                    <span className="size-2 rounded-full bg-zinc-600" />
-                    <span className="size-2 rounded-full bg-zinc-600" />
-                    <span className="ml-2 font-mono text-[9px] text-zinc-500 truncate">
-                      https://{project.title.toLowerCase().replace(/[^a-z0-9]/g, "")}.app
-                    </span>
-                  </div>
-
-                  <div className="relative flex-1 w-full bg-black">
-                    <Image
-                      src={images[activeImageIdx]}
-                      alt={`${project.title} desktop screenshot`}
-                      fill
-                      sizes="500px"
-                      className="object-cover object-top"
-                      onLoadingComplete={(img) => {
-                        if (img.naturalHeight > img.naturalWidth) {
-                          setIsVerticalImage(true);
-                        }
-                      }}
-                    />
-                  </div>
-
-                  <div className="absolute inset-0 bg-white/5 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none" />
-                </div>
-              )
+              <AdaptiveScreenshotFrame
+                src={images[activeImageIdx]}
+                alt={`${project.title} screenshot`}
+                title={project.title}
+                onClick={() => setIsLightboxOpen(true)}
+              />
             ) : (
               /* Simulation UI Mode from ProjectVisual */
               <div className="relative z-10 w-full">
@@ -374,7 +455,9 @@ function SingleProjectInspector({ project, index }: { project: Project; index: n
                 <span className="font-pixel text-white font-bold">[/] 0{index + 1}</span>
                 <span className="text-zinc-600">{"//"}</span>
                 <span className="text-zinc-400 uppercase text-[10px]">
-                  {project.categoryLabel || project.visual.label}
+                  {isSimple && project.simpleCategoryLabel
+                    ? project.simpleCategoryLabel
+                    : project.categoryLabel || project.visual.label}
                 </span>
               </div>
               <div className="flex items-center gap-2">
@@ -394,34 +477,47 @@ function SingleProjectInspector({ project, index }: { project: Project; index: n
             </h3>
 
             <p className="mt-3 text-xs sm:text-sm text-zinc-300 leading-relaxed font-mono">
-              {project.description}
+              {isSimple && project.simpleDescription
+                ? project.simpleDescription
+                : project.description}
             </p>
 
             {/* Architecture Note */}
-            {project.architectureNote && (
+            {(project.architectureNote || project.simpleArchitectureNote) && (
               <div className="mt-4 p-3.5 rounded-xl border border-white/10 bg-white/[0.02] text-xs text-zinc-300 leading-relaxed">
                 <span className="text-white font-bold block mb-1">
-                  АРХИТЕКТУРНОЕ ЯДРО //
+                  {isSimple ? "КАК ЭТО РАБОТАЕТ //" : "АРХИТЕКТУРНОЕ ЯДРО //"}
                 </span>
-                {project.architectureNote}
+                {isSimple && project.simpleArchitectureNote
+                  ? project.simpleArchitectureNote
+                  : project.architectureNote}
               </div>
             )}
 
             {/* Key Metrics */}
-            {project.metrics && (
+            {(project.metrics || project.simpleMetrics) && (
               <div className="mt-3 inline-flex items-center gap-2 rounded border border-white/20 bg-white/[0.04] px-3 py-1 text-xs text-white">
-                <span className="text-zinc-400">МЕТРИКА:</span>
-                <span>{project.metrics}</span>
+                <span className="text-zinc-400">
+                  {isSimple ? "РЕЗУЛЬТАТ:" : "МЕТРИКА:"}
+                </span>
+                <span>
+                  {isSimple && project.simpleMetrics
+                    ? project.simpleMetrics
+                    : project.metrics}
+                </span>
               </div>
             )}
 
             {/* Features */}
             <div className="mt-5">
               <span className="text-[11px] text-zinc-400 uppercase tracking-wider block mb-2 font-bold">
-                Реализованный функционал:
+                {isSimple ? "Что умеет проект:" : "Реализованный функционал:"}
               </span>
               <div className="grid gap-2 sm:grid-cols-2 text-xs text-zinc-300">
-                {project.features.map((feature) => (
+                {(isSimple && project.simpleFeatures
+                  ? project.simpleFeatures
+                  : project.features
+                ).map((feature) => (
                   <div key={feature} className="flex items-start gap-2">
                     <span className="text-white font-bold mt-0.5">✓</span>
                     <span className="leading-snug">{feature}</span>
@@ -453,7 +549,15 @@ function SingleProjectInspector({ project, index }: { project: Project; index: n
                 className="inline-flex items-center gap-2 rounded-lg bg-white px-4 py-2.5 text-xs font-bold text-black transition hover:bg-zinc-200"
               >
                 {isTelegram ? <Send size={13} /> : <Github size={13} />}
-                <span>{isTelegram ? "Протестировать в Telegram" : "Открыть репозиторий"}</span>
+                <span>
+                  {isTelegram
+                    ? isSimple
+                      ? "Открыть в Telegram"
+                      : "Протестировать в Telegram"
+                    : isSimple
+                    ? "Исходный код (GitHub)"
+                    : "Открыть репозиторий"}
+                </span>
                 <ArrowUpRight size={13} />
               </a>
             ) : (
@@ -471,7 +575,9 @@ function SingleProjectInspector({ project, index }: { project: Project; index: n
               >
                 <ExternalLink size={13} />
                 <span>
-                  {project.demoUrl?.endsWith(".md")
+                  {isSimple
+                    ? "Подробнее о проекте"
+                    : project.demoUrl?.endsWith(".md")
                     ? "Архитектура (Case Study)"
                     : "Смотреть проект"}
                 </span>

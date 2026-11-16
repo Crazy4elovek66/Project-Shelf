@@ -1,6 +1,8 @@
 "use client";
 
-const tickerItems = [
+import { useLanguageMode } from "@/context/LanguageModeContext";
+
+const techTickerItems = [
   "БЫСТРЫЙ ВЫХОД В MVP ЗА 7-14 ДНЕЙ",
   "ОТСЕВ ШУМА & ДЕДУПЛИКАЦИЯ",
   "MULTI-AGENT PIPELINES",
@@ -11,18 +13,45 @@ const tickerItems = [
   "LLM FALLBACK ROUTING БЕЗ ПАДЕНИЙ",
 ];
 
+const simpleTickerItems = [
+  "ЗАПУСК ПРОЕКТА ЗА 7-14 ДНЕЙ",
+  "УМНЫЕ БОТЫ В TELEGRAM",
+  "САЙТЫ И СЕРВИСЫ ПОД КЛЮЧ",
+  "АВТОМАТИЗАЦИЯ РУТИНЫ С ИИ",
+  "СТАБИЛЬНАЯ РАБОТА 24/7",
+  "ПОНЯТНЫЙ РЕЗУЛЬТАТ ДЛЯ БИЗНЕСА",
+];
+
 export function KineticMarquee() {
+  const { isSimple } = useLanguageMode();
+  const items = isSimple ? simpleTickerItems : techTickerItems;
+
   return (
-    <div className="w-full border-y border-white/10 py-3 bg-[#08080A] overflow-hidden select-none">
-      <div className="marquee-track flex w-max gap-8 animate-marquee-left">
-        {[...tickerItems, ...tickerItems].map((item, idx) => (
-          <div key={idx} className="flex items-center gap-8 font-mono text-xs text-zinc-400">
-            <span className="hover:text-white transition-colors tracking-wide font-medium">
-              {item}
-            </span>
-            <span className="text-white/40 text-[10px] font-pixel">[ / ]</span>
-          </div>
-        ))}
+    <div className="marquee-wrapper w-full border-y border-white/10 py-3 bg-[#08080A] overflow-hidden select-none">
+      <div className="animate-marquee-seamless flex w-max">
+        {/* Track 1 */}
+        <div className="flex shrink-0 items-center gap-8 pr-8">
+          {items.map((item, idx) => (
+            <div key={`track1-${idx}`} className="flex items-center gap-8 font-mono text-xs text-zinc-400">
+              <span className="hover:text-white transition-colors tracking-wide font-medium whitespace-nowrap">
+                {item}
+              </span>
+              <span className="text-white/40 text-[10px] font-pixel">[ / ]</span>
+            </div>
+          ))}
+        </div>
+
+        {/* Track 2 (Exact duplicate for seamless infinite loop) */}
+        <div className="flex shrink-0 items-center gap-8 pr-8" aria-hidden="true">
+          {items.map((item, idx) => (
+            <div key={`track2-${idx}`} className="flex items-center gap-8 font-mono text-xs text-zinc-400">
+              <span className="hover:text-white transition-colors tracking-wide font-medium whitespace-nowrap">
+                {item}
+              </span>
+              <span className="text-white/40 text-[10px] font-pixel">[ / ]</span>
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );

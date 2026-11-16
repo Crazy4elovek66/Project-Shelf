@@ -5,6 +5,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { Search, X, CornerDownLeft, Terminal, Send, Mail, Github, Briefcase, Sparkles, Layers } from "lucide-react";
 import { projects, getProjectId } from "@/data/projects";
 import { CONTACTS } from "@/data/contacts";
+import { useLanguageMode } from "@/context/LanguageModeContext";
 
 type PaletteItem = {
   id: string;
@@ -18,6 +19,7 @@ type PaletteItem = {
 };
 
 export function CommandPaletteModal() {
+  const { isSimple } = useLanguageMode();
   const [isOpen, setIsOpen] = useState(false);
   const [query, setQuery] = useState("");
   const [selectedIndex, setSelectedIndex] = useState(0);
@@ -136,7 +138,7 @@ export function CommandPaletteModal() {
       category: "Проекты" as const,
       code: `0${idx + 1}`,
       title: p.title,
-      subtitle: p.description,
+      subtitle: isSimple && p.simpleDescription ? p.simpleDescription : p.description,
       badge: p.status,
       icon: Terminal,
       action: () => {

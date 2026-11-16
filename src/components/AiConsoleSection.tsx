@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from "react";
 import { Terminal, Cpu, Sparkles, Send } from "lucide-react";
 import { CONTACTS } from "@/data/contacts";
+import { useLanguageMode } from "@/context/LanguageModeContext";
 
 type Scenario = {
   id: string;
@@ -24,7 +25,7 @@ type Scenario = {
   responseChunks: string[];
 };
 
-const scenarios: Scenario[] = [
+const techScenarios: Scenario[] = [
   {
     id: "agents-routing",
     code: "01",
@@ -129,11 +130,119 @@ const scenarios: Scenario[] = [
   },
 ];
 
+const simpleScenarios: Scenario[] = [
+  {
+    id: "business-help",
+    code: "01",
+    title: "Чем вы можете помочь моему бизнесу?",
+    subtitle: "Автоматизация рутины, умные боты и рост продаж",
+    relatedAction: {
+      label: "Обсудить задачу в Telegram →",
+      url: CONTACTS.telegram,
+    },
+    telemetry: {
+      model: "assistant // business-mode",
+      latency: "20ms",
+      ttft: "14ms",
+      tps: "95 tok/s",
+      pipeline: "запрос -> анализ задачи -> готовое решение",
+    },
+    responseChunks: [
+      "[ОТВЕТ] Изучаю потребности вашего бизнеса...",
+      "\n1. Автоматизация клиентского сервиса: Создаю умных ботов в Telegram, которые консультируют клиентов 24/7, принимают заявки и рассчитывают стоимость без задержек.",
+      "\n2. Запуск сервисов в Telegram: Разрабатываю современные мини-приложения (Telegram Mini Apps), в которых клиенты оформляют заказы в 1 клик прямо в мессенджере без скачивания лишних программ.",
+      "\n3. Устранение рутинных задач: Настраиваю сбор данных, автоматическую подготовку медиа и интеграцию нейросетей, чтобы освободить вам и сотрудникам до 15+ часов в неделю.",
+      "\nРезультат: Рост продаж, мгновенный отклик для клиентов и экономия бюджета компании.",
+    ],
+  },
+  {
+    id: "project-timeline",
+    code: "02",
+    title: "Сколько времени занимает запуск проекта?",
+    subtitle: "Быстрый старт от идеи до рабочего сервиса за 7-14 дней",
+    relatedAction: {
+      label: "Посмотреть примеры работ →",
+      targetTab: 0,
+    },
+    telemetry: {
+      model: "estimator // launch-speed",
+      latency: "10ms",
+      ttft: "6ms",
+      tps: "100 tok/s",
+      pipeline: "бриф -> архитектура -> MVP -> запуск",
+    },
+    responseChunks: [
+      "[ОТВЕТ] Оценка сроков и этапов реализации...",
+      "\n• Первый работающий прототип (MVP): обычно готов уже через 7–14 рабочих дней.",
+      "\n• Как строится работа: Мы созваниваемся или списываемся в Telegram, фиксируем ключевые задачи, и я сразу приступаю к разработке.",
+      "\n• Без долгого ожидания: Вы регулярно видите работающие промежуточные версии и можете тестировать продукт на реальных пользователях с первых дней.",
+      "\n• Запуск и поддержка: Помогаю развернуть сервис на сервере, подключить домен и даю бесплатную поддержку после запуска.",
+    ],
+  },
+  {
+    id: "pricing-workflow",
+    code: "03",
+    title: "Как устроена работа и оплата?",
+    subtitle: "Прозрачные этапы, поэтапная оплата и ежедневные отчеты",
+    relatedAction: {
+      label: "Написать напрямую в Telegram →",
+      url: CONTACTS.telegram,
+    },
+    telemetry: {
+      model: "workflow // transparent",
+      latency: "0ms",
+      ttft: "instant",
+      tps: "100%",
+      pipeline: "договор -> этап 1 -> демо -> этап 2",
+    },
+    responseChunks: [
+      "[ОТВЕТ] Условия и регламент сотрудничества...",
+      "\n• Поэтапная оплата: Работа делится на понятные шаги (например, 50% предоплата этапа / 50% после демонстрации готовой функции).",
+      "\n• Все исходники у вас: Вы получаете 100% чистый код, доступы и понятную инструкцию по использованию без привязки к разработчику.",
+      "\n• Постоянная связь: Отвечаю на вопросы в Telegram в рабочее время в течение 15–30 минут, без пропаданий.",
+      "\n• Гарантия надежности: Исправляю любые замечания бесплатно в течение 14 дней после передачи проекта.",
+    ],
+  },
+  {
+    id: "ai-automation-ideas",
+    code: "04",
+    title: "Какие задачи можно автоматизировать с ИИ?",
+    subtitle: "Примеры внедрения нейросетей для экономии времени и денег",
+    relatedAction: {
+      label: "Изучить пример с умными ботами →",
+      targetTab: 1,
+    },
+    telemetry: {
+      model: "solutions // practical-ai",
+      latency: "15ms",
+      ttft: "8ms",
+      tps: "110 tok/s",
+      pipeline: "анализ процессов -> внедрение ИИ -> результат",
+    },
+    responseChunks: [
+      "[ОТВЕТ] Практические сценарии использования искусственного интеллекта...",
+      "\n• Умный чат-консультант: Нейросеть отвечает на типовые и сложные вопросы клиентов живым языком с учетом правил вашей компании.",
+      "\n• Автоматическая обработка текста и фото: Распознавание чеков, документов, накладных или анализ пользовательских фото.",
+      "\n• Генерация контента: Автоматическая подготовка описаний товаров, постов, рассылок и нарезка видеороликов под соцсети.",
+      "\n• Персональные рекомендации: Подбор товаров и услуг под профиль клиента для повышения среднего чека.",
+    ],
+  },
+];
+
 export function AiConsoleSection() {
+  const { isSimple } = useLanguageMode();
+  const scenarios = isSimple ? simpleScenarios : techScenarios;
   const [selectedId, setSelectedId] = useState<string>(scenarios[0].id);
   const [displayedText, setDisplayedText] = useState<string>("");
   const [isStreaming, setIsStreaming] = useState<boolean>(false);
   const streamTimerRef = useRef<NodeJS.Timeout | null>(null);
+
+  // When mode changes, reset selectedId if not found in current scenarios
+  useEffect(() => {
+    if (!scenarios.some((s) => s.id === selectedId)) {
+      setSelectedId(scenarios[0].id);
+    }
+  }, [isSimple, scenarios, selectedId]);
 
   const startStreaming = (scenario: Scenario) => {
     if (streamTimerRef.current) clearInterval(streamTimerRef.current);
@@ -161,7 +270,7 @@ export function AiConsoleSection() {
     return () => {
       if (streamTimerRef.current) clearInterval(streamTimerRef.current);
     };
-  }, [selectedId]);
+  }, [selectedId, isSimple, scenarios]);
 
   const currentScenario = scenarios.find((s) => s.id === selectedId) || scenarios[0];
 
@@ -186,14 +295,18 @@ export function AiConsoleSection() {
           <div>
             <div className="inline-flex items-center gap-2 rounded border border-white/15 bg-white/[0.04] px-3 py-1 text-xs text-zinc-300 mb-3">
               <Terminal size={13} />
-              <span>INTERACTIVE AI TWIN // ASK ARCHITECTURE</span>
+              <span>
+                {isSimple ? "ИНТЕРАКТИВНЫЙ ПОМОЩНИК // ВОПРОСЫ И ОТВЕТЫ" : "INTERACTIVE AI TWIN // ASK ARCHITECTURE"}
+              </span>
             </div>
             <h2 className="font-display text-3xl sm:text-4xl font-bold tracking-tight text-white uppercase">
-              Интерактивная AI-консоль архитектора
+              {isSimple ? "Частые вопросы и ответы" : "Интерактивная AI-консоль архитектора"}
             </h2>
           </div>
           <p className="max-w-md text-xs sm:text-sm text-zinc-400 leading-relaxed">
-            Симулятор архитектурных решений. Выберите инженерный сценарий для мгновенного стриминга ответа и телеметрии пайплайна.
+            {isSimple
+              ? "Выберите интересующий вопрос, чтобы мгновенно получить подробный ответ о процессе работы, пользе для бизнеса и сроках."
+              : "Симулятор архитектурных решений. Выберите инженерный сценарий для мгновенного стриминга ответа и телеметрии пайплайна."}
           </p>
         </div>
 
@@ -202,7 +315,7 @@ export function AiConsoleSection() {
           {/* Left Column: Preset Scenarios */}
           <div className="lg:col-span-5 flex flex-col gap-2.5">
             <span className="text-xs text-zinc-500 uppercase tracking-wider mb-1 px-1">
-              Выберите сценарий диалога:
+              {isSimple ? "Популярные темы:" : "Выберите сценарий диалога:"}
             </span>
             {scenarios.map((scenario) => {
               const isSelected = scenario.id === selectedId;

@@ -1,11 +1,13 @@
 "use client";
 
 import { useRef, useState } from "react";
-import { motion, useMotionValue, useSpring, useTransform, AnimatePresence } from "framer-motion";
-import { ArrowDown, Terminal, Send, Crown } from "lucide-react";
+import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
+import { ArrowDown, Terminal, Send } from "lucide-react";
 import { CONTACTS } from "@/data/contacts";
+import { useLanguageMode } from "@/context/LanguageModeContext";
 
 export function HeroSection() {
+  const { isSimple } = useLanguageMode();
   const containerRef = useRef<HTMLDivElement>(null);
   const [isVolgogradHovered, setIsVolgogradHovered] = useState(false);
 
@@ -54,34 +56,50 @@ export function HeroSection() {
         {/* HUD Technical Coordinate Top Bar */}
         <div className="flex flex-wrap items-center justify-between gap-3 border-b border-white/10 pb-4 mb-8 text-xs font-mono text-zinc-400">
           <div className="flex items-center gap-3">
-            <span className="text-white font-bold tracking-wider">SYS.ARCH</span>
+            <span className="text-white font-bold tracking-wider">{isSimple ? "ЛОКАЦИЯ" : "SYS.ARCH"}</span>
             <span className="text-white/20">/</span>
 
-            {/* VOLGOGRAD with Crown Easter Egg */}
+            {/* VOLGOGRAD with Full-Width Contour Crown Easter Egg */}
             <span
               onMouseEnter={() => setIsVolgogradHovered(true)}
               onMouseLeave={() => setIsVolgogradHovered(false)}
-              className="relative cursor-pointer select-none text-white hover:text-white transition-colors py-0.5 inline-flex items-center gap-1 group"
+              className="relative inline-flex items-center text-zinc-100 border-b border-dashed border-white/35 pb-0.5 cursor-pointer select-none"
             >
-              <span className="border-b border-dashed border-white/40 group-hover:border-white">
-                VOLGOGRAD
-              </span>
-
-              {/* Floating Minimalist Outline Crown Easter Egg */}
-              <AnimatePresence>
-                {isVolgogradHovered && (
-                  <motion.span
-                    initial={{ opacity: 0, y: 6, scale: 0.85 }}
-                    animate={{ opacity: 1, y: -16, scale: 1 }}
-                    exit={{ opacity: 0, y: 6, scale: 0.85 }}
-                    transition={{ type: "spring", stiffness: 450, damping: 22 }}
-                    className="absolute -top-1 left-1/2 -translate-x-1/2 pointer-events-none text-white flex items-center justify-center"
-                    aria-label="Volgograd Hero Crown"
-                  >
-                    <Crown size={15} strokeWidth={1.8} className="drop-shadow-[0_0_8px_rgba(255,255,255,0.8)]" />
-                  </motion.span>
-                )}
-              </AnimatePresence>
+              <motion.span
+                aria-hidden="true"
+                initial={{ opacity: 0, y: 7, scale: 0.9 }}
+                animate={
+                  isVolgogradHovered
+                    ? { opacity: 1, y: 0, scale: 1 }
+                    : { opacity: 0, y: 7, scale: 0.9 }
+                }
+                transition={{ type: "spring", stiffness: 360, damping: 24 }}
+                className="pointer-events-none absolute bottom-full left-0 right-0 mb-1 flex w-full justify-center text-white drop-shadow-[0_0_10px_rgba(255,255,255,0.45)]"
+              >
+                <svg
+                  viewBox="0 0 120 28"
+                  fill="none"
+                  className="w-full h-5 overflow-visible"
+                  preserveAspectRatio="none"
+                >
+                  <path
+                    d="M4 23L12 7L36 17L60 3L84 17L108 7L116 23H4Z"
+                    stroke="currentColor"
+                    strokeWidth="1.8"
+                    strokeLinejoin="round"
+                  />
+                  <line
+                    x1="4"
+                    y1="26.5"
+                    x2="116"
+                    y2="26.5"
+                    stroke="currentColor"
+                    strokeWidth="1.6"
+                    strokeLinecap="round"
+                  />
+                </svg>
+              </motion.span>
+              VOLGOGRAD
             </span>
 
             <span>→ REMOTE</span>
@@ -91,7 +109,9 @@ export function HeroSection() {
 
           <div className="flex items-center gap-2 rounded-md border border-white/20 bg-white/[0.04] px-3 py-1 text-[11px] font-mono text-zinc-300">
             <span className="size-1.5 rounded-full bg-white animate-pulse" />
-            <span className="tracking-wide text-white">ONLINE // AVAILABLE FOR AI & FULL-STACK</span>
+            <span className="tracking-wide text-white">
+              {isSimple ? "ДОСТУПЕН ДЛЯ НОВЫХ ПРОЕКТОВ" : "ONLINE // AVAILABLE FOR AI & FULL-STACK"}
+            </span>
           </div>
         </div>
 
@@ -130,10 +150,20 @@ export function HeroSection() {
           <div className="mt-8 grid gap-8 lg:grid-cols-12 lg:items-end">
             <div className="lg:col-span-8">
               <p className="font-mono text-lg sm:text-xl font-bold text-white leading-snug">
-                Архитектура мультиагентных систем, отказоустойчивые LLM-роутеры, Telegram Mini Apps и веб-интерфейсы.
+                {isSimple
+                  ? "Создаю умных ботов, сайты и веб-приложения с нейросетью, которые автоматизируют рутину, экономят время и помогают бизнесу расти."
+                  : "Архитектура мультиагентных систем, отказоустойчивые LLM-роутеры, Telegram Mini Apps и веб-интерфейсы."}
               </p>
               <p className="mt-3 max-w-2xl text-xs sm:text-sm leading-relaxed text-zinc-400 font-mono">
-                Привет, я <span className="text-white font-bold">Илья (idleON)</span>. Разрабатываю практические AI-инструменты и Full-Stack веб-сервисы с 100% открытым кодом: от компьютерного зрения в OpenCV до сложных prompt-пайплайнов и реактивных интерфейсов на Next.js 15.
+                {isSimple ? (
+                  <>
+                    Привет, я <span className="text-white font-bold">Илья</span>. Помогаю предпринимателям и компаниям внедрять искусственный интеллект: создаю ботов в Telegram, современные сайты и системы автоматизации под ключ.
+                  </>
+                ) : (
+                  <>
+                    Привет, я <span className="text-white font-bold">Илья (idleON)</span>. Разрабатываю практические AI-инструменты и Full-Stack веб-сервисы с 100% открытым кодом: от компьютерного зрения в OpenCV до сложных prompt-пайплайнов и реактивных интерфейсов на Next.js 15.
+                  </>
+                )}
               </p>
             </div>
 
@@ -141,17 +171,23 @@ export function HeroSection() {
             <div className="lg:col-span-4 flex items-center justify-between lg:justify-end gap-6 font-mono text-xs border-t lg:border-t-0 border-white/10 pt-4 lg:pt-0">
               <div>
                 <div className="text-2xl font-bold font-mono text-white">6+</div>
-                <div className="text-zinc-500 uppercase text-[10px]">КЕЙСОВ В ПРОДЕ</div>
+                <div className="text-zinc-500 uppercase text-[10px]">
+                  {isSimple ? "ГОТОВЫХ ПРОЕКТОВ" : "КЕЙСОВ В ПРОДЕ"}
+                </div>
               </div>
               <div className="w-[1px] h-8 bg-white/10" />
               <div>
                 <div className="text-2xl font-bold font-mono text-white">24/7</div>
-                <div className="text-zinc-500 uppercase text-[10px]">АВТОНОМНЫЕ ПАЙПЛАЙНЫ</div>
+                <div className="text-zinc-500 uppercase text-[10px]">
+                  {isSimple ? "РАБОТА БЕЗ СБОЕВ" : "АВТОНОМНЫЕ ПАЙПЛАЙНЫ"}
+                </div>
               </div>
               <div className="w-[1px] h-8 bg-white/10" />
               <div>
                 <div className="text-2xl font-bold font-mono text-white">7-14д</div>
-                <div className="text-zinc-500 uppercase text-[10px]">СРОК СБОРКИ MVP</div>
+                <div className="text-zinc-500 uppercase text-[10px]">
+                  {isSimple ? "СРОК ЗАПУСКА" : "СРОК СБОРКИ MVP"}
+                </div>
               </div>
             </div>
           </div>
@@ -160,18 +196,18 @@ export function HeroSection() {
           <div className="mt-8 flex flex-wrap items-center gap-3">
             <button
               onClick={() => scrollTo("projects")}
-              className="group inline-flex items-center gap-2 rounded-lg bg-white px-6 py-3.5 text-xs font-mono font-bold text-black transition-all hover:bg-zinc-200 shadow-md"
+              className="group inline-flex items-center gap-2 rounded-lg bg-white px-6 py-3.5 text-xs font-mono font-bold text-black transition-all hover:bg-zinc-200 shadow-md cursor-pointer"
             >
-              <span>&gt;_ СМОТРЕТЬ КЕЙСЫ (01-06)</span>
+              <span>{isSimple ? ">_ СМОТРЕТЬ РАБОТЫ" : ">_ СМОТРЕТЬ КЕЙСЫ (01-06)"}</span>
               <ArrowDown size={14} className="group-hover:translate-y-0.5 transition-transform" />
             </button>
 
             <button
               onClick={() => scrollTo("console")}
-              className="inline-flex items-center gap-2 rounded-lg border border-white/20 bg-white/[0.04] px-6 py-3.5 text-xs font-mono font-bold text-white transition-all hover:bg-white hover:text-black hover:border-white"
+              className="inline-flex items-center gap-2 rounded-lg border border-white/20 bg-white/[0.04] px-6 py-3.5 text-xs font-mono font-bold text-white transition-all hover:bg-white hover:text-black hover:border-white cursor-pointer"
             >
               <Terminal size={14} />
-              <span>[/] AI-КОНСОЛЬ</span>
+              <span>{isSimple ? "[/] ЗАДАТЬ ВОПРОС ИИ" : "[/] AI-КОНСОЛЬ"}</span>
             </button>
 
             <a
@@ -181,7 +217,7 @@ export function HeroSection() {
               className="inline-flex items-center gap-2 rounded-lg border border-white/15 bg-transparent px-5 py-3.5 text-xs font-mono text-zinc-300 transition-all hover:border-white hover:text-white"
             >
               <Send size={13} />
-              <span>^S СВЯЗАТЬСЯ</span>
+              <span>{isSimple ? "^S НАПИСАТЬ МНЕ" : "^S СВЯЗАТЬСЯ"}</span>
             </a>
           </div>
         </div>
