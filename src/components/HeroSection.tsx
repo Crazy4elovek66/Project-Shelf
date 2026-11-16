@@ -132,7 +132,7 @@ export function HeroSection() {
         {/* Full-bleed Hands Video Scene: true 100vw edge-to-edge scale without finger clipping */}
         <div
           aria-hidden="true"
-          className="pointer-events-none relative left-1/2 right-1/2 -ml-[50vw] -mr-[50vw] -mt-4 -mb-6 w-screen select-none sm:-mt-[13vw] sm:-mb-[15.5vw]"
+          className="pointer-events-none relative left-1/2 right-1/2 -ml-[50vw] -mr-[50vw] mt-20 -mb-4 w-screen select-none sm:-mt-[13vw] sm:-mb-[15.5vw]"
         >
           <video
             autoPlay
@@ -154,7 +154,7 @@ export function HeroSection() {
         </div>
 
         {/* Main Monochromatic Kinetic Display Typography Hero */}
-        <div className="relative z-20 -mt-10 sm:-mt-[22vw] md:-mt-[28vw] lg:-mt-[33vw] xl:-mt-[35.5vw] py-0.5">
+        <div className="relative z-20 -mt-12 sm:-mt-[18vw] md:-mt-[21vw] lg:-mt-[23.5vw] xl:-mt-[25.5vw] py-0.5">
           {/* Technical crosshairs (+) */}
           <span className="absolute -top-2 -left-2 text-white/20 font-mono text-sm select-none z-10">+</span>
           <span className="absolute -top-2 -right-2 text-white/20 font-mono text-sm select-none z-10">+</span>
