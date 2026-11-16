@@ -2,7 +2,6 @@
 
 import { useState, useRef, useEffect } from "react";
 import Image from "next/image";
-import { MatrixCodeRain } from "./MatrixCodeRain";
 
 export function SeamlessPortraitVideo() {
   const [hasError, setHasError] = useState(false);
@@ -20,10 +19,7 @@ export function SeamlessPortraitVideo() {
 
   return (
     <div className="relative w-full h-[360px] sm:h-[400px] rounded-xl border border-white/10 bg-[#050505] overflow-hidden select-none">
-      {/* Layer 0: Delicate Black & White Matrix Code Rain Background */}
-      <MatrixCodeRain />
-
-      {/* Layer 1: Natural Scale Video Flush to Bottom Edge */}
+      {/* Video Portrait Flush to Bottom Edge */}
       {!hasError ? (
         <div className="pointer-events-none absolute inset-x-0 bottom-0 top-0 z-10 flex items-end justify-center translate-y-[3%] sm:translate-y-[4%] overflow-hidden">
           <video
@@ -79,13 +75,13 @@ export function SeamlessPortraitVideo() {
       {/* Subtle Terminal Scan Line overlay */}
       <div className="absolute inset-0 bg-gradient-to-b from-transparent via-white/[0.02] to-transparent h-full pointer-events-none z-15" />
 
-      {/* Layer 2: Telemetry Strip resting on top of the bottom edge */}
+      {/* Telemetry Strip resting on top of the bottom edge */}
       <div className="absolute bottom-2.5 inset-x-3 flex items-center justify-between z-20 font-mono text-[10px] text-zinc-400 bg-[#050505]/80 backdrop-blur-md px-3 py-1.5 rounded border border-white/10">
         <span className="flex items-center gap-1.5 text-zinc-300">
           <span className="size-1.5 rounded-full bg-white animate-pulse" />
           <span>NEURAL_PORTRAIT_FEED</span>
         </span>
-        <span className="text-zinc-500 font-pixel text-[9px]">MATRIX_STREAM // 60 FPS</span>
+        <span className="text-zinc-500 font-pixel text-[9px]">NEURAL_STREAM // 60 FPS</span>
       </div>
     </div>
   );
