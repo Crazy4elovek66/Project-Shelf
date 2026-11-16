@@ -53,7 +53,7 @@ export function HeroSection() {
       ref={containerRef}
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
-      className="relative pt-16 sm:pt-[72px] pb-3 sm:pb-4 lg:pb-5 overflow-x-clip"
+      className="relative pt-16 sm:pt-[72px] pb-1 sm:pb-1.5 lg:pb-2 overflow-x-clip"
     >
       {/* HUD Technical Coordinate Top Bar (Overlaying the upper area of hands, z-30) */}
       <div className="pointer-events-none absolute inset-x-0 top-[76px] sm:top-[88px] lg:top-[96px] z-30">
@@ -154,7 +154,7 @@ export function HeroSection() {
         </div>
 
         {/* Main Monochromatic Kinetic Display Typography Hero */}
-        <div className="relative z-20 -mt-10 sm:-mt-24 md:-mt-32 lg:-mt-36 xl:-mt-44 py-0.5">
+        <div className="relative z-20 -mt-10 sm:-mt-[22vw] md:-mt-[28vw] lg:-mt-[33vw] xl:-mt-[35.5vw] py-0.5">
           {/* Technical crosshairs (+) */}
           <span className="absolute -top-2 -left-2 text-white/20 font-mono text-sm select-none z-10">+</span>
           <span className="absolute -top-2 -right-2 text-white/20 font-mono text-sm select-none z-10">+</span>
