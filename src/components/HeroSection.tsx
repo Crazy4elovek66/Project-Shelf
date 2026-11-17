@@ -1,49 +1,20 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
 import { ArrowDown, Terminal, Send } from "lucide-react";
 import { CONTACTS } from "@/data/contacts";
 import { useLanguageMode } from "@/context/LanguageModeContext";
 import { SmoothModeText } from "./SmoothModeText";
+import { HeroHandsOverlay } from "./HeroHandsOverlay";
 
 export function HeroSection() {
   const { isSimple } = useLanguageMode();
   const containerRef = useRef<HTMLDivElement>(null);
   const [isVolgogradHovered, setIsVolgogradHovered] = useState(false);
 
-  // Слои рук: "layered" = левая рука за текстом + правая поверх (webm с альфой),
-  // "single" = старое одно видео (запасной вариант для Safari/iOS).
-  // null = ещё решаем, пока ничего не рисуем (резерв места держит aspect-video).
-  const [handsMode, setHandsMode] = useState<"layered" | "single" | null>(null);
-  const leftHandRef = useRef<HTMLVideoElement>(null);
-  const rightHandRef = useRef<HTMLVideoElement>(null);
-
-  useEffect(() => {
-    const ua = navigator.userAgent;
-    const isIOS = /iPhone|iPad|iPod/.test(ua);
-    const isDesktopSafari = /^((?!chrome|chromium|crios|fxios|android|edg).)*safari/i.test(ua);
-    // VP9 webm с прозрачностью надёжно работает в Chromium и Firefox
-    setHandsMode(isIOS || isDesktopSafari ? "single" : "layered");
-  }, []);
-
-  // Держим два видео в одном такте, иначе руки "разъедутся" по времени
-  useEffect(() => {
-    if (handsMode !== "layered") return;
-    const base = leftHandRef.current;
-    const top = rightHandRef.current;
-    if (!base || !top) return;
-
-    let raf = 0;
-    const tick = () => {
-      if (!base.paused && Math.abs(top.currentTime - base.currentTime) > 0.08) {
-        top.currentTime = base.currentTime;
-      }
-      raf = requestAnimationFrame(tick);
-    };
-    raf = requestAnimationFrame(tick);
-    return () => cancelAnimationFrame(raf);
-  }, [handsMode]);
+  // Single video element & hardware decoder: 100% smooth, 0-stutter, instant startup
+  const [videoEl, setVideoEl] = useState<HTMLVideoElement | null>(null);
 
   // Mouse Parallax coordinates for kinetic typography
   const mouseX = useMotionValue(0);
@@ -161,75 +132,33 @@ export function HeroSection() {
         </div>
       </div>
 
-      <div className="section-shell">
+      <div className="section-shell relative">
         {/* Full-bleed Hands Video Scene: true 100vw edge-to-edge scale without finger clipping */}
         <div
           aria-hidden="true"
-          className="pointer-events-none relative left-1/2 right-1/2 -ml-[50vw] -mr-[50vw] mt-20 -mb-4 aspect-video w-screen select-none sm:-mt-[13vw] sm:-mb-[15.5vw]"
+          className="pointer-events-none relative left-1/2 right-1/2 -ml-[50vw] -mr-[50vw] mt-20 -mb-4 aspect-video w-screen select-none overflow-hidden sm:-mt-[13vw] sm:-mb-[15.5vw]"
         >
-          {handsMode === "layered" && (
-            <>
-              {/* Слой 1: робот (правой руки в этом видео нет). Лежит под текстом (z-20) */}
-              <video
-                ref={leftHandRef}
-                autoPlay
-                loop
-                muted
-                playsInline
-                preload="auto"
-                controls={false}
-                disablePictureInPicture
-                onLoadedMetadata={(e) => {
-                  e.currentTarget.muted = true;
-                  e.currentTarget.volume = 0;
-                }}
-                className="absolute inset-0 block h-full w-full mix-blend-screen contrast-[1.28] brightness-[1.06] select-none"
-              >
-                <source src="/videos/hero-hands-left.webm" type="video/webm" />
-                <source src="/videos/hero-hands-left.mp4" type="video/mp4" />
-              </video>
+          <video
+            ref={setVideoEl}
+            autoPlay
+            loop
+            muted
+            playsInline
+            preload="auto"
+            controls={false}
+            disablePictureInPicture
+            onLoadedMetadata={(e) => {
+              e.currentTarget.muted = true;
+              e.currentTarget.volume = 0;
+            }}
+            className="absolute top-0 left-0 block h-[200%] w-full object-cover object-top mix-blend-screen contrast-[1.28] brightness-[1.06] select-none"
+          >
+            <source src="/videos/hero-hands-stacked.webm" type="video/webm" />
+            <source src="/videos/hero-hands-stacked.mp4" type="video/mp4" />
+          </video>
 
-              {/* Слой 2: правая рука с альфой. z-[25] выше текста (z-20), без blend-режима,
-                  иначе рука растворится в белых буквах. Фильтры те же, что у слоя 1 */}
-              <video
-                ref={rightHandRef}
-                autoPlay
-                loop
-                muted
-                playsInline
-                preload="auto"
-                controls={false}
-                disablePictureInPicture
-                onLoadedMetadata={(e) => {
-                  e.currentTarget.muted = true;
-                  e.currentTarget.volume = 0;
-                }}
-                className="absolute inset-0 z-[25] block h-full w-full contrast-[1.28] brightness-[1.06] select-none"
-              >
-                <source src="/videos/hero-hands-right.webm" type="video/webm" />
-              </video>
-            </>
-          )}
-
-          {handsMode === "single" && (
-            <video
-              autoPlay
-              loop
-              muted
-              playsInline
-              preload="auto"
-              controls={false}
-              disablePictureInPicture
-              onLoadedMetadata={(e) => {
-                e.currentTarget.muted = true;
-                e.currentTarget.volume = 0;
-              }}
-              className="absolute inset-0 block h-full w-full mix-blend-screen contrast-[1.28] brightness-[1.06] select-none"
-            >
-              <source src="/videos/hero-hands-loop.webm" type="video/webm" />
-              <source src="/videos/hero-hands-loop.mp4" type="video/mp4" />
-            </video>
-          )}
+          {/* WebGL Foreground Layer: Right Hand with Alpha above AI DEVELOPER (z-[25]) */}
+          <HeroHandsOverlay video={videoEl} />
         </div>
 
         {/* Main Monochromatic Kinetic Display Typography Hero */}
@@ -266,7 +195,13 @@ export function HeroSection() {
 
             {/* Front Solid Monochrome Typography Layer */}
             <h1 className="relative z-10 font-display text-5xl sm:text-7xl lg:text-9xl font-black tracking-tight uppercase leading-[0.88] text-white">
-              <span className="block text-white">
+              <span
+                className="block text-white"
+                style={{
+                  textShadow:
+                    "0 2px 14px rgba(5, 5, 5, 0.95), 0 0 24px rgba(5, 5, 5, 0.9), 0 0 4px rgba(5, 5, 5, 1)",
+                }}
+              >
                 FULL-STACK
               </span>
               <span className="block text-zinc-300">
