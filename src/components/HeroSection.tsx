@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
 import { ArrowDown, Terminal, Send } from "lucide-react";
 import { CONTACTS } from "@/data/contacts";
@@ -11,6 +11,39 @@ export function HeroSection() {
   const { isSimple } = useLanguageMode();
   const containerRef = useRef<HTMLDivElement>(null);
   const [isVolgogradHovered, setIsVolgogradHovered] = useState(false);
+
+  // Слои рук: "layered" = левая рука за текстом + правая поверх (webm с альфой),
+  // "single" = старое одно видео (запасной вариант для Safari/iOS).
+  // null = ещё решаем, пока ничего не рисуем (резерв места держит aspect-video).
+  const [handsMode, setHandsMode] = useState<"layered" | "single" | null>(null);
+  const leftHandRef = useRef<HTMLVideoElement>(null);
+  const rightHandRef = useRef<HTMLVideoElement>(null);
+
+  useEffect(() => {
+    const ua = navigator.userAgent;
+    const isIOS = /iPhone|iPad|iPod/.test(ua);
+    const isDesktopSafari = /^((?!chrome|chromium|crios|fxios|android|edg).)*safari/i.test(ua);
+    // VP9 webm с прозрачностью надёжно работает в Chromium и Firefox
+    setHandsMode(isIOS || isDesktopSafari ? "single" : "layered");
+  }, []);
+
+  // Держим два видео в одном такте, иначе руки "разъедутся" по времени
+  useEffect(() => {
+    if (handsMode !== "layered") return;
+    const base = leftHandRef.current;
+    const top = rightHandRef.current;
+    if (!base || !top) return;
+
+    let raf = 0;
+    const tick = () => {
+      if (!base.paused && Math.abs(top.currentTime - base.currentTime) > 0.08) {
+        top.currentTime = base.currentTime;
+      }
+      raf = requestAnimationFrame(tick);
+    };
+    raf = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(raf);
+  }, [handsMode]);
 
   // Mouse Parallax coordinates for kinetic typography
   const mouseX = useMotionValue(0);
@@ -132,25 +165,71 @@ export function HeroSection() {
         {/* Full-bleed Hands Video Scene: true 100vw edge-to-edge scale without finger clipping */}
         <div
           aria-hidden="true"
-          className="pointer-events-none relative left-1/2 right-1/2 -ml-[50vw] -mr-[50vw] mt-20 -mb-4 w-screen select-none sm:-mt-[13vw] sm:-mb-[15.5vw]"
+          className="pointer-events-none relative left-1/2 right-1/2 -ml-[50vw] -mr-[50vw] mt-20 -mb-4 aspect-video w-screen select-none sm:-mt-[13vw] sm:-mb-[15.5vw]"
         >
-          <video
-            autoPlay
-            loop
-            muted
-            playsInline
-            preload="auto"
-            controls={false}
-            disablePictureInPicture
-            onLoadedMetadata={(e) => {
-              e.currentTarget.muted = true;
-              e.currentTarget.volume = 0;
-            }}
-            className="block h-auto w-full mix-blend-screen contrast-[1.28] brightness-[1.06] select-none"
-          >
-            <source src="/videos/hero-hands-loop.webm" type="video/webm" />
-            <source src="/videos/hero-hands-loop.mp4" type="video/mp4" />
-          </video>
+          {handsMode === "layered" && (
+            <>
+              {/* Слой 1: робот (правой руки в этом видео нет). Лежит под текстом (z-20) */}
+              <video
+                ref={leftHandRef}
+                autoPlay
+                loop
+                muted
+                playsInline
+                preload="auto"
+                controls={false}
+                disablePictureInPicture
+                onLoadedMetadata={(e) => {
+                  e.currentTarget.muted = true;
+                  e.currentTarget.volume = 0;
+                }}
+                className="absolute inset-0 block h-full w-full mix-blend-screen contrast-[1.28] brightness-[1.06] select-none"
+              >
+                <source src="/videos/hero-hands-left.webm" type="video/webm" />
+                <source src="/videos/hero-hands-left.mp4" type="video/mp4" />
+              </video>
+
+              {/* Слой 2: правая рука с альфой. z-[25] выше текста (z-20), без blend-режима,
+                  иначе рука растворится в белых буквах. Фильтры те же, что у слоя 1 */}
+              <video
+                ref={rightHandRef}
+                autoPlay
+                loop
+                muted
+                playsInline
+                preload="auto"
+                controls={false}
+                disablePictureInPicture
+                onLoadedMetadata={(e) => {
+                  e.currentTarget.muted = true;
+                  e.currentTarget.volume = 0;
+                }}
+                className="absolute inset-0 z-[25] block h-full w-full contrast-[1.28] brightness-[1.06] select-none"
+              >
+                <source src="/videos/hero-hands-right.webm" type="video/webm" />
+              </video>
+            </>
+          )}
+
+          {handsMode === "single" && (
+            <video
+              autoPlay
+              loop
+              muted
+              playsInline
+              preload="auto"
+              controls={false}
+              disablePictureInPicture
+              onLoadedMetadata={(e) => {
+                e.currentTarget.muted = true;
+                e.currentTarget.volume = 0;
+              }}
+              className="absolute inset-0 block h-full w-full mix-blend-screen contrast-[1.28] brightness-[1.06] select-none"
+            >
+              <source src="/videos/hero-hands-loop.webm" type="video/webm" />
+              <source src="/videos/hero-hands-loop.mp4" type="video/mp4" />
+            </video>
+          )}
         </div>
 
         {/* Main Monochromatic Kinetic Display Typography Hero */}
