@@ -148,7 +148,21 @@ export function Header() {
         {/* Right: CLI Launcher Button >_ CLI [ / ] + Mode Switch + Quick Actions */}
         <div className="flex items-center gap-1.5 sm:gap-2">
           {/* Mode Switch: ПО-ПРОСТОМУ / ДЛЯ ГИКОВ */}
-          <div className="relative inline-flex h-7 items-center rounded-lg border border-white/20 bg-[#0E0E12] p-0.5 text-[10px] sm:text-[11px] font-mono select-none">
+          <div
+            className={`relative inline-flex h-7 items-center rounded-lg border p-0.5 text-[10px] sm:text-[11px] font-mono select-none overflow-hidden transition-all duration-300 ${
+              isSimple
+                ? "border-white/30 bg-[#0E0E12] animate-toggle-shell"
+                : "border-white/20 bg-[#0E0E12]"
+            }`}
+          >
+            {/* Ambient light sweep across the ENTIRE toggle section when isSimple */}
+            {isSimple && (
+              <span
+                aria-hidden="true"
+                className="pointer-events-none absolute inset-y-0 left-0 w-1/3 bg-gradient-to-r from-transparent via-white/20 to-transparent animate-toggle-sheen z-0"
+              />
+            )}
+
             <button
               type="button"
               onClick={() => setMode("simple")}
@@ -169,10 +183,8 @@ export function Header() {
             <button
               type="button"
               onClick={() => setMode("tech")}
-              className={`relative z-10 flex items-center px-2 sm:px-2.5 py-0.5 font-bold transition-all cursor-pointer rounded-md ${
-                !isSimple
-                  ? "text-black"
-                  : "animate-geek-zone overflow-hidden text-zinc-300 hover:text-white"
+              className={`relative z-10 flex items-center px-2 sm:px-2.5 py-0.5 font-bold transition-colors cursor-pointer rounded-md ${
+                !isSimple ? "text-black" : "text-zinc-400 hover:text-white"
               }`}
             >
               {!isSimple && (
@@ -180,12 +192,6 @@ export function Header() {
                   layoutId="mode-pill"
                   transition={{ type: "spring", stiffness: 420, damping: 32 }}
                   className="absolute inset-0 rounded-md bg-white shadow-sm"
-                />
-              )}
-              {isSimple && (
-                <span
-                  aria-hidden="true"
-                  className="pointer-events-none absolute inset-y-0 left-0 w-1/2 bg-gradient-to-r from-transparent via-white/15 to-transparent animate-geek-sheen"
                 />
               )}
               <span className="relative z-10 whitespace-nowrap">ДЛЯ ГИКОВ</span>

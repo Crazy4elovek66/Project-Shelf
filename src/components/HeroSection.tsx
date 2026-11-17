@@ -60,7 +60,7 @@ export function HeroSection() {
       className="relative pt-16 sm:pt-[72px] pb-1 sm:pb-1.5 lg:pb-2 overflow-x-clip"
     >
       {/* HUD Technical Coordinate Top Bar (Overlaying the upper area of hands, z-30) */}
-      <div className="pointer-events-none absolute inset-x-0 top-[76px] sm:top-[88px] lg:top-[96px] z-30">
+      <div className="pointer-events-none absolute inset-x-0 top-[94px] sm:top-[88px] lg:top-[96px] z-30">
         <div className="section-shell">
           <div className="pointer-events-auto flex flex-wrap items-center justify-between gap-3 border-b border-white/10 pb-3 text-xs font-mono text-zinc-400">
             <div className="flex items-center gap-3">
@@ -136,7 +136,7 @@ export function HeroSection() {
         {/* Full-bleed Hands Video Scene: true 100vw edge-to-edge scale without finger clipping */}
         <div
           aria-hidden="true"
-          className="pointer-events-none relative left-1/2 right-1/2 -ml-[50vw] -mr-[50vw] mt-20 -mb-4 aspect-video w-screen select-none overflow-hidden sm:-mt-[13vw] sm:-mb-[15.5vw]"
+          className="pointer-events-none relative left-1/2 right-1/2 -ml-[50vw] -mr-[50vw] mt-[100px] -mb-4 aspect-video w-screen select-none overflow-hidden sm:-mt-[13vw] sm:-mb-[15.5vw]"
         >
           <video
             ref={setVideoEl}
