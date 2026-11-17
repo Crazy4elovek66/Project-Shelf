@@ -21,24 +21,24 @@ const stackPills = [
   "Whisper STT",
 ];
 
+const formatMskTime = () =>
+  new Intl.DateTimeFormat("ru-RU", {
+    timeZone: "Europe/Moscow",
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+    hour12: false,
+  }).format(new Date());
+
 export function Footer() {
   const { isSimple } = useLanguageMode();
-  const [timeStr, setTimeStr] = useState<string>("");
+  const [timeStr, setTimeStr] = useState<string>("12:00:00");
 
   useEffect(() => {
-    const updateTime = () => {
-      const now = new Date();
-      const formatted = new Intl.DateTimeFormat("ru-RU", {
-        timeZone: "Europe/Moscow",
-        hour: "2-digit",
-        minute: "2-digit",
-        second: "2-digit",
-      }).format(now);
-      setTimeStr(formatted);
-    };
-
-    updateTime();
-    const interval = setInterval(updateTime, 1000);
+    setTimeStr(formatMskTime());
+    const interval = setInterval(() => {
+      setTimeStr(formatMskTime());
+    }, 1000);
     return () => clearInterval(interval);
   }, []);
 
@@ -104,7 +104,7 @@ export function Footer() {
               {isSimple ? "СТАТУС: ГОТОВ К СОТРУДНИЧЕСТВУ" : "SYS_STATUS: ALL SYSTEMS OPERATIONAL"}
             </SmoothModeText>
             <span className="text-white/20">/</span>
-            <span>VOLGOGRAD: {timeStr || "12:00:00"} MSK</span>
+            <span>VOLGOGRAD: <span suppressHydrationWarning>{timeStr}</span> MSK</span>
           </div>
 
           <div className="flex items-center gap-4">

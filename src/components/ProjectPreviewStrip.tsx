@@ -10,6 +10,7 @@ import { SmoothModeText } from "./SmoothModeText";
 export function ProjectPreviewStrip() {
   const { isSimple } = useLanguageMode();
   const [hoveredIdx, setHoveredIdx] = useState<number | null>(null);
+  const totalPadded = String(projects.length).padStart(2, "0");
 
   const selectProject = (index: number) => {
     const el = document.getElementById("projects");
@@ -27,8 +28,8 @@ export function ProjectPreviewStrip() {
             <span className="text-white font-bold">&gt;_</span>
             <SmoothModeText as="span">
               {isSimple
-                ? `КАТАЛОГ ПРОЕКТОВ // 01 – 0${projects.length} КРАТКИЙ ОБЗОР`
-                : `КАТАЛОГ ПРОЕКТОВ // 01 – 0${projects.length} БЫСТРОЕ ОЗНАКОМЛЕНИЕ`}
+                ? `КАТАЛОГ ПРОЕКТОВ // 01 – ${totalPadded} КРАТКИЙ ОБЗОР`
+                : `КАТАЛОГ ПРОЕКТОВ // 01 – ${totalPadded} БЫСТРОЕ ОЗНАКОМЛЕНИЕ`}
             </SmoothModeText>
           </div>
           <SmoothModeText as="span" className="hidden sm:inline-block font-mono text-[11px] text-zinc-500">

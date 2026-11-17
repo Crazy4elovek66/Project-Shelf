@@ -4,6 +4,7 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Terminal, Cpu, Layers, Video, Database, CheckCircle2, ChevronRight, Sparkles } from "lucide-react";
 import { skillGroups, skillRelations, skillFilterTabs, type SkillCategory } from "@/data/skills";
+import { projects } from "@/data/projects";
 import { SeamlessPortraitVideo } from "./SeamlessPortraitVideo";
 import { useLanguageMode } from "@/context/LanguageModeContext";
 import { SmoothModeText } from "./SmoothModeText";
@@ -131,9 +132,9 @@ export function EngineeringBaseSection() {
             {/* Bottom 4 Key Metrics */}
             <div className="grid grid-cols-2 gap-2.5 pt-4 border-t border-white/10 text-xs">
               <div className="p-3 rounded-lg border border-white/10 bg-white/[0.02]">
-                <div className="text-xl font-bold text-white">6+</div>
+                <div className="text-xl font-bold text-white">{projects.length}</div>
                 <SmoothModeText as="div" className="text-[10px] text-zinc-400 mt-0.5">
-                  {isSimple ? "ГОТОВЫХ ПРОЕКТОВ" : "ПРОЕКТОВ В ПРОДЕ"}
+                  {isSimple ? "ПРОЕКТОВ В ПОРТФОЛИО" : "ПРОЕКТОВ В ПРОДЕ"}
                 </SmoothModeText>
               </div>
               <div className="p-3 rounded-lg border border-white/10 bg-white/[0.02]">

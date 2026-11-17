@@ -33,44 +33,52 @@ export const viewport: Viewport = {
 };
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://project-shelf-beta.vercel.app"),
-  title: "idleON // Full-Stack AI Developer & Systems Engineer",
+  metadataBase: new URL("https://idleon.pro"),
+  alternates: {
+    canonical: "https://idleon.pro",
+  },
+  title: "idleON // Full-Stack AI Developer - Боты, сайты и AI-автоматизация",
   description:
-    "Портфолио Full-Stack AI разработчика (idleON / Илья): мультиагентные системы, отказоустойчивые LLM-роутеры, Telegram Mini Apps, компьютерное зрение и высоконагруженные веб-сервисы.",
+    "Портфолио Full-Stack AI разработчика (idleON / Илья): умные Telegram-боты, Mini Apps, AI-ассистенты и современные веб-приложения под ключ для автоматизации бизнеса.",
   keywords: [
     "Full-Stack AI Developer",
-    "AI Systems Engineer",
-    "LLM Routing",
-    "Multi-Agent Systems",
+    "AI разработчик",
+    "Telegram бот под ключ",
     "Telegram Mini Apps",
-    "Telegram Bot",
-    "Computer Vision",
-    "OpenCV",
-    "Next.js 15",
-    "React 19",
+    "Автоматизация бизнеса",
+    "AI ассистент",
+    "Next.js",
+    "React",
     "TypeScript",
     "Python",
-    "FastAPI",
     "Supabase",
-    "Портфолио AI разработчика",
     "idleON",
   ],
   authors: [{ name: "idleON (Илья)", url: "https://github.com/Crazy4elovek66" }],
   creator: "idleON",
   openGraph: {
-    title: "idleON // Full-Stack AI Developer & Systems Engineer",
+    title: "idleON // Full-Stack AI Developer - Боты, сайты и AI-автоматизация",
     description:
-      "Флагманские решения на стыке LLM-оркестрации, Computer Vision, Telegram Mini Apps и веб-интерфейсов.",
+      "Создаю умных ботов, сайты и веб-приложения с нейросетью, которые автоматизируют рутину, экономят время и помогают бизнесу расти.",
     type: "website",
     locale: "ru_RU",
-    url: "https://project-shelf-beta.vercel.app",
-    siteName: "idleON // Project Shelf",
+    url: "https://idleon.pro",
+    siteName: "idleON // idleon.pro",
+    images: [
+      {
+        url: "/opengraph-image",
+        width: 1200,
+        height: 630,
+        alt: "idleON // Full-Stack AI Developer",
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
     title: "idleON // Full-Stack AI Developer",
     description:
-      "Мультиагентные системы, Telegram Mini Apps, Computer Vision и Next.js веб-сервисы.",
+      "Умные Telegram-боты, Mini Apps, AI-ассистенты и веб-приложения под ключ для бизнеса.",
+    images: ["/twitter-image"],
   },
 };
 

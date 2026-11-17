@@ -42,6 +42,9 @@ export function ProjectsTerminalSection() {
   const [activeProjectIdx, setActiveProjectIdx] = useState(0);
   const [viewMode, setViewMode] = useState<"inspector" | "all">("inspector");
 
+  const totalCount = projects.length;
+  const paddedTotal = String(totalCount).padStart(2, "0");
+
   const simpleTabNames = [
     "01. JobRadar",
     "02. Twitch AI",
@@ -89,8 +92,8 @@ export function ProjectsTerminalSection() {
               <span className="font-pixel text-[10px] text-white">[ / ]</span>
               <SmoothModeText as="span">
                 {isSimple
-                  ? "ИНСПЕКТОР ПРОЕКТОВ // 01 – 06 РАБОТ"
-                  : "PROJECT INSPECTOR // 01 – 06 ИНЖЕНЕРНЫХ КЕЙСОВ"}
+                  ? `ИНСПЕКТОР ПРОЕКТОВ // 01 – ${paddedTotal} РАБОТ`
+                  : `PROJECT INSPECTOR // 01 – ${paddedTotal} ИНЖЕНЕРНЫХ КЕЙСОВ`}
               </SmoothModeText>
             </div>
             <SmoothModeText as="h2" className="font-display text-3xl sm:text-4xl font-bold tracking-tight text-white uppercase">
@@ -120,7 +123,7 @@ export function ProjectsTerminalSection() {
               }`}
             >
               <SmoothModeText as="span">
-                {isSimple ? "ВСЕ 6 ПРОЕКТОВ" : "ВСЕ 6 КЕЙСОВ"}
+                {isSimple ? `ВСЕ ${totalCount} ПРОЕКТОВ` : `ВСЕ ${totalCount} КЕЙСОВ`}
               </SmoothModeText>
             </button>
           </div>

@@ -1,12 +1,22 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
 import { ArrowDown, Terminal, Send } from "lucide-react";
 import { CONTACTS } from "@/data/contacts";
+import { projects } from "@/data/projects";
 import { useLanguageMode } from "@/context/LanguageModeContext";
 import { SmoothModeText } from "./SmoothModeText";
 import { HeroHandsOverlay } from "./HeroHandsOverlay";
+
+const formatMskTime = () =>
+  new Intl.DateTimeFormat("ru-RU", {
+    timeZone: "Europe/Moscow",
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+    hour12: false,
+  }).format(new Date());
 
 export function HeroSection() {
   const { isSimple } = useLanguageMode();
@@ -15,6 +25,15 @@ export function HeroSection() {
 
   // Single video element & hardware decoder: 100% smooth, 0-stutter, instant startup
   const [videoEl, setVideoEl] = useState<HTMLVideoElement | null>(null);
+  const [mskTime, setMskTime] = useState<string>("12:00:00");
+
+  useEffect(() => {
+    setMskTime(formatMskTime());
+    const interval = setInterval(() => {
+      setMskTime(formatMskTime());
+    }, 1000);
+    return () => clearInterval(interval);
+  }, []);
 
   // Mouse Parallax coordinates for kinetic typography
   const mouseX = useMotionValue(0);
@@ -114,7 +133,9 @@ export function HeroSection() {
 
               <span>→ REMOTE</span>
               <span className="text-white/20 hidden sm:inline">/</span>
-              <span className="hidden sm:inline text-zinc-500">UTC+3 MOSCOW</span>
+              <span className="hidden sm:inline text-zinc-500">
+                UTC+3 MOSCOW <span suppressHydrationWarning className="text-zinc-400">[{mskTime}]</span>
+              </span>
             </div>
 
             <div className="flex items-center gap-2 rounded-md border border-white/20 bg-white/[0.04] px-3 py-1 text-[11px] font-mono text-zinc-300">
@@ -241,9 +262,9 @@ export function HeroSection() {
             {/* Micro stats counter */}
             <div className="lg:col-span-4 flex items-center justify-between lg:justify-end gap-6 font-mono text-xs border-t lg:border-t-0 border-white/10 pt-2 lg:pt-0">
               <div>
-                <div className="text-2xl font-bold font-mono text-white">8+</div>
+                <div className="text-2xl font-bold font-mono text-white">{projects.length}</div>
                 <SmoothModeText as="div" className="text-zinc-500 uppercase text-[10px]">
-                  {isSimple ? "ГОТОВЫХ ПРОЕКТОВ" : "КЕЙСОВ В ПРОДЕ"}
+                  {isSimple ? "ПРОЕКТОВ В ПОРТФОЛИО" : "КЕЙСОВ В ПРОДЕ"}
                 </SmoothModeText>
               </div>
               <div className="w-[1px] h-8 bg-white/10" />
@@ -270,7 +291,7 @@ export function HeroSection() {
               className="group inline-flex items-center gap-2 rounded-lg bg-white px-6 py-3.5 text-xs font-mono font-bold text-black transition-all hover:bg-zinc-200 shadow-md cursor-pointer"
             >
               <SmoothModeText as="span">
-                {isSimple ? ">_ СМОТРЕТЬ РАБОТЫ" : ">_ СМОТРЕТЬ КЕЙСЫ (01-08)"}
+                {isSimple ? ">_ СМОТРЕТЬ РАБОТЫ" : `>_ СМОТРЕТЬ КЕЙСЫ (01-0${projects.length})`}
               </SmoothModeText>
               <ArrowDown size={14} className="group-hover:translate-y-0.5 transition-transform" />
             </button>
