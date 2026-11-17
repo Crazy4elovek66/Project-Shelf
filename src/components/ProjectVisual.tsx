@@ -1,28 +1,79 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
-import { useInView, motion, AnimatePresence } from "framer-motion";
+import { useState, useEffect, useRef, useCallback } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import {
+  RotateCcw,
+  Sparkles,
+  Check,
+  Send,
+  Play,
+  TrendingUp,
+  Shield,
+  Layers,
+  Cpu,
+  Flame,
+  Radio,
+  ShoppingBag,
+  Swords,
+  Clock,
+  Eye,
+  Sliders,
+  Terminal,
+} from "lucide-react";
 import type { Project } from "@/data/projects";
+import { useLanguageMode } from "@/context/LanguageModeContext";
 
 export function ProjectVisual({ project }: { project: Project }) {
-  const ref = useRef<HTMLDivElement>(null);
-  const isInView = useInView(ref, { margin: "-30px", amount: 0.1 });
+  const { isSimple } = useLanguageMode();
+  const [resetKey, setResetKey] = useState(0);
+
+  const handleReset = () => {
+    setResetKey((k) => k + 1);
+  };
 
   return (
-    <div 
-      ref={ref} 
-      className="group relative min-h-[440px] sm:min-h-[480px] lg:min-h-[500px] w-full overflow-hidden rounded-2xl border border-white/10 bg-black/25 p-0 flex items-center justify-center"
-    >
-      <div className={`absolute inset-0 bg-gradient-to-br ${project.visual.accent} opacity-10`} />
+    <div className="relative w-full rounded-2xl border border-white/15 bg-[#09090D] shadow-2xl overflow-hidden font-mono text-xs select-none">
+      {/* Top Sandbox Status Bar */}
+      <div className="flex items-center justify-between px-4 py-2.5 border-b border-white/10 bg-[#121216] text-[11px]">
+        <div className="flex items-center gap-2">
+          <span className="size-2 rounded-full bg-emerald-400 animate-pulse" />
+          <span className="font-bold text-white tracking-wider">
+            {isSimple ? "ИНТЕРАКТИВНОЕ ДЕМО" : "LIVE SANDBOX // PROTOTYPE"}
+          </span>
+          <span className="hidden sm:inline text-zinc-500">
+            [{project.title}]
+          </span>
+        </div>
 
-      <div className="absolute inset-0 flex items-center justify-center p-4 transition-transform duration-700 group-hover:scale-102">
-        <ProjectMockup title={project.title} active={isInView} />
+        <button
+          type="button"
+          onClick={handleReset}
+          className="flex items-center gap-1.5 rounded border border-white/15 bg-white/[0.04] px-2.5 py-1 text-zinc-300 hover:text-white hover:bg-white/10 hover:border-white transition-all cursor-pointer text-[10px]"
+          title="Сбросить состояние песочницы"
+        >
+          <RotateCcw size={11} />
+          <span>{isSimple ? "СБРОС" : "RESET"}</span>
+        </button>
       </div>
 
-      <div className="pointer-events-none absolute inset-0 z-10 bg-gradient-to-t from-[#030508] via-transparent to-transparent opacity-90" />
+      {/* Main Interactive Stage */}
+      <div className="p-4 sm:p-6 min-h-[440px] flex flex-col justify-center">
+        <ProjectInteractiveSandbox
+          key={resetKey}
+          title={project.title}
+          isSimple={isSimple}
+        />
+      </div>
 
-      <div className="pointer-events-none absolute bottom-5 left-5 z-20">
-        <span className="rounded-full border border-white/15 bg-black/40 px-3 py-1 text-xs text-slate-200 backdrop-blur-md font-mono uppercase tracking-wider">
+      {/* Bottom Telemetry Bar */}
+      <div className="px-4 py-2 border-t border-white/10 bg-[#0E0E12] flex items-center justify-between text-[10px] text-zinc-500">
+        <span className="truncate">
+          {isSimple
+            ? "Нажимайте на кнопки в блоке выше для проверки работы"
+            : "Click interactive triggers to test real-time state machine"}
+        </span>
+        <span className="shrink-0 text-zinc-400 font-bold ml-2">
           {project.visual.label}
         </span>
       </div>
@@ -30,587 +81,783 @@ export function ProjectVisual({ project }: { project: Project }) {
   );
 }
 
-function ProjectMockup({ title, active }: { title: Project["title"]; active: boolean }) {
+function ProjectInteractiveSandbox({
+  title,
+  isSimple,
+}: {
+  title: Project["title"];
+  isSimple: boolean;
+}) {
   switch (title) {
     case "JobRadar":
-      return <JobRadarMockup active={active} />;
-    case "ProfitCheck":
-      return <ProfitCheckMockup active={active} />;
+      return <JobRadarSandbox isSimple={isSimple} />;
+    case "Ракомания":
+      return <RakomaniaSandbox isSimple={isSimple} />;
+    case "DotaOverlay":
+      return <DotaOverlaySandbox isSimple={isSimple} />;
     case "Twitch AI Viewers":
-      return <TwitchMockup active={active} />;
+      return <TwitchAiSandbox isSimple={isSimple} />;
     case "Aura.net":
-      return <AuraNetMockup active={active} />;
+      return <AuraNetSandbox isSimple={isSimple} />;
+    case "ProfitCheck":
+      return <ProfitCheckSandbox isSimple={isSimple} />;
     case "AutoClip":
-      return <AutoClipMockup active={active} />;
+      return <AutoClipSandbox isSimple={isSimple} />;
     case "Магия Бабушки":
-      return <BabushkaMockup active={active} />;
+      return <BabushkaMagicSandbox isSimple={isSimple} />;
     default:
-      return <FallbackMockup />;
+      return <JobRadarSandbox isSimple={isSimple} />;
   }
 }
 
-function TelegramShell({
-  botName,
-  avatarClassName,
-  children,
-}: {
-  botName: string;
-  avatarClassName: string;
-  children: React.ReactNode;
-}) {
+// -------------------------------------------------------------
+// 1. JobRadar Sandbox
+// -------------------------------------------------------------
+function JobRadarSandbox({ isSimple }: { isSimple: boolean }) {
+  const [selectedStack, setSelectedStack] = useState<"python" | "qa" | "react">("python");
+  const [isSearching, setIsSearching] = useState(false);
+  const [applied, setApplied] = useState(false);
+
+  const jobsData = {
+    python: {
+      role: "Senior AI / Backend Engineer",
+      salary: "350 000 — 480 000 ₽",
+      company: "DeepTech AI Lab",
+      score: "98/100",
+      skills: ["Python", "FastAPI", "LLM", "PostgreSQL"],
+    },
+    qa: {
+      role: "Lead QA Automation Engineer",
+      salary: "240 000 — 320 000 ₽",
+      company: "Fintech Platform",
+      score: "94/100",
+      skills: ["Python", "Pytest", "Docker", "CI/CD"],
+    },
+    react: {
+      role: "Full-Stack Next.js Developer",
+      salary: "280 000 — 380 000 ₽",
+      company: "Highload Systems",
+      score: "96/100",
+      skills: ["TypeScript", "Next.js", "React 19", "Tailwind"],
+    },
+  };
+
+  const handleSelectStack = (stack: "python" | "qa" | "react") => {
+    setSelectedStack(stack);
+    setIsSearching(true);
+    setApplied(false);
+    setTimeout(() => setIsSearching(false), 600);
+  };
+
+  const currentJob = jobsData[selectedStack];
+
   return (
-    <div className="flex h-[232px] w-full max-w-[340px] flex-col overflow-hidden rounded-xl border border-[#263341] bg-[#0b111b] shadow-2xl">
-      <div className="flex h-11 shrink-0 items-center gap-2.5 border-b border-black/40 bg-[#17212b] px-3">
-        <div className={`size-8 rounded-full ${avatarClassName}`} />
-        <div className="min-w-0">
-          <div className="truncate text-[11px] font-semibold leading-none text-white">{botName}</div>
-          <div className="mt-1 text-[9px] leading-none text-[#75b7ed]">бот</div>
-        </div>
-        <div className="ml-auto flex items-center gap-3 text-[#7d8b9a]">
-          <div className="size-3 rounded-full border-2 border-current" />
-          <div className="h-4 w-1 rounded-full bg-current opacity-70" />
-        </div>
+    <div className="space-y-4 max-w-lg mx-auto w-full">
+      {/* Stack Switcher */}
+      <div className="flex items-center justify-between gap-2 p-1.5 rounded-xl border border-white/10 bg-[#121216]">
+        {(["python", "qa", "react"] as const).map((s) => (
+          <button
+            key={s}
+            type="button"
+            onClick={() => handleSelectStack(s)}
+            className={`flex-1 py-1.5 rounded-lg text-center font-bold text-[11px] transition-all cursor-pointer ${
+              selectedStack === s
+                ? "bg-white text-black shadow-md"
+                : "text-zinc-400 hover:text-white"
+            }`}
+          >
+            {s === "python" ? "Python / AI" : s === "qa" ? "QA Auto" : "Web / Next"}
+          </button>
+        ))}
       </div>
 
-      <div className="relative flex flex-1 flex-col gap-1.5 overflow-hidden p-2.5">
-        <div className="pointer-events-none absolute inset-0 opacity-[0.08] [background-image:radial-gradient(#7ea0bf_1px,transparent_1px)] [background-size:14px_14px]" />
-        <div className="relative z-10 flex flex-1 flex-col gap-1.5 justify-end">{children}</div>
+      {/* Live Pipeline / Radar State */}
+      <div className="rounded-xl border border-white/10 bg-[#060608] p-4 relative overflow-hidden">
+        {isSearching ? (
+          <div className="py-8 flex flex-col items-center justify-center gap-3 text-zinc-400">
+            <Radio size={24} className="text-cyan-400 animate-spin" />
+            <span className="text-xs">
+              {isSimple ? "Сканирование HH API и отсев спама..." : "Parsing HH API & applying deduplication hash..."}
+            </span>
+          </div>
+        ) : (
+          <div className="space-y-3">
+            <div className="flex items-start justify-between gap-2">
+              <div>
+                <span className="rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-2 py-0.5 text-[10px] font-bold">
+                  AI MATCH: {currentJob.score}
+                </span>
+                <h4 className="font-bold text-white text-sm sm:text-base mt-1.5">
+                  {currentJob.role}
+                </h4>
+                <p className="text-zinc-400 text-xs">{currentJob.company} {"//"} Удаленно</p>
+              </div>
+              <div className="text-right">
+                <span className="text-emerald-400 font-bold text-xs sm:text-sm">
+                  {currentJob.salary}
+                </span>
+                <div className="text-[10px] text-zinc-500 mt-1">Сегодня, 10:45</div>
+              </div>
+            </div>
+
+            <div className="flex flex-wrap gap-1.5 pt-1">
+              {currentJob.skills.map((sk) => (
+                <span
+                  key={sk}
+                  className="rounded border border-white/10 bg-white/[0.04] px-2 py-0.5 text-[10px] text-zinc-300"
+                >
+                  {sk}
+                </span>
+              ))}
+            </div>
+
+            <div className="pt-2 border-t border-white/10 flex items-center justify-between">
+              <span className="text-[11px] text-zinc-500">
+                {isSimple ? "Автофильтр колл-центров: Пройден" : "Spam & callcenter filter: PASSED"}
+              </span>
+
+              <button
+                type="button"
+                onClick={() => setApplied(true)}
+                disabled={applied}
+                className={`px-3.5 py-1.5 rounded-lg font-bold text-xs transition-all cursor-pointer flex items-center gap-1.5 ${
+                  applied
+                    ? "bg-emerald-500/20 text-emerald-300 border border-emerald-500/40"
+                    : "bg-white text-black hover:bg-zinc-200"
+                }`}
+              >
+                {applied ? (
+                  <>
+                    <Check size={12} />
+                    <span>Отклик отправлен!</span>
+                  </>
+                ) : (
+                  <>
+                    <Send size={11} />
+                    <span>Откликнуться</span>
+                  </>
+                )}
+              </button>
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+// -------------------------------------------------------------
+// 2. Ракомания Sandbox
+// -------------------------------------------------------------
+function RakomaniaSandbox({ isSimple }: { isSimple: boolean }) {
+  const [portion, setPortion] = useState<"medium" | "large">("medium");
+  const [spices, setSpices] = useState(true);
+  const [orderStep, setOrderStep] = useState<"config" | "cooking" | "delivering" | "done">("config");
+
+  const basePrice = portion === "medium" ? 2200 : 3400;
+  const totalPrice = basePrice + (spices ? 200 : 0);
+
+  const handleOrder = () => {
+    setOrderStep("cooking");
+    setTimeout(() => {
+      setOrderStep("delivering");
+      setTimeout(() => {
+        setOrderStep("done");
+      }, 1800);
+    }, 1400);
+  };
+
+  return (
+    <div className="space-y-4 max-w-lg mx-auto w-full">
+      {orderStep === "config" ? (
+        <div className="rounded-xl border border-white/10 bg-[#07070A] p-4 space-y-4">
+          <div className="flex items-center justify-between border-b border-white/10 pb-2">
+            <span className="font-bold text-white text-sm">
+              🦞 РАКОМАНИЯ // Telegram WebApp
+            </span>
+            <span className="text-[10px] text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20">
+              Кухня онлайн
+            </span>
+          </div>
+
+          <div className="space-y-2">
+            <span className="text-[11px] text-zinc-400">Выберите размер раков:</span>
+            <div className="grid grid-cols-2 gap-2">
+              <button
+                type="button"
+                onClick={() => setPortion("medium")}
+                className={`p-2.5 rounded-lg border text-left transition-all cursor-pointer ${
+                  portion === "medium"
+                    ? "border-amber-400 bg-amber-400/10 text-white"
+                    : "border-white/10 bg-white/[0.02] text-zinc-400 hover:text-white"
+                }`}
+              >
+                <div className="font-bold text-xs">1 кг // Средние</div>
+                <div className="text-[10px] text-zinc-400 mt-0.5">30-40 шт/кг · 2 200 ₽</div>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setPortion("large")}
+                className={`p-2.5 rounded-lg border text-left transition-all cursor-pointer ${
+                  portion === "large"
+                    ? "border-amber-400 bg-amber-400/10 text-white"
+                    : "border-white/10 bg-white/[0.02] text-zinc-400 hover:text-white"
+                }`}
+              >
+                <div className="font-bold text-xs">2 кг // Крупные</div>
+                <div className="text-[10px] text-zinc-400 mt-0.5">20-25 шт/кг · 3 400 ₽</div>
+              </button>
+            </div>
+          </div>
+
+          <div className="flex items-center justify-between p-2.5 rounded-lg border border-white/10 bg-white/[0.02]">
+            <div className="flex items-center gap-2">
+              <Flame size={14} className="text-amber-400" />
+              <span className="text-xs text-white">Фирменная варка с яблоком и укропом</span>
+            </div>
+            <button
+              type="button"
+              onClick={() => setSpices(!spices)}
+              className={`px-2.5 py-1 rounded text-[10px] font-bold transition-all cursor-pointer ${
+                spices ? "bg-amber-400 text-black" : "bg-white/10 text-zinc-400"
+              }`}
+            >
+              {spices ? "+200 ₽ (ВКЛ)" : "Без варки"}
+            </button>
+          </div>
+
+          <div className="flex items-center justify-between pt-2 border-t border-white/10">
+            <div>
+              <span className="text-[10px] text-zinc-500 block">
+                {isSimple ? "Геозона доставки Shapely: Зона 1 (Центр)" : "Shapely Geozone Poly: Zone 1 (Center)"}
+              </span>
+              <span className="text-sm font-bold text-white">Итого: {totalPrice} ₽</span>
+            </div>
+            <button
+              type="button"
+              onClick={handleOrder}
+              className="bg-white text-black hover:bg-zinc-200 px-4 py-2 rounded-lg font-bold text-xs transition-all cursor-pointer flex items-center gap-1.5"
+            >
+              <ShoppingBag size={13} />
+              <span>Оформить заказ</span>
+            </button>
+          </div>
+        </div>
+      ) : (
+        <div className="rounded-xl border border-white/10 bg-[#07070A] p-5 space-y-4">
+          <div className="flex items-center justify-between border-b border-white/10 pb-2">
+            <span className="font-bold text-white text-xs">ТРЕКИНГ ЗАКАЗА #RK-8491</span>
+            <span className="text-emerald-400 font-bold text-xs">{totalPrice} ₽</span>
+          </div>
+
+          {/* Stepper */}
+          <div className="space-y-3">
+            {[
+              { id: "cooking", label: "01. Варка на кухне (партия 8 раков)", time: "14:30" },
+              { id: "delivering", label: "02. Курьер назначен и в пути (Lada Granta)", time: "14:48" },
+              { id: "done", label: "03. Заказ доставлен до двери", time: "15:15" },
+            ].map((st, i) => {
+              const isPast =
+                orderStep === "done" ||
+                (orderStep === "delivering" && i <= 1) ||
+                (orderStep === "cooking" && i === 0);
+              const isCurrent = orderStep === st.id;
+
+              return (
+                <div key={st.id} className="flex items-center gap-3">
+                  <div
+                    className={`size-6 rounded-full flex items-center justify-center shrink-0 text-xs font-bold ${
+                      isPast
+                        ? "bg-emerald-500 text-black"
+                        : isCurrent
+                        ? "bg-white text-black animate-pulse"
+                        : "bg-white/10 text-zinc-500"
+                    }`}
+                  >
+                    {isPast ? <Check size={12} strokeWidth={3} /> : i + 1}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <span className={`text-xs block ${isPast ? "text-white font-bold" : "text-zinc-500"}`}>
+                      {st.label}
+                    </span>
+                  </div>
+                  <span className="text-[10px] text-zinc-500 font-mono">{st.time}</span>
+                </div>
+              );
+            })}
+          </div>
+
+          <div className="pt-2 text-center">
+            <button
+              type="button"
+              onClick={() => setOrderStep("config")}
+              className="text-[11px] text-zinc-400 hover:text-white underline cursor-pointer"
+            >
+              Сделать новый заказ
+            </button>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+// -------------------------------------------------------------
+// 3. DotaOverlay Sandbox
+// -------------------------------------------------------------
+function DotaOverlaySandbox({ isSimple }: { isSimple: boolean }) {
+  const [selectedOpponent, setSelectedOpponent] = useState<"pa" | "storm" | "slark">("pa");
+
+  const metaData = {
+    pa: {
+      hero: "Phantom Assassin",
+      winrate: "48.2%",
+      alliedWinrate: "57.8%",
+      threat: "КРИТИЧЕСКИЙ (BKB + Deso)",
+      bestCounters: ["Anti-Mage", "Lion (Finger Burst)", "Doom (Lockdown)"],
+      itemsToBuy: ["Monkey King Bar (MKB)", "Blade Mail", "Silver Edge (Break)"],
+    },
+    storm: {
+      hero: "Storm Spirit",
+      winrate: "51.0%",
+      alliedWinrate: "55.4%",
+      threat: "ВЫСОКИЙ (Orchid + Zip)",
+      bestCounters: ["Silencer (Global)", "Disruptor (Static Storm)", "Bane"],
+      itemsToBuy: ["Orchid Malevolence", "Scythe of Vyse (Hex)", "BKB"],
+    },
+    slark: {
+      hero: "Slark",
+      winrate: "49.5%",
+      alliedWinrate: "54.2%",
+      threat: "СРЕДНИЙ (Essence Shift)",
+      bestCounters: ["Bloodseeker (Rupture)", "Axe (Call)", "Legion Commander"],
+      itemsToBuy: ["Force Staff (Kite)", "Ghost Scepter", "Halberd (Disarm)"],
+    },
+  };
+
+  const current = metaData[selectedOpponent];
+
+  return (
+    <div className="space-y-4 max-w-lg mx-auto w-full">
+      {/* Target Selector */}
+      <div className="flex items-center justify-between gap-2 p-1.5 rounded-xl border border-white/10 bg-[#121216]">
+        <span className="text-[10px] text-zinc-500 ml-2 hidden sm:inline">Пик врага:</span>
+        {(["pa", "storm", "slark"] as const).map((k) => (
+          <button
+            key={k}
+            type="button"
+            onClick={() => setSelectedOpponent(k)}
+            className={`flex-1 py-1.5 rounded-lg text-center font-bold text-[11px] transition-all cursor-pointer ${
+              selectedOpponent === k
+                ? "bg-red-500/20 text-red-200 border border-red-500/40"
+                : "text-zinc-400 hover:text-white"
+            }`}
+          >
+            {k === "pa" ? "P. Assassin" : k === "storm" ? "Storm Spirit" : "Slark"}
+          </button>
+        ))}
       </div>
 
-      <div className="flex h-10 shrink-0 items-center gap-2 border-t border-black/40 bg-[#17212b] px-2.5">
-        <div className="relative size-5 rounded-full border-2 border-[#7b8794] after:absolute after:-right-1 after:top-1 after:h-3 after:w-1 after:rounded-full after:border-r-2 after:border-[#7b8794]" />
-        <div className="flex h-6 flex-1 items-center rounded-full bg-[#202b38] px-3">
-          <div className="h-1.5 w-20 rounded bg-[#7b8794]/70" />
+      {/* Live Overlay HUD */}
+      <div className="rounded-xl border border-red-500/30 bg-[#0B080A] p-4 space-y-3 relative overflow-hidden">
+        <div className="flex items-center justify-between border-b border-white/10 pb-2">
+          <div className="flex items-center gap-2">
+            <Swords size={14} className="text-red-400" />
+            <span className="font-bold text-white text-xs">{current.hero.toUpperCase()}</span>
+          </div>
+          <span className="text-[10px] text-emerald-400 font-bold bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20">
+            VAC-SAFE // GSI OK
+          </span>
+        </div>
+
+        <div className="grid grid-cols-2 gap-3">
+          <div className="p-2.5 rounded-lg bg-white/[0.02] border border-white/5">
+            <span className="text-[10px] text-zinc-500 block">Прогноз винрейта союзников:</span>
+            <span className="text-base font-bold text-emerald-400">{current.alliedWinrate}</span>
+          </div>
+          <div className="p-2.5 rounded-lg bg-white/[0.02] border border-white/5">
+            <span className="text-[10px] text-zinc-500 block">Уровень опасности врага:</span>
+            <span className="text-xs font-bold text-red-400 mt-1 block">{current.threat}</span>
+          </div>
+        </div>
+
+        <div className="space-y-1.5">
+          <span className="text-[10px] text-zinc-400 block font-bold">ТОП КОНТРПИКИ В ЭТОМ ДРАФТЕ:</span>
+          <div className="flex flex-wrap gap-1.5">
+            {current.bestCounters.map((c) => (
+              <span
+                key={c}
+                className="px-2 py-0.5 rounded border border-emerald-500/30 bg-emerald-500/10 text-emerald-300 text-[10px] font-bold"
+              >
+                {c}
+              </span>
+            ))}
+          </div>
+        </div>
+
+        <div className="space-y-1.5 pt-1 border-t border-white/10">
+          <span className="text-[10px] text-zinc-400 block font-bold">РЕКОМЕНДОВАННЫЙ ЗАКУП:</span>
+          <div className="flex flex-wrap gap-1.5">
+            {current.itemsToBuy.map((it) => (
+              <span
+                key={it}
+                className="px-2 py-0.5 rounded border border-cyan-500/30 bg-cyan-500/10 text-cyan-300 text-[10px]"
+              >
+                {it}
+              </span>
+            ))}
+          </div>
         </div>
       </div>
     </div>
   );
 }
 
-function JobRadarMockup({ active }: { active: boolean }) {
-  const [pulsePoints, setPulsePoints] = useState<{ x: number; y: number; id: number }[]>([]);
+// -------------------------------------------------------------
+// 4. Twitch AI Viewers Sandbox
+// -------------------------------------------------------------
+function TwitchAiSandbox({ isSimple }: { isSimple: boolean }) {
+  const [messages, setMessages] = useState<Array<{ user: string; text: string; role: string }>>([
+    { user: "AI_Sniper", text: "Смотрим внимательно, позиция опасная", role: "Аналитик" },
+    { user: "HypeBoy_AI", text: "ПОГНАЛИ! Тащи этот раунд 🔥", role: "Хайпер" },
+  ]);
 
-  useEffect(() => {
-    if (!active) return;
-    const interval = setInterval(() => {
-      setPulsePoints((prev) => {
-        const next = [...prev, {
-          x: Math.random() * 80 + 10,
-          y: Math.random() * 80 + 10,
-          id: Date.now()
-        }];
-        if (next.length > 5) next.shift();
-        return next;
-      });
-    }, 1200);
-
-    return () => clearInterval(interval);
-  }, [active]);
+  const triggerEvent = (type: "clutch" | "fail") => {
+    if (type === "clutch") {
+      setMessages((prev) => [
+        ...prev.slice(-3),
+        { user: "AI_Sniper", text: "НЕВЕРОЯТНЫЙ КЛАТЧ! Реакция 180мс, чистый скилл!", role: "Аналитик" },
+        { user: "HypeBoy_AI", text: "АААААА КАК ОН ЭТО ЗАБРАЛ?! ЧАТ В ОГНЕ 🔥🔥🔥", role: "Хайпер" },
+        { user: "Memer_9000", text: "Противники в шоке удаляют игру 😂", role: "Мемодел" },
+      ]);
+    } else {
+      setMessages((prev) => [
+        ...prev.slice(-3),
+        { user: "Memer_9000", text: "Эпичный фейл года 💀 Срочно в нарезку!", role: "Мемодел" },
+        { user: "AI_Sniper", text: "Ошибся с таймингом гранаты на 0.4 сек, бывает", role: "Аналитик" },
+        { user: "HypeBoy_AI", text: "Ничего, в следующем раунде отыграемся!", role: "Хайпер" },
+      ]);
+    }
+  };
 
   return (
-    <TelegramShell botName="JobRadar" avatarClassName="bg-gradient-to-br from-slate-600 via-slate-800 to-emerald-900">
-      {/* Анимированный экран радара */}
-      <div className="absolute inset-0 flex items-center justify-center bg-black/40">
-        <div className="relative size-28 rounded-full border border-emerald-500/10 flex items-center justify-center overflow-hidden">
-          {/* Вращающийся луч */}
-          {active && (
-            <div className="absolute inset-0 origin-center animate-radar-spin bg-[conic-gradient(from_0deg,transparent_60%,rgba(16,185,129,0.25)_100%)] rounded-full" />
-          )}
-          {/* Сетка радара */}
-          <div className="absolute size-20 rounded-full border border-emerald-500/15" />
-          <div className="absolute size-12 rounded-full border border-emerald-500/20" />
-          <div className="absolute h-full w-[1px] bg-emerald-500/10" />
-          <div className="absolute w-full h-[1px] bg-emerald-500/10" />
-          
-          {/* Пульсирующие точки найденных вакансий */}
-          <AnimatePresence>
-            {active && pulsePoints.map((pt) => (
-              <motion.div
-                key={pt.id}
-                initial={{ opacity: 0, scale: 0 }}
-                animate={{ opacity: [0, 1, 0], scale: [0, 1.2, 0] }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 2.5, ease: "easeOut" }}
-                className="absolute size-2.5 rounded-full bg-emerald-400"
-                style={{ left: `${pt.x}%`, top: `${pt.y}%` }}
-              />
-            ))}
-          </AnimatePresence>
-        </div>
+    <div className="space-y-4 max-w-lg mx-auto w-full">
+      <div className="flex items-center gap-2">
+        <span className="text-[10px] text-zinc-500">Событие стрима:</span>
+        <button
+          type="button"
+          onClick={() => triggerEvent("clutch")}
+          className="flex-1 py-1.5 rounded-lg border border-white/20 bg-white/5 hover:bg-white hover:text-black font-bold text-xs transition-all cursor-pointer"
+        >
+          🔥 Клатч 1v3
+        </button>
+        <button
+          type="button"
+          onClick={() => triggerEvent("fail")}
+          className="flex-1 py-1.5 rounded-lg border border-white/20 bg-white/5 hover:bg-white hover:text-black font-bold text-xs transition-all cursor-pointer"
+        >
+          💀 Смешной фейл
+        </button>
       </div>
 
-      {/* Проплывающие карточки вакансий в чате */}
-      <div className="absolute bottom-2 inset-x-2.5 z-10 flex flex-col gap-1.5">
-        <div className="w-[85%] rounded-xl rounded-tl-md bg-[#182636] p-2.5 shadow-md border border-white/5">
-          <div className="flex items-center gap-1.5 mb-1.5 shrink-0">
-            <span className="size-2 rounded-full bg-emerald-400 animate-pulse" />
-            <div className="h-2 w-20 rounded bg-white/70" />
-          </div>
-          <div className="h-1.5 w-[90%] rounded bg-white/40" />
-          <div className="mt-1 h-1.5 w-[70%] rounded bg-white/30" />
+      <div className="rounded-xl border border-white/10 bg-[#07070A] p-4 space-y-2.5 max-h-56 overflow-y-auto">
+        <div className="text-[10px] text-zinc-500 border-b border-white/10 pb-1 flex justify-between">
+          <span>ЖИВОЙ ЧАТ // TWITCH STT + LLM AGENTS</span>
+          <span className="text-emerald-400">Whisper: 18ms</span>
         </div>
+        {messages.map((m, idx) => (
+          <div key={idx} className="text-xs leading-relaxed flex items-start gap-2">
+            <span className="text-cyan-400 font-bold shrink-0">[{m.user}]:</span>
+            <span className="text-zinc-200">{m.text}</span>
+          </div>
+        ))}
       </div>
-    </TelegramShell>
+    </div>
   );
 }
 
-function ProfitCheckMockup({ active }: { active: boolean }) {
-  const [price, setPrice] = useState("");
-  const [margin, setMargin] = useState(0);
+// -------------------------------------------------------------
+// 5. Aura.net Sandbox
+// -------------------------------------------------------------
+function AuraNetSandbox({ isSimple }: { isSimple: boolean }) {
+  const [aura, setAura] = useState(1420);
+  const [rank, setRank] = useState(3);
 
-  useEffect(() => {
-    if (!active) {
-      setPrice("");
-      setMargin(0);
-      return;
-    }
-
-    let isMounted = true;
-    
-    const runSimulation = async () => {
-      while (isMounted) {
-        // Очистка
-        setPrice("");
-        setMargin(0);
-        await new Promise((r) => setTimeout(r, 800));
-
-        // Печатаем "700+1000"
-        const text = "700+1000";
-        for (let i = 1; i <= text.length; i++) {
-          if (!isMounted) return;
-          setPrice(text.slice(0, i));
-          await new Promise((r) => setTimeout(r, 150));
-        }
-
-        await new Promise((r) => setTimeout(r, 400));
-
-        // Нарастание маржи до 1000
-        const duration = 1200;
-        const steps = 30;
-        const stepTime = duration / steps;
-        for (let i = 1; i <= steps; i++) {
-          if (!isMounted) return;
-          setMargin(Math.floor((1000 / steps) * i));
-          await new Promise((r) => setTimeout(r, stepTime));
-        }
-
-        await new Promise((r) => setTimeout(r, 3000));
-      }
-    };
-
-    runSimulation();
-
-    return () => {
-      isMounted = false;
-    };
-  }, [active]);
+  const changeAura = (delta: number) => {
+    setAura((prev) => {
+      const next = prev + delta;
+      if (next > 1500) setRank(1);
+      else if (next > 1400) setRank(2);
+      else setRank(4);
+      return next;
+    });
+  };
 
   return (
-    <TelegramShell botName="ProfitCheck" avatarClassName="bg-[radial-gradient(circle_at_35%_35%,#f8d38a,#6d4322_48%,#14161b_72%)]">
-      <div className="w-[85%] rounded-2xl rounded-tl-md bg-[#182636] p-3 border border-white/5 space-y-2">
-        <div className="text-[10px] text-slate-400 font-mono flex items-center justify-between border-b border-white/5 pb-1">
-          <span>Калькулятор цены</span>
-          <span className="text-emerald-400 font-bold">Активен</span>
-        </div>
-        <div className="space-y-1">
-          <div className="flex justify-between text-[9px] text-slate-500">
-            <span>Ввод:</span>
-            <span className="text-white font-mono">{price || "|"}</span>
+    <div className="space-y-4 max-w-lg mx-auto w-full">
+      <div className="rounded-xl border border-white/15 bg-[#09090D] p-5 space-y-4">
+        <div className="flex items-center justify-between border-b border-white/10 pb-3">
+          <div className="flex items-center gap-2.5">
+            <div className="size-8 rounded-full bg-gradient-to-br from-cyan-400 to-indigo-600 flex items-center justify-center font-bold text-black text-xs">
+              AN
+            </div>
+            <div>
+              <h4 className="font-bold text-white text-xs">Alex // Full-Stack Lead</h4>
+              <span className="text-[10px] text-zinc-500">Telegram Social Rating</span>
+            </div>
           </div>
-          <div className="h-1.5 w-full bg-white/10 rounded-full overflow-hidden">
-            <motion.div 
-              className="h-full bg-cyan-400"
-              initial={{ width: 0 }}
-              animate={active ? { width: "100%" } : { width: 0 }}
-              transition={{ duration: 1.5, repeat: Infinity, repeatDelay: 4 }}
+          <div className="text-right">
+            <span className="text-xs font-bold text-emerald-400">РАНГ #{rank}</span>
+            <div className="text-[10px] text-zinc-500">в сообществе</div>
+          </div>
+        </div>
+
+        <div className="text-center py-2">
+          <div className="text-3xl font-black font-mono text-white tracking-tight">
+            {aura} <span className="text-cyan-400 text-lg">AURA</span>
+          </div>
+          <div className="w-full bg-white/10 h-1.5 rounded-full mt-2 overflow-hidden">
+            <motion.div
+              className="bg-gradient-to-r from-cyan-400 to-emerald-400 h-full"
+              style={{ width: `${Math.min(100, Math.max(10, (aura / 2000) * 100))}%` }}
+              transition={{ type: "spring", stiffness: 300, damping: 25 }}
             />
           </div>
         </div>
-        <div className="pt-1 flex items-center justify-between border-t border-white/5 font-mono">
-          <span className="text-[9px] text-slate-400">Чистая прибыль:</span>
-          <span className="text-xs text-emerald-400 font-black">+{margin} ₽</span>
-        </div>
-      </div>
-    </TelegramShell>
-  );
-}
 
-const mockUsers = ["Алиса", "Максим", "Елена", "Денис", "Анна", "Влад"];
-const mockTexts = [
-  "Стрим просто огонь! 🔥",
-  "Отличная архитектура проекта.",
-  "А бот реагирует на голос?",
-  "STT модель работает супер.",
-  "Интересный концепт Twitch AI.",
-  "Крутая реализация ботов!"
-];
-
-function TwitchMockup({ active }: { active: boolean }) {
-  const [chatMessages, setChatMessages] = useState<{ sender: string; text: string; id: number }[]>([]);
-  const nextId = useRef(0);
-
-  useEffect(() => {
-    if (!active) {
-      setChatMessages([]);
-      return;
-    }
-
-    // Инициализация парой сообщений
-    setChatMessages([
-      { sender: "Система", text: "Подключение к Twitch чату...", id: nextId.current++ },
-      { sender: "Бот-Ассистент", text: "ИИ-модель активна", id: nextId.current++ }
-    ]);
-
-    const interval = setInterval(() => {
-      const randomUser = mockUsers[Math.floor(Math.random() * mockUsers.length)];
-      const randomText = mockTexts[Math.floor(Math.random() * mockTexts.length)];
-      
-      setChatMessages((prev) => {
-        const next = [...prev, { sender: randomUser, text: randomText, id: nextId.current++ }];
-        if (next.length > 4) next.shift();
-        return next;
-      });
-    }, 2200);
-
-    return () => clearInterval(interval);
-  }, [active]);
-
-  return (
-    <div className="flex h-[224px] w-full max-w-[360px] overflow-hidden rounded-xl border border-[#272846] bg-[#0d0d15] shadow-2xl relative">
-      {/* Главный экран стрима */}
-      <div className="flex flex-1 flex-col p-3 relative z-10">
-        <div className="flex items-center gap-2 mb-2">
-          <div className="size-4 rounded-sm border-2 border-[#8c34ff] bg-[#261044] flex items-center justify-center">
-            <span className="text-[7px] text-purple-300">T</span>
-          </div>
-          <div className="h-3 w-28 rounded bg-white/80" />
-          {/* Индикатор LIVE */}
-          <div className="ml-auto flex items-center gap-1.5 rounded bg-red-600/20 px-2 py-0.5 border border-red-600/40">
-            <span className="size-1.5 rounded-full bg-red-500 animate-pulse" />
-            <span className="text-[7px] font-black tracking-wider text-red-400 uppercase">В эфире</span>
-          </div>
-        </div>
-
-        {/* Чат ботов */}
-        <div className="flex-1 flex flex-col justify-end bg-black/40 rounded-lg p-2 border border-white/5 overflow-hidden font-mono text-[9px]">
-          <div className="flex flex-col gap-1.5">
-            <AnimatePresence initial={false}>
-              {chatMessages.map((msg) => (
-                <motion.div
-                  key={msg.id}
-                  initial={{ opacity: 0, x: -10 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: 10 }}
-                  className="flex flex-col border-l-2 border-purple-500/40 pl-1.5"
-                >
-                  <span className="text-purple-400 font-bold text-[8px]">{msg.sender}</span>
-                  <span className="text-slate-300">{msg.text}</span>
-                </motion.div>
-              ))}
-            </AnimatePresence>
-          </div>
-        </div>
-      </div>
-
-      {/* Боковая панель */}
-      <div className="flex w-[26%] flex-col border-l border-[#2a2b43] bg-[#121219] p-2 shrink-0">
-        <div className="h-1.5 w-12 rounded bg-slate-700/60 mb-2 shrink-0" />
-        <div className="flex-1 flex flex-col justify-center gap-2">
-          <div className="h-1.5 w-14 rounded bg-slate-800" />
-          <div className="h-1.5 w-10 rounded bg-slate-800" />
-          <div className="h-1.5 w-12 rounded bg-slate-800" />
-        </div>
-        <div className="h-5 rounded bg-purple-600/20 border border-purple-500/20 text-[7px] text-purple-300 font-mono font-bold flex items-center justify-center shrink-0">
-          AI SYSTEM
+        <div className="grid grid-cols-2 gap-3 pt-1">
+          <button
+            type="button"
+            onClick={() => changeAura(10)}
+            className="py-2 px-3 rounded-lg border border-emerald-500/30 bg-emerald-500/10 text-emerald-300 font-bold hover:bg-emerald-500 hover:text-black transition-all cursor-pointer text-xs"
+          >
+            +10 AURA (Респект)
+          </button>
+          <button
+            type="button"
+            onClick={() => changeAura(-10)}
+            className="py-2 px-3 rounded-lg border border-rose-500/30 bg-rose-500/10 text-rose-300 font-bold hover:bg-rose-500 hover:text-black transition-all cursor-pointer text-xs"
+          >
+            -10 AURA (Сломал прод)
+          </button>
         </div>
       </div>
     </div>
   );
 }
 
-function AuraNetMockup({ active }: { active: boolean }) {
-  const [pulseCount, setPulseCount] = useState(0);
+// -------------------------------------------------------------
+// 6. ProfitCheck Sandbox
+// -------------------------------------------------------------
+function ProfitCheckSandbox({ isSimple }: { isSimple: boolean }) {
+  const [dealSum, setDealSum] = useState(30000);
+  const [isUrgent, setIsUrgent] = useState(false);
 
-  useEffect(() => {
-    if (!active) return;
-    const interval = setInterval(() => {
-      setPulseCount((prev) => prev + 1);
-    }, 1800);
-    return () => clearInterval(interval);
-  }, [active]);
-
-  return (
-    <div className="relative h-[224px] w-full max-w-[360px] overflow-hidden rounded-xl border border-white/10 bg-black shadow-2xl">
-      {/* Неоновая сетка */}
-      <div className="absolute inset-0 bg-[linear-gradient(rgba(168,85,247,.08)_1px,transparent_1px),linear-gradient(90deg,rgba(168,85,247,.08)_1px,transparent_1px)] bg-[size:20px_20px]" />
-      
-      {/* Декоративная подсветка */}
-      <div className="absolute -top-10 left-1/2 -translate-x-1/2 size-44 rounded-full bg-purple-500/10 blur-2xl" />
-
-      <div className="absolute inset-x-0 top-0 flex h-10 items-center border-b border-white/10 px-3 z-10 bg-black/60 backdrop-blur-md">
-        <div className="text-[11px] font-black leading-none text-[#a63cff]">AURA<span className="text-white/70">.NET</span></div>
-        <div className="ml-auto flex gap-1.5">
-          <div className="h-4.5 w-11 rounded border border-white/10" />
-          <div className="h-4.5 w-12 rounded border border-[#a63cff]/50 bg-[#a63cff]/15 flex items-center justify-center">
-            <span className="size-1 rounded-full bg-[#a63cff] animate-ping" />
-          </div>
-        </div>
-      </div>
-
-      <div className="relative z-10 flex h-full flex-col items-center justify-center pt-8">
-        <div className="mb-2 rounded-full border border-purple-500/40 bg-purple-950/20 px-4 py-1 text-[9px] font-bold text-purple-300 shadow-[0_0_15px_rgba(168,85,247,.1)]">
-          Бета · ранний доступ
-        </div>
-        <div className="text-center text-[40px] font-black leading-none tracking-tight text-white">
-          AURA<span className="text-purple-400">.NET</span>
-        </div>
-        <div className="mt-2 h-1 w-28 rounded bg-white/20 relative overflow-hidden">
-          <motion.div
-            className="absolute inset-y-0 bg-purple-500"
-            initial={{ left: "-100%", width: "100%" }}
-            animate={active ? { left: ["-100%", "100%"] } : { left: "-100%" }}
-            transition={{ duration: 2.2, repeat: Infinity, ease: "easeInOut" }}
-          />
-        </div>
-        <div className="mt-5 flex gap-2.5">
-          <div className="h-7 w-20 rounded bg-purple-600 shadow-[0_0_15px_rgba(168,85,247,.4)] flex items-center justify-center text-[8px] font-bold text-white uppercase tracking-wider">Открыть</div>
-          <div className="h-7 w-20 rounded border border-white/15 bg-black/20" />
-        </div>
-      </div>
-
-      {/* Пульсирующие волны сети */}
-      <AnimatePresence>
-        {active && (
-          <motion.div
-            key={pulseCount}
-            initial={{ opacity: 0.5, scale: 0.6 }}
-            animate={{ opacity: 0, scale: 1.3 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 1.8, ease: "easeOut" }}
-            className="absolute inset-0 border border-purple-500/20 rounded-xl pointer-events-none"
-          />
-        )}
-      </AnimatePresence>
-    </div>
-  );
-}
-
-const statuses = [
-  "Импорт медиа...",
-  "Анализ видеоряда...",
-  "Нарезка клипов...",
-  "Рендеринг аудио...",
-  "Обработка клипа №1...",
-  "Завершено!"
-];
-
-function AutoClipMockup({ active }: { active: boolean }) {
-  const [progress, setProgress] = useState(0);
-  const [statusIdx, setStatusIdx] = useState(0);
-
-  useEffect(() => {
-    if (!active) {
-      setProgress(0);
-      setStatusIdx(0);
-      return;
-    }
-
-    const interval = setInterval(() => {
-      setProgress((prev) => {
-        if (prev >= 100) {
-          setStatusIdx(0);
-          return 0;
-        }
-        const next = prev + 1.5;
-        // Переключение статусов на основе прогресса
-        const step = Math.floor((next / 100) * statuses.length);
-        if (step < statuses.length) setStatusIdx(step);
-        return next;
-      });
-    }, 100);
-
-    return () => clearInterval(interval);
-  }, [active]);
+  const multiplier = isUrgent ? 1.4 : 1.0;
+  const gross = Math.round(dealSum * multiplier);
+  const platformFee = Math.round(gross * 0.1);
+  const withdrawalFee = Math.round(gross * 0.03);
+  const netProfit = gross - platformFee - withdrawalFee;
 
   return (
-    <div className="flex h-[224px] w-full max-w-[360px] flex-col overflow-hidden rounded-xl border border-[#444] bg-[#1e1e1e] shadow-2xl font-mono text-[8px]">
-      <div className="flex h-6 items-center border-b border-[#333] bg-[#141414] px-2.5 shrink-0">
-        <div className="mr-2 size-0 border-y-[4px] border-l-[6px] border-y-transparent border-l-purple-500" />
-        <div className="h-1.5 w-24 rounded bg-white/70" />
-        <div className="ml-auto flex gap-1.5">
-          <div className="size-1.5 rounded-full bg-slate-600" />
-          <div className="size-1.5 rounded-full bg-slate-600" />
-        </div>
+    <div className="space-y-4 max-w-lg mx-auto w-full">
+      <div className="flex items-center gap-2">
+        <span className="text-[10px] text-zinc-500">Сумма заказа:</span>
+        {[20000, 35000, 50000].map((val) => (
+          <button
+            key={val}
+            type="button"
+            onClick={() => setDealSum(val)}
+            className={`px-3 py-1 rounded text-xs font-bold transition-all cursor-pointer ${
+              dealSum === val
+                ? "bg-white text-black"
+                : "border border-white/10 bg-white/5 text-zinc-400 hover:text-white"
+            }`}
+          >
+            {val.toLocaleString()} ₽
+          </button>
+        ))}
+        <button
+          type="button"
+          onClick={() => setIsUrgent(!isUrgent)}
+          className={`ml-auto px-2.5 py-1 rounded text-[10px] font-bold transition-all cursor-pointer ${
+            isUrgent ? "bg-amber-400 text-black" : "bg-white/10 text-zinc-400"
+          }`}
+        >
+          {isUrgent ? "Срочный x1.4" : "Обычный"}
+        </button>
       </div>
 
-      <div className="flex border-b border-[#333] bg-[#222] text-slate-500 shrink-0">
-        <div className="h-6 border-r border-[#333] px-3 pt-1.5 bg-[#2d2d2d] text-white">Редактор</div>
-        <div className="h-6 border-r border-[#333] px-3 pt-1.5">Логи</div>
-      </div>
+      <div className="rounded-xl border border-white/15 bg-[#09090D] p-4 space-y-3">
+        <div className="flex justify-between items-center border-b border-white/10 pb-2">
+          <span className="text-zinc-400 text-xs">Итоговая цена клиенту:</span>
+          <span className="text-base font-bold text-white">{gross.toLocaleString()} ₽</span>
+        </div>
 
-      <div className="p-2 space-y-2 flex-1 flex flex-col justify-between overflow-hidden">
-        {/* Прогресс рендеринга */}
-        <div className="bg-black/40 border border-white/5 rounded p-2 space-y-1.5 shrink-0">
-          <div className="flex justify-between items-center text-[7px]">
-            <span className="text-slate-400">Процесс нарезки</span>
-            <span className={progress >= 100 ? "text-emerald-400 font-bold" : "text-purple-400 animate-pulse"}>
-              {statuses[statusIdx]}
-            </span>
+        <div className="space-y-1.5 text-[11px] text-zinc-400">
+          <div className="flex justify-between">
+            <span>Комиссия биржи / сервиса (10%):</span>
+            <span className="text-rose-400">-{platformFee.toLocaleString()} ₽</span>
           </div>
-          <div className="h-2 w-full bg-white/10 rounded-full overflow-hidden relative">
-            <div className="h-full bg-purple-500" style={{ width: `${progress}%` }} />
+          <div className="flex justify-between">
+            <span>Комиссия на вывод (3%):</span>
+            <span className="text-rose-400">-{withdrawalFee.toLocaleString()} ₽</span>
           </div>
         </div>
 
-        {/* Псевдо-таблица клипов */}
-        <div className="flex-1 border border-white/5 rounded bg-black/20 overflow-hidden flex flex-col">
-          <div className="grid grid-cols-4 border-b border-white/5 bg-black/40 p-1 font-bold text-slate-500">
-            <span>Файл</span>
-            <span>Таймкод</span>
-            <span>Вес</span>
-            <span>Статус</span>
-          </div>
-          <div className="flex-1 flex flex-col justify-start">
-            <div className="grid grid-cols-4 p-1 text-slate-300 border-b border-white/5 bg-black/10">
-              <span className="truncate">clip_01.mp4</span>
-              <span>00:12 - 00:24</span>
-              <span>12 MB</span>
-              <span className={progress > 30 ? "text-emerald-400 font-bold" : "text-purple-400 animate-pulse"}>
-                {progress > 30 ? "Готово" : "Рендер"}
-              </span>
-            </div>
-            <div className="grid grid-cols-4 p-1 text-slate-300 border-b border-white/5">
-              <span className="truncate">clip_02.mp4</span>
-              <span>01:45 - 02:08</span>
-              <span>24 MB</span>
-              <span className={progress > 60 ? "text-emerald-400 font-bold" : progress > 30 ? "text-purple-400 animate-pulse" : "text-slate-600"}>
-                {progress > 60 ? "Готово" : progress > 30 ? "Рендер" : "Ожидание"}
-              </span>
-            </div>
-            <div className="grid grid-cols-4 p-1 text-slate-300">
-              <span className="truncate">clip_03.mp4</span>
-              <span>03:10 - 03:32</span>
-              <span>18 MB</span>
-              <span className={progress >= 100 ? "text-emerald-400 font-bold" : progress > 60 ? "text-purple-400 animate-pulse" : "text-slate-600"}>
-                {progress >= 100 ? "Готово" : progress > 60 ? "Рендер" : "Ожидание"}
-              </span>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function BabushkaMockup({ active }: { active: boolean }) {
-  const [stage, setStage] = useState(0);
-
-  useEffect(() => {
-    if (!active) {
-      setStage(0);
-      return;
-    }
-    const interval = setInterval(() => {
-      setStage((prev) => (prev + 1) % 4);
-    }, 2500);
-    return () => clearInterval(interval);
-  }, [active]);
-
-  return (
-    <TelegramShell
-      botName="Магия Бабушки"
-      avatarClassName="bg-gradient-to-br from-purple-600 via-pink-700 to-amber-500"
-    >
-      <div className="absolute inset-0 flex flex-col bg-[#0f0e17] text-white p-2.5 font-sans relative overflow-hidden select-none">
-        {/* Mystic glowing background elements */}
-        <div className="absolute -top-12 -left-12 size-24 rounded-full bg-purple-500/20 blur-xl animate-pulse" />
-        <div className="absolute -bottom-12 -right-12 size-24 rounded-full bg-pink-500/20 blur-xl animate-pulse" />
-
-        {/* WebApp Header */}
-        <div className="flex items-center justify-between border-b border-purple-500/20 pb-1.5 mb-2 shrink-0">
-          <span className="text-[8px] font-bold tracking-wider text-purple-300 uppercase">
-            Магия Бабушки
+        <div className="flex justify-between items-center pt-2 border-t border-white/10">
+          <span className="text-xs font-bold text-white">Чистая прибыль:</span>
+          <span className="text-lg font-black text-emerald-400 font-mono">
+            +{netProfit.toLocaleString()} ₽
           </span>
-          <span className="text-[7px] text-pink-400 font-mono">ИИ Гадалка</span>
-        </div>
-
-        {/* WebApp Body */}
-        <div className="flex-1 flex flex-col justify-between overflow-hidden">
-          {/* Card Selection Stage */}
-          {stage === 0 && (
-            <div className="flex-1 flex flex-col items-center justify-center gap-1.5">
-              <div className="text-[8px] text-center text-slate-300">Выберите тему расклада</div>
-              <div className="flex gap-1.5 w-full justify-center">
-                <div className="px-2 py-1 rounded bg-purple-950/40 border border-purple-500/30 text-[7px] text-purple-200">Любовь</div>
-                <div className="px-2 py-1 rounded bg-purple-950/40 border border-purple-500/30 text-[7px] text-purple-200">Карьера</div>
-                <div className="px-2 py-1 rounded bg-purple-950/40 border border-purple-500/30 text-[7px] text-purple-200">Судьба</div>
-              </div>
-            </div>
-          )}
-
-          {/* Shuffling Cards Stage */}
-          {stage === 1 && (
-            <div className="flex-1 flex items-center justify-center gap-1">
-              <motion.div
-                animate={{ y: [-4, 4, -4], rotate: [-5, 5, -5] }}
-                transition={{ duration: 1.5, repeat: Infinity }}
-                className="w-6 h-10 rounded border border-purple-500/40 bg-purple-900/30 flex items-center justify-center shadow-lg"
-              >
-                <span className="text-[8px] text-purple-300">★</span>
-              </motion.div>
-              <motion.div
-                animate={{ y: [4, -4, 4], rotate: [5, -5, 5] }}
-                transition={{ duration: 1.5, repeat: Infinity }}
-                className="w-6 h-10 rounded border border-pink-500/40 bg-pink-900/30 flex items-center justify-center shadow-lg"
-              >
-                <span className="text-[8px] text-pink-300">★</span>
-              </motion.div>
-              <motion.div
-                animate={{ y: [-2, 2, -2], rotate: [-2, 2, -2] }}
-                transition={{ duration: 1.5, repeat: Infinity }}
-                className="w-6 h-10 rounded border border-purple-500/40 bg-purple-900/30 flex items-center justify-center shadow-lg"
-              >
-                <span className="text-[8px] text-purple-300">★</span>
-              </motion.div>
-            </div>
-          )}
-
-          {/* Prompt / Thinking Stage */}
-          {stage === 2 && (
-            <div className="flex-1 flex flex-col items-center justify-center gap-2">
-              <div className="flex gap-1">
-                <span className="size-1.5 rounded-full bg-purple-500 animate-bounce" style={{ animationDelay: "0ms" }} />
-                <span className="size-1.5 rounded-full bg-pink-500 animate-bounce" style={{ animationDelay: "150ms" }} />
-                <span className="size-1.5 rounded-full bg-amber-500 animate-bounce" style={{ animationDelay: "300ms" }} />
-              </div>
-              <div className="text-[7px] text-slate-400 font-mono animate-pulse">Бабушка тасует карты и думает...</div>
-            </div>
-          )}
-
-          {/* Result / Text Output Stage */}
-          {stage === 3 && (
-            <div className="flex-1 flex flex-col gap-1.5 overflow-hidden">
-              <div className="text-[7px] font-bold text-amber-300">Расклад «Карта Судьбы»:</div>
-              <div className="flex-1 text-[7px] leading-3 text-slate-200 overflow-hidden text-ellipsis border-l border-purple-500/30 pl-1.5">
-                Ваш путь озарен светом ИИ-мудрости. Впереди новые вызовы, но prompt-архитектура защитит вас от ошибок. Ожидайте успеха!
-              </div>
-            </div>
-          )}
-
-          {/* WebApp Action Button */}
-          <div className="h-6 mt-1.5 shrink-0 rounded bg-gradient-to-r from-purple-600 to-pink-600 flex items-center justify-center text-[7px] font-bold text-white uppercase tracking-wider shadow-[0_0_10px_rgba(168,85,247,0.3)]">
-            Получить предсказание
-          </div>
         </div>
       </div>
-    </TelegramShell>
+    </div>
   );
 }
 
-function FallbackMockup() {
+// -------------------------------------------------------------
+// 7. AutoClip Sandbox
+// -------------------------------------------------------------
+function AutoClipSandbox({ isSimple }: { isSimple: boolean }) {
+  const [step, setStep] = useState<0 | 1 | 2 | 3>(0);
+  const [isRunning, setIsRunning] = useState(false);
+
+  const startPipeline = () => {
+    setIsRunning(true);
+    setStep(1);
+    setTimeout(() => {
+      setStep(2);
+      setTimeout(() => {
+        setStep(3);
+        setIsRunning(false);
+      }, 1200);
+    }, 1000);
+  };
+
   return (
-    <div className="grid size-32 place-items-center rounded-2xl border border-white/10 bg-black/5">
-      <div className="size-16 rounded-full border border-cyan-500/10" />
+    <div className="space-y-4 max-w-lg mx-auto w-full">
+      <div className="flex items-center justify-between">
+        <span className="text-xs text-zinc-400">Конвейер нарезки 9:16 Shorts</span>
+        <button
+          type="button"
+          onClick={startPipeline}
+          disabled={isRunning}
+          className="bg-white text-black hover:bg-zinc-200 px-3.5 py-1.5 rounded-lg font-bold text-xs transition-all cursor-pointer flex items-center gap-1.5"
+        >
+          <Play size={11} />
+          <span>{isRunning ? "Обработка..." : "Запустить клиппинг"}</span>
+        </button>
+      </div>
+
+      <div className="rounded-xl border border-white/10 bg-[#07070A] p-4 space-y-3">
+        {[
+          { num: 1, title: "Детекция звукового всплеска", detail: "Аудио-пик +18dB на 14:20" },
+          { num: 2, title: "MediaPipe Face Mesh трекинг", detail: "Удержание лица в 9:16 рамке" },
+          { num: 3, title: "Аппаратный рендер FFmpeg", detail: "Готово: short_clip_01.mp4" },
+        ].map((s) => (
+          <div
+            key={s.num}
+            className={`flex items-center justify-between p-2.5 rounded-lg border transition-all ${
+              step >= s.num
+                ? "border-emerald-500/30 bg-emerald-500/10 text-white"
+                : "border-white/5 bg-white/[0.02] text-zinc-500"
+            }`}
+          >
+            <div className="flex items-center gap-2">
+              <span className={`size-5 rounded-full flex items-center justify-center text-[10px] font-bold ${
+                step >= s.num ? "bg-emerald-500 text-black" : "bg-white/10 text-zinc-400"
+              }`}>
+                {step >= s.num ? "✓" : s.num}
+              </span>
+              <span className="text-xs font-bold">{s.title}</span>
+            </div>
+            <span className="text-[10px] font-mono text-zinc-400">{s.detail}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+// -------------------------------------------------------------
+// 8. Магия Бабушки Sandbox
+// -------------------------------------------------------------
+const BABUSHKA_TEXTS = {
+  coffee: "Вижу по кофейной гуще: проект твой сложный, но к концу недели ждет тебя уверенный релиз и довольный заказчик!",
+  tarot: "Выпала карта «Колесница»: пора двигаться вперед без сомнений, все сервисы выдержат нагрузку!",
+  palm: "Линия ума глубокая и четкая: архитектура надежная, базы данных настроены без единого узкого места.",
+};
+
+function BabushkaMagicSandbox({ isSimple }: { isSimple: boolean }) {
+  const [mode, setMode] = useState<"coffee" | "tarot" | "palm">("coffee");
+  const [streamText, setStreamText] = useState("");
+  const [isTyping, setIsTyping] = useState(false);
+  const intervalRef = useRef<NodeJS.Timeout | null>(null);
+
+  const startOracle = useCallback((m: "coffee" | "tarot" | "palm") => {
+    if (intervalRef.current) {
+      clearInterval(intervalRef.current);
+    }
+    setMode(m);
+    setStreamText("");
+    setIsTyping(true);
+
+    const full = BABUSHKA_TEXTS[m];
+    let i = 0;
+    intervalRef.current = setInterval(() => {
+      i += 3;
+      if (i >= full.length) {
+        setStreamText(full);
+        setIsTyping(false);
+        if (intervalRef.current) clearInterval(intervalRef.current);
+      } else {
+        setStreamText(full.slice(0, i));
+      }
+    }, 25);
+  }, []);
+
+  useEffect(() => {
+    startOracle("coffee");
+    return () => {
+      if (intervalRef.current) clearInterval(intervalRef.current);
+    };
+  }, [startOracle]);
+
+  return (
+    <div className="space-y-4 max-w-lg mx-auto w-full">
+      <div className="flex items-center gap-2 p-1.5 rounded-xl border border-white/10 bg-[#121216]">
+        {(["coffee", "tarot", "palm"] as const).map((m) => (
+          <button
+            key={m}
+            type="button"
+            onClick={() => startOracle(m)}
+            className={`flex-1 py-1.5 rounded-lg text-center font-bold text-xs transition-all cursor-pointer ${
+              mode === m ? "bg-white text-black" : "text-zinc-400 hover:text-white"
+            }`}
+          >
+            {m === "coffee" ? "Кофе" : m === "tarot" ? "Таро" : "Ладонь"}
+          </button>
+        ))}
+      </div>
+
+      <div className="rounded-xl border border-purple-500/30 bg-[#0B0810] p-4 space-y-3 min-h-[140px] flex flex-col justify-between">
+        <div className="flex items-center justify-between border-b border-white/10 pb-1.5 text-[10px] text-zinc-400">
+          <span>🔮 БАБУШКА MAGIC // LLM ORACLE</span>
+          <span className="text-purple-300 font-bold">Claude 3.5 Sonnet</span>
+        </div>
+
+        <p className="text-xs sm:text-sm text-purple-100 leading-relaxed font-mono">
+          {streamText}
+          {isTyping && <span className="inline-block w-2 h-3.5 bg-purple-300 ml-1 animate-pulse" />}
+        </p>
+
+        <div className="text-[10px] text-zinc-500 pt-1 border-t border-white/5 flex justify-between">
+          <span>Сессия сохранена в PostgreSQL</span>
+          <span>Latency: 22ms</span>
+        </div>
+      </div>
     </div>
   );
 }

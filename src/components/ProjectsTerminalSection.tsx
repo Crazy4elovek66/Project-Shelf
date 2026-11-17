@@ -21,6 +21,7 @@ import {
   Monitor,
 } from "lucide-react";
 import { projects, getProjectId, type Project } from "@/data/projects";
+import { StatusBadge } from "./Badges";
 import { ProjectVisual } from "./ProjectVisual";
 import { useLanguageMode } from "@/context/LanguageModeContext";
 import { SmoothModeText } from "./SmoothModeText";
@@ -32,6 +33,8 @@ const tabNames = [
   "04_profitcheck.tsx",
   "05_autoclip.py",
   "06_babushka_magic.ts",
+  "07_rakomania.py",
+  "08_dota_overlay.ts",
 ];
 
 export function ProjectsTerminalSection() {
@@ -46,6 +49,8 @@ export function ProjectsTerminalSection() {
     "04. ProfitCheck",
     "05. AutoClip",
     "06. Магия Бабушки",
+    "07. Ракомания",
+    "08. DotaOverlay",
   ];
 
   const currentTabs = isSimple ? simpleTabNames : tabNames;
@@ -249,23 +254,24 @@ function AdaptiveScreenshotFrame({
     return (
       <div
         onClick={onClick}
-        className="relative z-10 w-full max-w-[520px] aspect-[16/10] rounded-xl border border-white/15 bg-black shadow-2xl overflow-hidden cursor-zoom-in group flex flex-col transition-all duration-300 hover:border-white/30"
+        className="relative z-10 w-full max-w-[520px] aspect-[16/10] rounded-xl border border-white/15 bg-black shadow-2xl overflow-hidden cursor-zoom-in group flex flex-col transition-all duration-300 hover:border-white/30 select-none no-select-media"
       >
-        <div className="h-6 bg-[#16161A] border-b border-white/10 flex items-center px-3 gap-1.5 shrink-0">
+        <div className="h-6 bg-[#16161A] border-b border-white/10 flex items-center px-3 gap-1.5 shrink-0 select-none">
           <span className="size-2 rounded-full bg-zinc-600" />
           <span className="size-2 rounded-full bg-zinc-600" />
           <span className="size-2 rounded-full bg-zinc-600" />
-          <span className="ml-2 font-mono text-[9px] text-zinc-500 truncate">
+          <span className="ml-2 font-mono text-[9px] text-zinc-500 truncate select-none">
             https://{title.toLowerCase().replace(/[^a-z0-9]/g, "")}.app
           </span>
         </div>
-        <div className="relative flex-1 w-full bg-black">
+        <div className="relative flex-1 w-full bg-black select-none">
           <Image
             src={src}
             alt={alt}
             fill
             sizes="520px"
-            className="object-cover object-top"
+            draggable={false}
+            className="object-cover object-top select-none pointer-events-none no-select-media"
           />
         </div>
         <div className="absolute inset-0 bg-white/5 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none" />
@@ -278,27 +284,28 @@ function AdaptiveScreenshotFrame({
     return (
       <div
         onClick={onClick}
-        className="relative z-10 w-full max-w-[460px] rounded-xl border border-white/15 bg-[#09090B] shadow-2xl overflow-hidden cursor-zoom-in group flex flex-col transition-all duration-300 hover:border-white/30"
+        className="relative z-10 w-full max-w-[460px] rounded-xl border border-white/15 bg-[#09090B] shadow-2xl overflow-hidden cursor-zoom-in group flex flex-col transition-all duration-300 hover:border-white/30 select-none no-select-media"
         style={{ aspectRatio: `${ratio}` }}
       >
-        <div className="h-6 bg-[#16161C] border-b border-white/10 flex items-center px-3 gap-2 shrink-0">
+        <div className="h-6 bg-[#16161C] border-b border-white/10 flex items-center px-3 gap-2 shrink-0 select-none">
           <div className="size-2 rounded-full bg-emerald-500/80" />
-          <span className="font-mono text-[9px] text-zinc-400 font-bold truncate">
+          <span className="font-mono text-[9px] text-zinc-400 font-bold truncate select-none">
             Telegram Desktop // {title}
           </span>
-          <div className="ml-auto flex items-center gap-1.5 text-zinc-600 text-[9px]">
+          <div className="ml-auto flex items-center gap-1.5 text-zinc-600 text-[9px] select-none">
             <span>—</span>
             <span>□</span>
             <span>✕</span>
           </div>
         </div>
-        <div className="relative flex-1 w-full bg-black">
+        <div className="relative flex-1 w-full bg-black select-none">
           <Image
             src={src}
             alt={alt}
             fill
             sizes="460px"
-            className="object-contain object-top"
+            draggable={false}
+            className="object-contain object-top select-none pointer-events-none no-select-media"
           />
         </div>
         <div className="absolute inset-0 bg-white/5 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none" />
@@ -311,24 +318,25 @@ function AdaptiveScreenshotFrame({
     <div
       onClick={onClick}
       style={{ aspectRatio: `${ratio}` }}
-      className="relative z-10 mx-auto flex h-[430px] sm:h-[470px] lg:h-[500px] w-auto max-w-full items-center justify-center rounded-[28px] border border-white/25 bg-[#09090B] p-1.5 shadow-[0_24px_60px_rgba(0,0,0,0.9)] cursor-zoom-in group transition-all duration-300 hover:border-white/40"
+      className="relative z-10 mx-auto flex h-[430px] sm:h-[470px] lg:h-[500px] w-auto max-w-full items-center justify-center rounded-[28px] border border-white/25 bg-[#09090B] p-1.5 shadow-[0_24px_60px_rgba(0,0,0,0.9)] cursor-zoom-in group transition-all duration-300 hover:border-white/40 select-none no-select-media"
     >
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute top-2.5 left-1/2 z-20 h-1 w-12 -translate-x-1/2 rounded-full bg-white/20"
+        className="pointer-events-none absolute top-2.5 left-1/2 z-20 h-1 w-12 -translate-x-1/2 rounded-full bg-white/20 select-none"
       />
-      <div className="relative h-full w-full overflow-hidden rounded-[22px] bg-[#050505]">
+      <div className="relative h-full w-full overflow-hidden rounded-[22px] bg-[#050505] select-none">
         <Image
           src={src}
           alt={alt}
           fill
           sizes="340px"
-          className="h-full w-full object-cover object-top transition-transform duration-300 group-hover:scale-[1.01]"
+          draggable={false}
+          className="h-full w-full object-cover object-top transition-transform duration-300 group-hover:scale-[1.01] select-none pointer-events-none no-select-media"
         />
       </div>
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute bottom-2.5 left-1/2 z-20 h-1 w-16 -translate-x-1/2 rounded-full bg-white/20"
+        className="pointer-events-none absolute bottom-2.5 left-1/2 z-20 h-1 w-16 -translate-x-1/2 rounded-full bg-white/20 select-none"
       />
       <div className="absolute inset-0 bg-white/5 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-30 rounded-[28px]" />
     </div>
@@ -459,9 +467,7 @@ function SingleProjectInspector({ project, index }: { project: Project; index: n
                 </span>
               </div>
               <div className="flex items-center gap-2">
-                <span className="rounded border border-white/20 bg-white/[0.04] px-2 py-0.5 text-[10px] text-white">
-                  {project.status}
-                </span>
+                <StatusBadge status={project.status} />
                 {project.updatedAt && (
                   <span className="rounded border border-white/10 px-2 py-0.5 text-[10px] text-zinc-400">
                     {project.updatedAt}

@@ -1,14 +1,25 @@
+import dynamic from "next/dynamic";
 import { Header } from "@/components/Header";
 import { HeroSection } from "@/components/HeroSection";
 import { KineticMarquee } from "@/components/KineticMarquee";
 import { ProjectPreviewStrip } from "@/components/ProjectPreviewStrip";
 import { EngineeringBaseSection } from "@/components/EngineeringBaseSection";
-import { ProjectsTerminalSection } from "@/components/ProjectsTerminalSection";
-import { AiConsoleSection } from "@/components/AiConsoleSection";
 import { ContactSection } from "@/components/ContactSection";
 import { Footer } from "@/components/Footer";
 import { ScrollToTop } from "@/components/ScrollToTop";
-import { CommandPaletteModal } from "@/components/CommandPaletteModal";
+
+// Dynamic imports with SSR for below-the-fold sections
+const ProjectsTerminalSection = dynamic(
+  () => import("@/components/ProjectsTerminalSection").then((m) => m.ProjectsTerminalSection)
+);
+
+const AiConsoleSection = dynamic(
+  () => import("@/components/AiConsoleSection").then((m) => m.AiConsoleSection)
+);
+
+const CommandPaletteModal = dynamic(
+  () => import("@/components/CommandPaletteModal").then((m) => m.CommandPaletteModal)
+);
 
 export default function Home() {
   return (

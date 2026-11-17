@@ -204,7 +204,7 @@ export function HeroSection() {
                 className="block text-white"
                 style={{
                   textShadow:
-                    "0 2px 14px rgba(5, 5, 5, 0.95), 0 0 24px rgba(5, 5, 5, 0.9), 0 0 4px rgba(5, 5, 5, 1)",
+                    "0 0 3px #050505, 0 0 8px #050505, 0 2px 16px rgba(5, 5, 5, 0.98), 0 0 28px rgba(0, 0, 0, 0.95)",
                 }}
               >
                 FULL-STACK
@@ -241,7 +241,7 @@ export function HeroSection() {
             {/* Micro stats counter */}
             <div className="lg:col-span-4 flex items-center justify-between lg:justify-end gap-6 font-mono text-xs border-t lg:border-t-0 border-white/10 pt-2 lg:pt-0">
               <div>
-                <div className="text-2xl font-bold font-mono text-white">6+</div>
+                <div className="text-2xl font-bold font-mono text-white">8+</div>
                 <SmoothModeText as="div" className="text-zinc-500 uppercase text-[10px]">
                   {isSimple ? "ГОТОВЫХ ПРОЕКТОВ" : "КЕЙСОВ В ПРОДЕ"}
                 </SmoothModeText>
@@ -270,7 +270,7 @@ export function HeroSection() {
               className="group inline-flex items-center gap-2 rounded-lg bg-white px-6 py-3.5 text-xs font-mono font-bold text-black transition-all hover:bg-zinc-200 shadow-md cursor-pointer"
             >
               <SmoothModeText as="span">
-                {isSimple ? ">_ СМОТРЕТЬ РАБОТЫ" : ">_ СМОТРЕТЬ КЕЙСЫ (01-06)"}
+                {isSimple ? ">_ СМОТРЕТЬ РАБОТЫ" : ">_ СМОТРЕТЬ КЕЙСЫ (01-08)"}
               </SmoothModeText>
               <ArrowDown size={14} className="group-hover:translate-y-0.5 transition-transform" />
             </button>

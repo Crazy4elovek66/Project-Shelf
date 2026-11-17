@@ -272,9 +272,11 @@ export function CommandPaletteModal() {
               <input
                 ref={inputRef}
                 type="text"
+                maxLength={240}
                 value={query}
                 onChange={(e) => {
-                  setQuery(e.target.value);
+                  const sanitized = e.target.value.replace(/[\u0000-\u001F\u007F-\u009F]/g, "").slice(0, 240);
+                  setQuery(sanitized);
                   setSelectedIndex(0);
                 }}
                 onKeyDown={handleKeyDown}

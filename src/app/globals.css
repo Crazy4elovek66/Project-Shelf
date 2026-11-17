@@ -87,6 +87,12 @@ body::before {
   -webkit-text-stroke: 2px rgba(255, 255, 255, 0.85);
 }
 
+.no-select-media {
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+}
+
 /* Reusable layout shell */
 .section-shell {
   width: min(1200px, calc(100% - 32px));

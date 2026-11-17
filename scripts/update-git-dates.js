@@ -9,7 +9,9 @@ const projects = [
   { id: "Aura.net", localPath: "../Aura.net", repo: "Crazy4elovek66/aura-net", defaultDate: "07.2026" },
   { id: "ProfitCheck", localPath: "../ProfitCheck", repo: "Crazy4elovek66/ProfitCheck", defaultDate: "04.2026" },
   { id: "AutoClip", localPath: "../CryptOS", repo: "Crazy4elovek66/AutoClip", defaultDate: "05.2026" },
-  { id: "Магия Бабушки", localPath: "../Magic", repo: "Crazy4elovek66/BabushkaMagicBot", defaultDate: "07.2026" }
+  { id: "Магия Бабушки", localPath: "../Magic", repo: "Crazy4elovek66/BabushkaMagicBot", defaultDate: "07.2026" },
+  { id: "Ракомания", localPath: "../Rak", repo: "Crazy4elovek66/Rak", defaultDate: "11.2026" },
+  { id: "DotaOverlay", localPath: "../DotaOverlay", repo: "Crazy4elovek66/DotaOverlay", defaultDate: "09.2026" }
 ];
 
 const outputPath = path.join(__dirname, '..', 'src', 'data', 'project-commits.json');

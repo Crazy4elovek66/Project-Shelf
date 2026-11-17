@@ -5,6 +5,7 @@ const statusStyles: Record<ProjectStatus, string> = {
   MVP: "border-white/20 bg-white/[0.06] text-zinc-200",
   "В разработке": "border-white/15 bg-white/[0.03] text-zinc-400",
   "Технический эксперимент": "border-white/15 bg-white/[0.03] text-zinc-400",
+  "Сырой прототип": "border-dashed border-amber-500/40 bg-amber-500/[0.05] text-amber-200/90",
 };
 
 export function StatusBadge({ status }: { status: ProjectStatus }) {

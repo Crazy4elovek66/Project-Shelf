@@ -1,6 +1,6 @@
 import projectCommits from "./project-commits.json";
 
-export type ProjectStatus = "Готово" | "MVP" | "В разработке" | "Технический эксперимент";
+export type ProjectStatus = "Готово" | "MVP" | "В разработке" | "Технический эксперимент" | "Сырой прототип";
 
 export type ProjectCategory = "ai" | "fullstack" | "automation";
 
@@ -22,7 +22,7 @@ export type Project = {
   visual: {
     label: string;
     accent: string;
-    pattern: "radar" | "chat" | "network" | "rank" | "calc";
+    pattern: "radar" | "chat" | "network" | "rank" | "calc" | "overlay" | "order";
   };
   // Simple mode fields
   simpleSubtitle?: string;
@@ -276,6 +276,82 @@ const rawProjects: Project[] = [
       label: "ИИ / Telegram Mini App / WebApp",
       accent: "from-indigo-600 via-purple-600 to-pink-500",
       pattern: "chat",
+    },
+  },
+  {
+    title: "Ракомания",
+    status: "Готово",
+    category: "fullstack",
+    categoryLabel: "FULL-STACK DISPATCH HUB & TELEGRAM WEBAPP",
+    description:
+      "Омниканальная цифровая платформа доставки живых и вареных раков: витрина Telegram WebApp, умная маршрутизация заказов между кухней и курьерами, геозоны доставки.",
+    architectureNote:
+      "FastAPI бэкенд на Python 3.11+, асинхронная ORM SQLAlchemy с SQLite/PostgreSQL, расчет полигональных геозон через Shapely, интеграция с платежами и Telegram Bot FSM.",
+    metrics: "Автоматизация 90%+ заказов // Расчет геозон < 4мс",
+    features: [
+      "Telegram WebApp витрина с выбором граммовок и варок",
+      "Автоматическая диспетчеризация по сменам и статусам кухни",
+      "Расчет стоимости доставки по полигональным геозонам Shapely",
+      "Интерактивная панель управления для диспетчера и поваров",
+    ],
+    simpleCategoryLabel: "СИСТЕМА ДОСТАВКИ И ТОРГОВЛИ ПОД КЛЮЧ",
+    simpleDescription: "Автоматизированная система онлайн-заказов и доставки раков с Telegram-витриной и панелью управления",
+    simpleArchitectureNote:
+      "Полноценный комплекс для бизнеса: клиенты заказывают свежих или вареных раков через Telegram, система автоматически считает стоимость доставки по адресу, передает заказ на кухню и назначает курьера.",
+    simpleMetrics: "90% заказов без участия оператора // Точный расчет доставки",
+    simpleFeatures: [
+      "Удобная витрина в Telegram для заказа в пару кликов",
+      "Автоматический расчет цены доставки до двери",
+      "Панель для кухни: статусы варки и готовности",
+      "Оповещения клиенту о каждом этапе заказа",
+    ],
+    stack: ["Python", "FastAPI", "Telegram Bot API", "SQLAlchemy", "SQLite", "Shapely", "Docker", "Tailwind CSS"],
+    repoUrl: "https://github.com/Crazy4elovek66/Rak",
+    demoUrl: "",
+    imageUrl: "/projects/Rakomania1.webp",
+    images: ["/projects/Rakomania1.webp", "/projects/Rakomania2.webp"],
+    visual: {
+      label: "доставка / диспетчерская / webapp",
+      accent: "from-rose-500 via-orange-500 to-amber-500",
+      pattern: "order",
+    },
+  },
+  {
+    title: "DotaOverlay",
+    status: "Сырой прототип",
+    category: "automation",
+    categoryLabel: "ELECTRON & VAC-SAFE GAME STATE INTEGRATION",
+    description:
+      "Десктопный оверлей для Dota 2 на Electron и React с живым анализом драфтов, определением сигнатурных героев противников и рекомендацией контрпиков.",
+    architectureNote:
+      "100% VAC-безопасная архитектура без инъекций в память процесса: локальный Express HTTP-сервер слушает Valve GSI (Game State Integration), синхронизируется с OpenDota API и кеширует историю в SQLite.",
+    metrics: "0 инъекций в память // Задержка GSI < 15мс",
+    features: [
+      "VAC-безопасный перехват игровых событий через Valve GSI HTTP",
+      "Парсинг логов сервера Dota 2 для идентификации 10 игроков",
+      "Мгновенный скоринг винрейта связок и контрпиков по мете",
+      "Оверлей на прозрачном Electron-окне с поддержкой клик-сквозь",
+    ],
+    simpleCategoryLabel: "ПОМОЩНИК В ИГРЕ ДЛЯ АНАЛИЗА ДРАФТОВ",
+    simpleDescription: "Умный игровой оверлей для Dota 2 с анализом пиков и подсказками контргероев",
+    simpleArchitectureNote:
+      "Программа работает как подсказчик во время выбора героев: считывает матч через официальный API игры (без риска бана), показывает любимых героев соперников и советует, кого лучше взять.",
+    simpleMetrics: "Безопасно без риска бана // Мгновенный расчет контрпиков",
+    simpleFeatures: [
+      "Официальный безопасный способ работы без блокировок",
+      "Показывает сильных героев каждого игрока в матче",
+      "Рекомендует лучших персонажей против текущего пика",
+      "Удобное окно поверх игры во время выбора героев",
+    ],
+    stack: ["Electron", "TypeScript", "React", "Node.js", "Express", "SQLite", "OpenDota API", "Tailwind CSS"],
+    repoUrl: "https://github.com/Crazy4elovek66/DotaOverlay",
+    demoUrl: "",
+    imageUrl: "/projects/DotaOverlay1.webp",
+    images: ["/projects/DotaOverlay1.webp", "/projects/DotaOverlay2.webp"],
+    visual: {
+      label: "игры / оверлей / киберспорт",
+      accent: "from-amber-400 via-red-500 to-purple-600",
+      pattern: "overlay",
     },
   },
 ];

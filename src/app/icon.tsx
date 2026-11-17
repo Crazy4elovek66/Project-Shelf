@@ -17,17 +17,42 @@ export default function Icon() {
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
+          background: "#050507",
+          borderRadius: "16px",
+          border: "2px solid rgba(255, 255, 255, 0.4)",
+          padding: "8px",
         }}
       >
-        <div
-          style={{
-            width: "32px",
-            height: "32px",
-            borderRadius: "8px",
-            background: "#6EE7F9",
-            transform: "rotate(45deg)",
-          }}
-        />
+        <svg
+          width="44"
+          height="44"
+          viewBox="0 0 44 44"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          {/* Greater-than symbol > on top left */}
+          <path
+            d="M8 13L16 19L8 25"
+            stroke="#FAFAFA"
+            strokeWidth="3.6"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+          {/* Diagonal Slash / across center */}
+          <path
+            d="M30 8L16 36"
+            stroke="#FAFAFA"
+            strokeWidth="3.6"
+            strokeLinecap="round"
+          />
+          {/* Terminal Underscore _ on bottom right */}
+          <path
+            d="M26 36H36"
+            stroke="#FAFAFA"
+            strokeWidth="3.6"
+            strokeLinecap="round"
+          />
+        </svg>
       </div>
     ),
     size,

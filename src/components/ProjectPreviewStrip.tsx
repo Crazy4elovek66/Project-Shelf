@@ -27,8 +27,8 @@ export function ProjectPreviewStrip() {
             <span className="text-white font-bold">&gt;_</span>
             <SmoothModeText as="span">
               {isSimple
-                ? "КАТАЛОГ ПРОЕКТОВ // 01 – 06 КРАТКИЙ ОБЗОР"
-                : "КАТАЛОГ ПРОЕКТОВ // 01 – 06 БЫСТРОЕ ОЗНАКОМЛЕНИЕ"}
+                ? `КАТАЛОГ ПРОЕКТОВ // 01 – 0${projects.length} КРАТКИЙ ОБЗОР`
+                : `КАТАЛОГ ПРОЕКТОВ // 01 – 0${projects.length} БЫСТРОЕ ОЗНАКОМЛЕНИЕ`}
             </SmoothModeText>
           </div>
           <SmoothModeText as="span" className="hidden sm:inline-block font-mono text-[11px] text-zinc-500">
