@@ -1,53 +1,17 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
 import { ArrowDown, Terminal, Send } from "lucide-react";
 import { CONTACTS } from "@/data/contacts";
 import { useLanguageMode } from "@/context/LanguageModeContext";
 import { SmoothModeText } from "./SmoothModeText";
+import { LayeredHandsCanvas } from "./LayeredHandsCanvas";
 
 export function HeroSection() {
   const { isSimple } = useLanguageMode();
   const containerRef = useRef<HTMLDivElement>(null);
-  const leftVideoRef = useRef<HTMLVideoElement>(null);
-  const rightVideoRef = useRef<HTMLVideoElement>(null);
   const [isVolgogradHovered, setIsVolgogradHovered] = useState(false);
-
-  // Synchronize left and right hands video layers frame-perfectly
-  useEffect(() => {
-    const v1 = leftVideoRef.current;
-    const v2 = rightVideoRef.current;
-    if (!v1 || !v2) return;
-
-    const syncVideos = () => {
-      if (Math.abs(v1.currentTime - v2.currentTime) > 0.04) {
-        v2.currentTime = v1.currentTime;
-      }
-    };
-
-    const handlePlay = () => {
-      v2.play().catch(() => {});
-    };
-
-    const handlePause = () => {
-      v2.pause();
-    };
-
-    v1.addEventListener("timeupdate", syncVideos);
-    v1.addEventListener("play", handlePlay);
-    v1.addEventListener("pause", handlePause);
-
-    if (!v1.paused && v2.paused) {
-      v2.play().catch(() => {});
-    }
-
-    return () => {
-      v1.removeEventListener("timeupdate", syncVideos);
-      v1.removeEventListener("play", handlePlay);
-      v1.removeEventListener("pause", handlePause);
-    };
-  }, []);
 
   // Mouse Parallax coordinates for kinetic typography
   const mouseX = useMotionValue(0);
@@ -92,8 +56,8 @@ export function HeroSection() {
       onMouseLeave={handleMouseLeave}
       className="relative pt-16 sm:pt-[72px] pb-1 sm:pb-1.5 lg:pb-2 overflow-x-clip"
     >
-      {/* HUD Technical Coordinate Top Bar (Overlaying the upper area of hands, z-30) */}
-      <div className="pointer-events-none absolute inset-x-0 top-[90px] sm:top-[88px] lg:top-[96px] z-30">
+      {/* HUD Technical Coordinate Top Bar (Overlaying the upper area of hands, z-40) */}
+      <div className="pointer-events-none absolute inset-x-0 top-[90px] sm:top-[88px] lg:top-[96px] z-40">
         <div className="section-shell">
           <div className="pointer-events-auto flex flex-wrap items-center justify-between gap-3 border-b border-white/10 pb-3 text-xs font-mono text-zinc-400">
             <div className="flex items-center gap-3">
@@ -165,61 +129,10 @@ export function HeroSection() {
         </div>
       </div>
 
-      <div className="section-shell relative">
-        {/* Layer 1: Left Hand (Robot) behind FULL-STACK (z-10) */}
-        <div
-          aria-hidden="true"
-          className="pointer-events-none relative left-1/2 right-1/2 -ml-[50vw] -mr-[50vw] mt-20 -mb-4 w-screen select-none sm:-mt-[13vw] sm:-mb-[15.5vw] z-10"
-          style={{ clipPath: "inset(0 50% 0 0)" }}
-        >
-          <video
-            ref={leftVideoRef}
-            autoPlay
-            loop
-            muted
-            playsInline
-            preload="auto"
-            controls={false}
-            disablePictureInPicture
-            onLoadedMetadata={(e) => {
-              e.currentTarget.muted = true;
-              e.currentTarget.volume = 0;
-            }}
-            className="block h-auto w-full mix-blend-screen contrast-[1.28] brightness-[1.06] select-none"
-          >
-            <source src="/videos/hero-hands-loop.webm" type="video/webm" />
-            <source src="/videos/hero-hands-loop.mp4" type="video/mp4" />
-          </video>
-        </div>
-
-        {/* Layer 3: Right Hand (Human) above AI DEVELOPER (z-30) */}
-        <div
-          aria-hidden="true"
-          className="pointer-events-none absolute inset-x-0 top-0 left-1/2 right-1/2 -ml-[50vw] -mr-[50vw] mt-20 -mb-4 w-screen select-none sm:-mt-[13vw] sm:-mb-[15.5vw] z-30"
-          style={{ clipPath: "inset(0 0 0 50%)" }}
-        >
-          <video
-            ref={rightVideoRef}
-            autoPlay
-            loop
-            muted
-            playsInline
-            preload="auto"
-            controls={false}
-            disablePictureInPicture
-            onLoadedMetadata={(e) => {
-              e.currentTarget.muted = true;
-              e.currentTarget.volume = 0;
-            }}
-            className="block h-auto w-full mix-blend-screen contrast-[1.28] brightness-[1.06] select-none"
-          >
-            <source src="/videos/hero-hands-loop.webm" type="video/webm" />
-            <source src="/videos/hero-hands-loop.mp4" type="video/mp4" />
-          </video>
-        </div>
-
-        {/* Main Monochromatic Kinetic Display Typography Hero */}
-        <div className="relative z-20 -mt-12 sm:-mt-[18vw] md:-mt-[21vw] lg:-mt-[23.5vw] xl:-mt-[25.5vw] py-0.5">
+      <div className="section-shell">
+        <LayeredHandsCanvas>
+          {/* Main Monochromatic Kinetic Display Typography Hero */}
+          <div className="relative z-20 -mt-12 sm:-mt-[18vw] md:-mt-[21vw] lg:-mt-[23.5vw] xl:-mt-[25.5vw] py-0.5">
           {/* Technical crosshairs (+) */}
           <span className="absolute -top-2 -left-2 text-white/20 font-mono text-sm select-none z-10">+</span>
           <span className="absolute -top-2 -right-2 text-white/20 font-mono text-sm select-none z-10">+</span>
@@ -256,7 +169,7 @@ export function HeroSection() {
                 className="block text-white"
                 style={{
                   textShadow:
-                    "0 2px 10px rgba(5, 5, 5, 0.96), 0 0 22px rgba(5, 5, 5, 0.92), 0 0 2px rgba(5, 5, 5, 1)",
+                    "0 2px 12px rgba(5, 5, 5, 0.98), 0 0 24px rgba(5, 5, 5, 0.95), 0 0 3px rgba(5, 5, 5, 1)",
                 }}
               >
                 FULL-STACK
@@ -350,6 +263,7 @@ export function HeroSection() {
             </a>
           </div>
         </div>
+        </LayeredHandsCanvas>
       </div>
     </section>
   );
