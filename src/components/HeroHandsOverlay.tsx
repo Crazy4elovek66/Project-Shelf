@@ -350,7 +350,7 @@ export function HeroHandsOverlay({ video, children }: HeroHandsOverlayProps) {
       {/* Layer 3: Right Human Hand (Above AI DEVELOPER, z-30) */}
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute top-0 left-1/2 right-1/2 -ml-[50vw] -mr-[50vw] mt-[100px] -mb-4 aspect-video w-screen select-none overflow-hidden sm:-mt-[13vw] sm:-mb-[15.5vw] z-30"
+        className="pointer-events-none absolute top-0 left-1/2 right-1/2 -ml-[50vw] -mr-[50vw] aspect-video w-screen select-none overflow-hidden z-30"
       >
         <canvas
           ref={humanCanvasRef}
