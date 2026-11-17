@@ -151,6 +151,11 @@ export function HeroSection() {
               e.currentTarget.muted = true;
               e.currentTarget.volume = 0;
             }}
+            onCanPlay={(e) => {
+              if (e.currentTarget.paused) {
+                e.currentTarget.play().catch(() => {});
+              }
+            }}
             className="absolute top-0 left-0 block h-[200%] w-full object-cover object-top mix-blend-screen contrast-[1.28] brightness-[1.06] select-none"
           >
             <source src="/videos/hero-hands-stacked.webm" type="video/webm" />
