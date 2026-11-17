@@ -4,25 +4,21 @@ import { useEffect, useRef } from "react";
 
 interface HeroHandsOverlayProps {
   video: HTMLVideoElement | null;
+  children: React.ReactNode;
 }
 
-export function HeroHandsOverlay({ video }: HeroHandsOverlayProps) {
-  const canvasRef = useRef<HTMLCanvasElement>(null);
+export function HeroHandsOverlay({ video, children }: HeroHandsOverlayProps) {
+  const robotCanvasRef = useRef<HTMLCanvasElement>(null);
+  const humanCanvasRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
-    const canvas = canvasRef.current;
-    if (!canvas || !video) return;
+    const robotCanvas = robotCanvasRef.current;
+    const humanCanvas = humanCanvasRef.current;
+    if (!robotCanvas || !humanCanvas || !video) return;
 
     const prefersReducedMotion =
       typeof window !== "undefined" &&
       window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-
-    let gl: WebGLRenderingContext | null = null;
-    let program: WebGLProgram | null = null;
-    let vs: WebGLShader | null = null;
-    let fs: WebGLShader | null = null;
-    let posBuffer: WebGLBuffer | null = null;
-    let texture: WebGLTexture | null = null;
 
     const vsSource = `
       attribute vec2 a_pos;
@@ -33,14 +29,42 @@ export function HeroHandsOverlay({ video }: HeroHandsOverlayProps) {
       }
     `;
 
-    const fsSource = `
+    // Layer 1: Left Robot Hand ONLY (discard human hand where mask > 0.02 and black background)
+    const fsRobotSource = `
       precision mediump float;
       uniform sampler2D u_video;
       varying vec2 v_uv;
       void main() {
-        // Top half: 1920x1080 RGB color frame
         vec2 color_uv = vec2(v_uv.x, v_uv.y * 0.5);
-        // Bottom half: 1920x1080 right hand alpha mask
+        vec2 mask_uv = vec2(v_uv.x, 0.5 + v_uv.y * 0.5);
+
+        float human_mask = texture2D(u_video, mask_uv).r;
+        if (human_mask > 0.02) {
+          discard;
+        }
+
+        vec4 color = texture2D(u_video, color_uv);
+        float luma = max(color.r, max(color.g, color.b));
+        if (luma < 0.02) {
+          discard;
+        }
+
+        // Match contrast (1.28) and brightness (1.06)
+        vec3 rgb = color.rgb * 1.06;
+        rgb = clamp((rgb - 0.5) * 1.28 + 0.5, 0.0, 1.0);
+        float alpha = clamp(luma * 10.0, 0.0, 1.0);
+
+        gl_FragColor = vec4(rgb, alpha);
+      }
+    `;
+
+    // Layer 3: Right Human Hand ONLY (masked by alpha mask in bottom half of stacked video)
+    const fsHumanSource = `
+      precision mediump float;
+      uniform sampler2D u_video;
+      varying vec2 v_uv;
+      void main() {
+        vec2 color_uv = vec2(v_uv.x, v_uv.y * 0.5);
         vec2 mask_uv = vec2(v_uv.x, 0.5 + v_uv.y * 0.5);
 
         float mask = texture2D(u_video, mask_uv).r;
@@ -50,7 +74,7 @@ export function HeroHandsOverlay({ video }: HeroHandsOverlayProps) {
 
         vec4 color = texture2D(u_video, color_uv);
 
-        // Match contrast (1.28) and brightness (1.06) from background CSS video
+        // Match contrast (1.28) and brightness (1.06)
         vec3 rgb = color.rgb * 1.06;
         rgb = clamp((rgb - 0.5) * 1.28 + 0.5, 0.0, 1.0);
 
@@ -58,8 +82,17 @@ export function HeroHandsOverlay({ video }: HeroHandsOverlayProps) {
       }
     `;
 
-    const initGL = () => {
-      gl = canvas.getContext("webgl", {
+    type LayerContext = {
+      gl: WebGLRenderingContext;
+      program: WebGLProgram;
+      texture: WebGLTexture;
+      posBuffer: WebGLBuffer;
+      vs: WebGLShader;
+      fs: WebGLShader;
+    };
+
+    const initLayer = (canvas: HTMLCanvasElement, fsCode: string): LayerContext | null => {
+      let gl = canvas.getContext("webgl", {
         alpha: true,
         premultipliedAlpha: false,
         antialias: false,
@@ -78,61 +111,50 @@ export function HeroHandsOverlay({ video }: HeroHandsOverlayProps) {
         }) as WebGLRenderingContext | null;
       }
 
-      if (!gl) {
-        console.warn("[HeroHandsOverlay] WebGL not available");
-        return false;
-      }
+      if (!gl) return null;
 
-      // Match native 1920x1080 Full HD resolution for 1:1 pixel precision
       canvas.width = 1920;
       canvas.height = 1080;
       gl.viewport(0, 0, 1920, 1080);
 
-      const compileShader = (type: number, source: string) => {
+      const compileShader = (type: number, src: string) => {
         const shader = gl!.createShader(type);
         if (!shader) return null;
-        gl!.shaderSource(shader, source);
+        gl!.shaderSource(shader, src);
         gl!.compileShader(shader);
         if (!gl!.getShaderParameter(shader, gl!.COMPILE_STATUS)) {
-          console.error("[HeroHandsOverlay] Shader compile error:", gl!.getShaderInfoLog(shader));
           gl!.deleteShader(shader);
           return null;
         }
         return shader;
       };
 
-      vs = compileShader(gl.VERTEX_SHADER, vsSource);
-      fs = compileShader(gl.FRAGMENT_SHADER, fsSource);
-      if (!vs || !fs) return false;
+      const vs = compileShader(gl.VERTEX_SHADER, vsSource);
+      const fs = compileShader(gl.FRAGMENT_SHADER, fsCode);
+      if (!vs || !fs) return null;
 
-      program = gl.createProgram();
-      if (!program) return false;
+      const program = gl.createProgram();
+      if (!program) return null;
       gl.attachShader(program, vs);
       gl.attachShader(program, fs);
       gl.linkProgram(program);
       if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
-        console.error("[HeroHandsOverlay] Program link error:", gl.getProgramInfoLog(program));
-        return false;
+        return null;
       }
       gl.useProgram(program);
 
-      // Fullscreen quad
-      const quadVertices = new Float32Array([
-        -1,  1,
-         1,  1,
-        -1, -1,
-         1, -1,
-      ]);
-      posBuffer = gl.createBuffer();
+      const quad = new Float32Array([-1, 1, 1, 1, -1, -1, 1, -1]);
+      const posBuffer = gl.createBuffer();
+      if (!posBuffer) return null;
       gl.bindBuffer(gl.ARRAY_BUFFER, posBuffer);
-      gl.bufferData(gl.ARRAY_BUFFER, quadVertices, gl.STATIC_DRAW);
+      gl.bufferData(gl.ARRAY_BUFFER, quad, gl.STATIC_DRAW);
 
       const aPosLoc = gl.getAttribLocation(program, "a_pos");
       gl.enableVertexAttribArray(aPosLoc);
       gl.vertexAttribPointer(aPosLoc, 2, gl.FLOAT, false, 0, 0);
 
-      // Texture setup
-      texture = gl.createTexture();
+      const texture = gl.createTexture();
+      if (!texture) return null;
       gl.bindTexture(gl.TEXTURE_2D, texture);
       gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
       gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
@@ -142,10 +164,16 @@ export function HeroHandsOverlay({ video }: HeroHandsOverlayProps) {
       gl.enable(gl.BLEND);
       gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
 
-      return true;
+      return { gl, program, texture, posBuffer, vs, fs };
     };
 
-    if (!initGL()) return;
+    const robotLayer = initLayer(robotCanvas, fsRobotSource);
+    const humanLayer = initLayer(humanCanvas, fsHumanSource);
+
+    if (!robotLayer || !humanLayer) {
+      console.warn("[HeroHandsOverlay] WebGL initialization failed");
+      return;
+    }
 
     let isVisible = true;
     let isRunning = false;
@@ -154,20 +182,29 @@ export function HeroHandsOverlay({ video }: HeroHandsOverlayProps) {
     let lastRenderedTime = -1;
 
     const render = () => {
-      if (!gl || !video || video.readyState < 2) return;
+      if (!video || video.readyState < 2) return;
 
       const currentTime = video.currentTime;
-      // Skip redundant GPU re-uploads when frame hasn't progressed
       if (currentTime === lastRenderedTime && lastRenderedTime >= 0) {
         return;
       }
       lastRenderedTime = currentTime;
 
-      gl.bindTexture(gl.TEXTURE_2D, texture);
-      gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, video);
-      gl.clearColor(0, 0, 0, 0);
-      gl.clear(gl.COLOR_BUFFER_BIT);
-      gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+      // 1. Render Robot Hand to background canvas (behind FULL-STACK)
+      const gl1 = robotLayer.gl;
+      gl1.bindTexture(gl1.TEXTURE_2D, robotLayer.texture);
+      gl1.texImage2D(gl1.TEXTURE_2D, 0, gl1.RGBA, gl1.RGBA, gl1.UNSIGNED_BYTE, video);
+      gl1.clearColor(0, 0, 0, 0);
+      gl1.clear(gl1.COLOR_BUFFER_BIT);
+      gl1.drawArrays(gl1.TRIANGLE_STRIP, 0, 4);
+
+      // 2. Render Human Hand to foreground canvas (above AI DEVELOPER)
+      const gl2 = humanLayer.gl;
+      gl2.bindTexture(gl2.TEXTURE_2D, humanLayer.texture);
+      gl2.texImage2D(gl2.TEXTURE_2D, 0, gl2.RGBA, gl2.RGBA, gl2.UNSIGNED_BYTE, video);
+      gl2.clearColor(0, 0, 0, 0);
+      gl2.clear(gl2.COLOR_BUFFER_BIT);
+      gl2.drawArrays(gl2.TRIANGLE_STRIP, 0, 4);
     };
 
     const scheduleNextFrame = () => {
@@ -216,7 +253,6 @@ export function HeroHandsOverlay({ video }: HeroHandsOverlayProps) {
       }
     };
 
-    // Event listeners on video element to guarantee sync
     const handleCanPlay = () => {
       lastRenderedTime = -1;
       render();
@@ -237,8 +273,8 @@ export function HeroHandsOverlay({ video }: HeroHandsOverlayProps) {
       handleCanPlay();
     }
 
-    // IntersectionObserver targeting #hero to suspend render loop when offscreen
-    const heroSection = document.getElementById("hero") || canvas;
+    // Suspend render loop when offscreen
+    const heroSection = document.getElementById("hero") || robotCanvas;
     const observer = new IntersectionObserver(
       ([entry]) => {
         const inView = entry.isIntersecting;
@@ -255,7 +291,7 @@ export function HeroHandsOverlay({ video }: HeroHandsOverlayProps) {
     );
     observer.observe(heroSection);
 
-    // Tab visibility handling
+    // Tab visibility handling (prevents duplicate hands during tab switches & hover previews)
     const handleVisibilityChange = () => {
       if (document.hidden) {
         isVisible = false;
@@ -269,48 +305,59 @@ export function HeroHandsOverlay({ video }: HeroHandsOverlayProps) {
     };
     document.addEventListener("visibilitychange", handleVisibilityChange);
 
-    // WebGL Context Loss / Restoration
-    const handleContextLost = (e: Event) => {
-      e.preventDefault();
-      stopAnimation();
-    };
-
-    const handleContextRestored = () => {
-      initGL();
-      startAnimation();
-      lastRenderedTime = -1;
-      render();
-    };
-
-    canvas.addEventListener("webglcontextlost", handleContextLost);
-    canvas.addEventListener("webglcontextrestored", handleContextRestored);
-
     return () => {
       stopAnimation();
       observer.disconnect();
       document.removeEventListener("visibilitychange", handleVisibilityChange);
-      canvas.removeEventListener("webglcontextlost", handleContextLost);
-      canvas.removeEventListener("webglcontextrestored", handleContextRestored);
       video.removeEventListener("canplay", handleCanPlay);
       video.removeEventListener("playing", startAnimation);
       video.removeEventListener("play", startAnimation);
       video.removeEventListener("seeked", handleSeeked);
 
-      if (gl) {
-        if (program) gl.deleteProgram(program);
-        if (vs) gl.deleteShader(vs);
-        if (fs) gl.deleteShader(fs);
-        if (posBuffer) gl.deleteBuffer(posBuffer);
-        if (texture) gl.deleteTexture(texture);
-      }
+      const destroyLayer = (layer: LayerContext) => {
+        const { gl, program, vs, fs, posBuffer, texture } = layer;
+        gl.deleteProgram(program);
+        gl.deleteShader(vs);
+        gl.deleteShader(fs);
+        gl.deleteBuffer(posBuffer);
+        gl.deleteTexture(texture);
+      };
+
+      destroyLayer(robotLayer);
+      destroyLayer(humanLayer);
     };
   }, [video]);
 
   return (
-    <canvas
-      ref={canvasRef}
-      aria-hidden="true"
-      className="pointer-events-none absolute inset-0 z-[25] block h-full w-full select-none"
-    />
+    <div className="relative">
+      {/* Layer 1: Left Robot Hand (Behind FULL-STACK, z-10) */}
+      <div
+        aria-hidden="true"
+        className="pointer-events-none relative left-1/2 right-1/2 -ml-[50vw] -mr-[50vw] mt-[100px] -mb-4 aspect-video w-screen select-none overflow-hidden sm:-mt-[13vw] sm:-mb-[15.5vw] z-10"
+      >
+        <canvas
+          ref={robotCanvasRef}
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-0 block h-full w-full select-none"
+        />
+      </div>
+
+      {/* Layer 2: Main Typography & Action Content (z-20) */}
+      <div className="relative z-20">
+        {children}
+      </div>
+
+      {/* Layer 3: Right Human Hand (Above AI DEVELOPER, z-30) */}
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute top-0 left-1/2 right-1/2 -ml-[50vw] -mr-[50vw] mt-[100px] -mb-4 aspect-video w-screen select-none overflow-hidden sm:-mt-[13vw] sm:-mb-[15.5vw] z-30"
+      >
+        <canvas
+          ref={humanCanvasRef}
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-0 block h-full w-full select-none"
+        />
+      </div>
+    </div>
   );
 }

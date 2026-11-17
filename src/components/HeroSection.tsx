@@ -155,45 +155,38 @@ export function HeroSection() {
         </div>
       </div>
 
+      {/* Hardware Video Decoder Source (Decodes 1 single video stream for WebGL layers) */}
+      <video
+        ref={setVideoEl}
+        autoPlay
+        loop
+        muted
+        playsInline
+        preload="auto"
+        controls={false}
+        disablePictureInPicture
+        onLoadedMetadata={(e) => {
+          e.currentTarget.muted = true;
+          e.currentTarget.volume = 0;
+        }}
+        onCanPlay={(e) => {
+          if (e.currentTarget.paused) {
+            e.currentTarget.play().catch(() => {});
+          }
+        }}
+        className="pointer-events-none absolute opacity-0 w-1 h-1 -z-50"
+      >
+        <source src="/videos/hero-hands-stacked.webm" type="video/webm" />
+        <source src="/videos/hero-hands-stacked.mp4" type="video/mp4" />
+      </video>
+
       <div className="section-shell relative">
-        {/* Full-bleed Hands Video Scene: true 100vw edge-to-edge scale without finger clipping */}
-        <div
-          aria-hidden="true"
-          className="pointer-events-none relative left-1/2 right-1/2 -ml-[50vw] -mr-[50vw] mt-[100px] -mb-4 aspect-video w-screen select-none overflow-hidden sm:-mt-[13vw] sm:-mb-[15.5vw]"
-        >
-          <video
-            ref={setVideoEl}
-            autoPlay
-            loop
-            muted
-            playsInline
-            preload="auto"
-            controls={false}
-            disablePictureInPicture
-            onLoadedMetadata={(e) => {
-              e.currentTarget.muted = true;
-              e.currentTarget.volume = 0;
-            }}
-            onCanPlay={(e) => {
-              if (e.currentTarget.paused) {
-                e.currentTarget.play().catch(() => {});
-              }
-            }}
-            className="absolute top-0 left-0 block h-[200%] w-full object-cover object-top mix-blend-screen contrast-[1.28] brightness-[1.06] select-none"
-          >
-            <source src="/videos/hero-hands-stacked.webm" type="video/webm" />
-            <source src="/videos/hero-hands-stacked.mp4" type="video/mp4" />
-          </video>
-
-          {/* WebGL Foreground Layer: Right Hand with Alpha above AI DEVELOPER (z-[25]) */}
-          <HeroHandsOverlay video={videoEl} />
-        </div>
-
-        {/* Main Monochromatic Kinetic Display Typography Hero */}
-        <div className="relative z-20 -mt-12 sm:-mt-[18vw] md:-mt-[21vw] lg:-mt-[23.5vw] xl:-mt-[25.5vw] py-0.5">
-          {/* Technical crosshairs (+) */}
-          <span className="absolute -top-2 -left-2 text-white/20 font-mono text-sm select-none z-10">+</span>
-          <span className="absolute -top-2 -right-2 text-white/20 font-mono text-sm select-none z-10">+</span>
+        <HeroHandsOverlay video={videoEl}>
+          {/* Main Monochromatic Kinetic Display Typography Hero */}
+          <div className="relative -mt-12 sm:-mt-[18vw] md:-mt-[21vw] lg:-mt-[23.5vw] xl:-mt-[25.5vw] py-0.5">
+            {/* Technical crosshairs (+) */}
+            <span className="absolute -top-2 -left-2 text-white/20 font-mono text-sm select-none z-10">+</span>
+            <span className="absolute -top-2 -right-2 text-white/20 font-mono text-sm select-none z-10">+</span>
 
           {/* Multilayer kinetic typography */}
           <div className="relative select-none z-10">
@@ -323,7 +316,8 @@ export function HeroSection() {
             )}
           </div>
         </div>
-      </div>
-    </section>
-  );
+      </HeroHandsOverlay>
+    </div>
+  </section>
+);
 }
