@@ -148,24 +148,7 @@ export function Header() {
         {/* Right: CLI Launcher Button >_ CLI [ / ] + Mode Switch + Quick Actions */}
         <div className="flex items-center gap-1.5 sm:gap-2">
           {/* Mode Switch: ПО-ПРОСТОМУ / ДЛЯ ГИКОВ */}
-          <div
-            role="switch"
-            aria-checked={!isSimple}
-            className={`relative inline-flex h-7 items-center rounded-lg border bg-[#0E0E12] p-0.5 text-[10px] sm:text-[11px] font-mono select-none overflow-hidden transition-colors ${
-              isSimple
-                ? "border-white/20 animate-toggle-shell"
-                : "border-white/20"
-            }`}
-          >
-            {isSimple && (
-              <span
-                aria-hidden="true"
-                className="pointer-events-none absolute inset-0 z-0 overflow-hidden rounded-lg"
-              >
-                <span className="absolute inset-y-0 w-1/3 bg-gradient-to-r from-transparent via-white/[0.09] to-transparent animate-toggle-sheen" />
-              </span>
-            )}
-
+          <div className="relative inline-flex h-7 items-center rounded-lg border border-white/20 bg-[#0E0E12] p-0.5 text-[10px] sm:text-[11px] font-mono select-none">
             <button
               type="button"
               onClick={() => setMode("simple")}
@@ -187,7 +170,9 @@ export function Header() {
               type="button"
               onClick={() => setMode("tech")}
               className={`relative z-10 flex items-center px-2 sm:px-2.5 py-0.5 font-bold transition-all cursor-pointer rounded-md ${
-                !isSimple ? "text-black" : "text-zinc-300 hover:text-white"
+                !isSimple
+                  ? "text-black"
+                  : "animate-geek-zone overflow-hidden text-zinc-300 hover:text-white"
               }`}
             >
               {!isSimple && (
@@ -195,6 +180,12 @@ export function Header() {
                   layoutId="mode-pill"
                   transition={{ type: "spring", stiffness: 420, damping: 32 }}
                   className="absolute inset-0 rounded-md bg-white shadow-sm"
+                />
+              )}
+              {isSimple && (
+                <span
+                  aria-hidden="true"
+                  className="pointer-events-none absolute inset-y-0 left-0 w-1/2 bg-gradient-to-r from-transparent via-white/15 to-transparent animate-geek-sheen"
                 />
               )}
               <span className="relative z-10 whitespace-nowrap">ДЛЯ ГИКОВ</span>
@@ -221,7 +212,7 @@ export function Header() {
             type="button"
             onClick={copyTelegram}
             aria-label="Скопировать контакт Telegram"
-            className="ml-1 sm:ml-0 grid size-7 sm:size-8 place-items-center rounded-lg border border-white/15 bg-white/[0.03] text-zinc-300 transition hover:border-white hover:text-white hover:bg-white/10"
+            className="grid size-7 sm:size-8 place-items-center rounded-lg border border-white/15 bg-white/[0.03] text-zinc-300 transition hover:border-white hover:text-white hover:bg-white/10"
             title="Скопировать Telegram"
           >
             <Send size={13} className="-ml-0.5" />

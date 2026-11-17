@@ -6,7 +6,6 @@ import { ArrowDown, Terminal, Send } from "lucide-react";
 import { CONTACTS } from "@/data/contacts";
 import { useLanguageMode } from "@/context/LanguageModeContext";
 import { SmoothModeText } from "./SmoothModeText";
-import { LayeredHandsCanvas } from "./LayeredHandsCanvas";
 
 export function HeroSection() {
   const { isSimple } = useLanguageMode();
@@ -56,8 +55,8 @@ export function HeroSection() {
       onMouseLeave={handleMouseLeave}
       className="relative pt-16 sm:pt-[72px] pb-1 sm:pb-1.5 lg:pb-2 overflow-x-clip"
     >
-      {/* HUD Technical Coordinate Top Bar (Overlaying the upper area of hands, z-40) */}
-      <div className="pointer-events-none absolute inset-x-0 top-[90px] sm:top-[88px] lg:top-[96px] z-40">
+      {/* HUD Technical Coordinate Top Bar (Overlaying the upper area of hands, z-30) */}
+      <div className="pointer-events-none absolute inset-x-0 top-[76px] sm:top-[88px] lg:top-[96px] z-30">
         <div className="section-shell">
           <div className="pointer-events-auto flex flex-wrap items-center justify-between gap-3 border-b border-white/10 pb-3 text-xs font-mono text-zinc-400">
             <div className="flex items-center gap-3">
@@ -130,9 +129,32 @@ export function HeroSection() {
       </div>
 
       <div className="section-shell">
-        <LayeredHandsCanvas>
-          {/* Main Monochromatic Kinetic Display Typography Hero */}
-          <div className="relative z-20 -mt-12 sm:-mt-[18vw] md:-mt-[21vw] lg:-mt-[23.5vw] xl:-mt-[25.5vw] py-0.5">
+        {/* Full-bleed Hands Video Scene: true 100vw edge-to-edge scale without finger clipping */}
+        <div
+          aria-hidden="true"
+          className="pointer-events-none relative left-1/2 right-1/2 -ml-[50vw] -mr-[50vw] mt-20 -mb-4 w-screen select-none sm:-mt-[13vw] sm:-mb-[15.5vw]"
+        >
+          <video
+            autoPlay
+            loop
+            muted
+            playsInline
+            preload="auto"
+            controls={false}
+            disablePictureInPicture
+            onLoadedMetadata={(e) => {
+              e.currentTarget.muted = true;
+              e.currentTarget.volume = 0;
+            }}
+            className="block h-auto w-full mix-blend-screen contrast-[1.28] brightness-[1.06] select-none"
+          >
+            <source src="/videos/hero-hands-loop.webm" type="video/webm" />
+            <source src="/videos/hero-hands-loop.mp4" type="video/mp4" />
+          </video>
+        </div>
+
+        {/* Main Monochromatic Kinetic Display Typography Hero */}
+        <div className="relative z-20 -mt-12 sm:-mt-[18vw] md:-mt-[21vw] lg:-mt-[23.5vw] xl:-mt-[25.5vw] py-0.5">
           {/* Technical crosshairs (+) */}
           <span className="absolute -top-2 -left-2 text-white/20 font-mono text-sm select-none z-10">+</span>
           <span className="absolute -top-2 -right-2 text-white/20 font-mono text-sm select-none z-10">+</span>
@@ -165,13 +187,7 @@ export function HeroSection() {
 
             {/* Front Solid Monochrome Typography Layer */}
             <h1 className="relative z-10 font-display text-5xl sm:text-7xl lg:text-9xl font-black tracking-tight uppercase leading-[0.88] text-white">
-              <span
-                className="block text-white"
-                style={{
-                  textShadow:
-                    "0 2px 12px rgba(5, 5, 5, 0.98), 0 0 24px rgba(5, 5, 5, 0.95), 0 0 3px rgba(5, 5, 5, 1)",
-                }}
-              >
+              <span className="block text-white">
                 FULL-STACK
               </span>
               <span className="block text-zinc-300">
@@ -263,7 +279,6 @@ export function HeroSection() {
             </a>
           </div>
         </div>
-        </LayeredHandsCanvas>
       </div>
     </section>
   );
