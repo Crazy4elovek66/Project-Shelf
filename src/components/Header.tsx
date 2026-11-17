@@ -5,25 +5,27 @@ import { motion, useAnimationControls } from "framer-motion";
 import { Terminal, Send, Mail, Sparkles } from "lucide-react";
 import { CONTACTS } from "@/data/contacts";
 import { useLanguageMode } from "@/context/LanguageModeContext";
+import { useKwork } from "@/context/KworkModeContext";
 
 export function Header() {
   const { mode, isSimple, setMode } = useLanguageMode();
+  const { hideContacts } = useKwork();
   const [isScrolled, setIsScrolled] = useState(false);
-  const [activeSection, setActiveSection] = useState("projects");
+  const [activeSection, setActiveSection] = useState("engineering");
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
 
   const navItems = isSimple
     ? [
-        { label: "[/] ПРОЕКТЫ", href: "#projects", id: "projects" },
         { label: "[/] ОБО МНЕ", href: "#engineering", id: "engineering" },
+        { label: "[/] ПРОЕКТЫ", href: "#projects", id: "projects" },
         { label: "[/] ВОПРОСЫ", href: "#console", id: "console" },
-        { label: "[/] СВЯЗЬ", href: "#contacts", id: "contacts" },
+        ...(!hideContacts ? [{ label: "[/] СВЯЗЬ", href: "#contacts", id: "contacts" }] : []),
       ]
     : [
-        { label: "[/] КЕЙСЫ", href: "#projects", id: "projects" },
         { label: "[/] СТЕК", href: "#engineering", id: "engineering" },
+        { label: "[/] КЕЙСЫ", href: "#projects", id: "projects" },
         { label: "[/] AI-КОНСОЛЬ", href: "#console", id: "console" },
-        { label: "[/] КОНТАКТЫ", href: "#contacts", id: "contacts" },
+        ...(!hideContacts ? [{ label: "[/] КОНТАКТЫ", href: "#contacts", id: "contacts" }] : []),
       ];
 
   useEffect(() => {
@@ -50,7 +52,7 @@ export function Header() {
       });
     }, observerOptions);
 
-    const sectionIds = ["projects", "engineering", "console", "contacts"];
+    const sectionIds = ["engineering", "projects", "console", ...(!hideContacts ? ["contacts"] : [])];
     sectionIds.forEach((id) => {
       const el = document.getElementById(id);
       if (el) observer.observe(el);
@@ -62,7 +64,7 @@ export function Header() {
         if (el) observer.unobserve(el);
       });
     };
-  }, []);
+  }, [hideContacts]);
 
   const openCli = () => {
     window.dispatchEvent(new CustomEvent("open-command-palette"));
@@ -211,37 +213,42 @@ export function Header() {
             </span>
           </button>
 
-          {/* Quick Copy Telegram */}
-          <button
-            type="button"
-            onClick={copyTelegram}
-            aria-label="Скопировать контакт Telegram"
-            className="grid size-7 sm:size-8 place-items-center rounded-lg border border-white/15 bg-white/[0.03] text-zinc-300 transition hover:border-white hover:text-white hover:bg-white/10"
-            title="Скопировать Telegram"
-          >
-            <Send size={13} className="-ml-0.5" />
-          </button>
+          {/* Quick Contacts Actions - Hidden in Kwork mode */}
+          {!hideContacts && (
+            <>
+              {/* Quick Copy Telegram */}
+              <button
+                type="button"
+                onClick={copyTelegram}
+                aria-label="Скопировать контакт Telegram"
+                className="grid size-7 sm:size-8 place-items-center rounded-lg border border-white/15 bg-white/[0.03] text-zinc-300 transition hover:border-white hover:text-white hover:bg-white/10"
+                title="Скопировать Telegram"
+              >
+                <Send size={13} className="-ml-0.5" />
+              </button>
 
-          {/* Quick Copy Email */}
-          <button
-            type="button"
-            onClick={copyEmail}
-            aria-label="Скопировать почту"
-            className="hidden md:grid size-8 place-items-center rounded-lg border border-white/15 bg-white/[0.03] text-zinc-300 transition hover:border-white hover:text-white hover:bg-white/10"
-            title="Скопировать Email"
-          >
-            <Mail size={13} />
-          </button>
+              {/* Quick Copy Email */}
+              <button
+                type="button"
+                onClick={copyEmail}
+                aria-label="Скопировать почту"
+                className="hidden md:grid size-8 place-items-center rounded-lg border border-white/15 bg-white/[0.03] text-zinc-300 transition hover:border-white hover:text-white hover:bg-white/10"
+                title="Скопировать Email"
+              >
+                <Mail size={13} />
+              </button>
 
-          {/* Direct Contact Button */}
-          <a
-            href={CONTACTS.telegram}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="hidden md:inline-flex items-center gap-1.5 rounded-lg bg-white px-3.5 py-1.5 text-xs font-mono font-bold text-black transition hover:bg-zinc-200"
-          >
-            <span>{isSimple ? "НАПИСАТЬ" : "СВЯЗАТЬСЯ"}</span>
-          </a>
+              {/* Direct Contact Button */}
+              <a
+                href={CONTACTS.telegram}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hidden md:inline-flex items-center gap-1.5 rounded-lg bg-white px-3.5 py-1.5 text-xs font-mono font-bold text-black transition hover:bg-zinc-200"
+              >
+                <span>{isSimple ? "НАПИСАТЬ" : "СВЯЗАТЬСЯ"}</span>
+              </a>
+            </>
+          )}
         </div>
       </div>
     </header>

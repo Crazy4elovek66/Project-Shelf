@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { ArrowUp } from "lucide-react";
 import { CONTACTS } from "@/data/contacts";
 import { useLanguageMode } from "@/context/LanguageModeContext";
+import { useKwork } from "@/context/KworkModeContext";
 import { SmoothModeText } from "./SmoothModeText";
 
 const stackPills = [
@@ -32,6 +33,7 @@ const formatMskTime = () =>
 
 export function Footer() {
   const { isSimple } = useLanguageMode();
+  const { hideContacts } = useKwork();
   const [timeStr, setTimeStr] = useState<string>("12:00:00");
 
   useEffect(() => {
@@ -108,22 +110,26 @@ export function Footer() {
           </div>
 
           <div className="flex items-center gap-4">
-            <a
-              href={CONTACTS.github}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="hover:text-white transition-colors"
-            >
-              GitHub
-            </a>
-            <a
-              href={CONTACTS.telegram}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="hover:text-white transition-colors"
-            >
-              Telegram
-            </a>
+            {!hideContacts && (
+              <>
+                <a
+                  href={CONTACTS.github}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="hover:text-white transition-colors"
+                >
+                  GitHub
+                </a>
+                <a
+                  href={CONTACTS.telegram}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="hover:text-white transition-colors"
+                >
+                  Telegram
+                </a>
+              </>
+            )}
             <span>© {new Date().getFullYear()} idleON (Илья)</span>
           </div>
         </div>

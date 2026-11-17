@@ -1,9 +1,10 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { Terminal, Cpu, Sparkles, Send } from "lucide-react";
 import { CONTACTS } from "@/data/contacts";
 import { useLanguageMode } from "@/context/LanguageModeContext";
+import { useKwork } from "@/context/KworkModeContext";
 import { SmoothModeText } from "./SmoothModeText";
 
 type Scenario = {
@@ -243,6 +244,7 @@ const simpleScenarios: Scenario[] = [
 
 export function AiConsoleSection() {
   const { isSimple } = useLanguageMode();
+  const { hideContacts } = useKwork();
   const scenarios = isSimple ? simpleScenarios : techScenarios;
   const [selectedId, setSelectedId] = useState<string>(scenarios[0].id);
   const [displayedText, setDisplayedText] = useState<string>("");
@@ -256,25 +258,36 @@ export function AiConsoleSection() {
     }
   }, [isSimple, scenarios, selectedId]);
 
-  const startStreaming = (scenario: Scenario) => {
-    if (streamTimerRef.current) clearInterval(streamTimerRef.current);
-    setIsStreaming(true);
-    setDisplayedText("");
+  const startStreaming = useCallback(
+    (scenario: Scenario) => {
+      if (streamTimerRef.current) clearInterval(streamTimerRef.current);
+      setIsStreaming(true);
+      setDisplayedText("");
 
-    const fullText = scenario.responseChunks.join("");
-    let charIndex = 0;
+      const chunks = scenario.responseChunks.map((chunk) => {
+        if (!hideContacts) return chunk;
+        return chunk
+          .replace(/Напишите напрямую в Telegram — отвечу в течение 15 минут\./g, "Напишите в чат проекта — отвечу в кратчайшие сроки.")
+          .replace(/Мы созваниваемся или списываемся в Telegram/g, "Мы списываемся в чате заказа")
+          .replace(/прямая связь в Telegram/g, "оперативная связь в чате платформы")
+          .replace(/Telegram @Crazy4elovek/g, "чате платформы");
+      });
+      const fullText = chunks.join("");
+      let charIndex = 0;
 
-    streamTimerRef.current = setInterval(() => {
-      charIndex += 4;
-      if (charIndex >= fullText.length) {
-        setDisplayedText(fullText);
-        setIsStreaming(false);
-        if (streamTimerRef.current) clearInterval(streamTimerRef.current);
-      } else {
-        setDisplayedText(fullText.slice(0, charIndex));
-      }
-    }, 18);
-  };
+      streamTimerRef.current = setInterval(() => {
+        charIndex += 4;
+        if (charIndex >= fullText.length) {
+          setDisplayedText(fullText);
+          setIsStreaming(false);
+          if (streamTimerRef.current) clearInterval(streamTimerRef.current);
+        } else {
+          setDisplayedText(fullText.slice(0, charIndex));
+        }
+      }, 18);
+    },
+    [hideContacts]
+  );
 
   useEffect(() => {
     const scenario = scenarios.find((s) => s.id === selectedId) || scenarios[0];
@@ -282,7 +295,7 @@ export function AiConsoleSection() {
     return () => {
       if (streamTimerRef.current) clearInterval(streamTimerRef.current);
     };
-  }, [selectedId, isSimple, scenarios]);
+  }, [selectedId, isSimple, scenarios, startStreaming]);
 
   const currentScenario = scenarios.find((s) => s.id === selectedId) || scenarios[0];
 
@@ -419,7 +432,7 @@ export function AiConsoleSection() {
               </div>
 
               <div className="flex items-center gap-2">
-                {currentScenario.relatedAction && (
+                {currentScenario.relatedAction && (!hideContacts || !currentScenario.relatedAction.url) && (
                   <button
                     onClick={() => handleActionClick(currentScenario.relatedAction)}
                     className="inline-flex items-center gap-1.5 rounded-lg border border-white/20 bg-white/[0.04] px-3.5 py-1.5 font-bold text-white hover:bg-white hover:text-black transition-colors"
@@ -427,15 +440,17 @@ export function AiConsoleSection() {
                     <span>{currentScenario.relatedAction.label}</span>
                   </button>
                 )}
-                <a
-                  href={CONTACTS.telegram}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1.5 rounded-lg bg-white px-3.5 py-1.5 font-bold text-black hover:bg-zinc-200 transition-colors"
-                >
-                  <Send size={11} />
-                  <span>Обсудить задачу</span>
-                </a>
+                {!hideContacts && (
+                  <a
+                    href={CONTACTS.telegram}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1.5 rounded-lg bg-white px-3.5 py-1.5 font-bold text-black hover:bg-zinc-200 transition-colors"
+                  >
+                    <Send size={11} />
+                    <span>Обсудить задачу</span>
+                  </a>
+                )}
               </div>
             </div>
           </div>

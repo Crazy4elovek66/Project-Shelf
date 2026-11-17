@@ -4,11 +4,17 @@ import { useState } from "react";
 import { CONTACTS, contactItems } from "@/data/contacts";
 import { ArrowUpRight, Copy, Mail, Send, Github, Briefcase, Check } from "lucide-react";
 import { useLanguageMode } from "@/context/LanguageModeContext";
+import { useKwork } from "@/context/KworkModeContext";
 import { SmoothModeText } from "./SmoothModeText";
 
 export function ContactSection() {
   const { isSimple } = useLanguageMode();
+  const { hideContacts } = useKwork();
   const [copiedKey, setCopiedKey] = useState<string | null>(null);
+
+  if (hideContacts) {
+    return null;
+  }
 
   const copyToClipboard = (text: string, label: string) => {
     navigator.clipboard.writeText(text);

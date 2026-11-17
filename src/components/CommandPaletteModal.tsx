@@ -6,6 +6,7 @@ import { Search, X, CornerDownLeft, Terminal, Send, Mail, Github, Briefcase, Spa
 import { projects, getProjectId } from "@/data/projects";
 import { CONTACTS } from "@/data/contacts";
 import { useLanguageMode } from "@/context/LanguageModeContext";
+import { useKwork } from "@/context/KworkModeContext";
 
 type PaletteItem = {
   id: string;
@@ -20,6 +21,7 @@ type PaletteItem = {
 
 export function CommandPaletteModal() {
   const { isSimple } = useLanguageMode();
+  const { hideContacts } = useKwork();
   const [isOpen, setIsOpen] = useState(false);
   const [query, setQuery] = useState("");
   const [selectedIndex, setSelectedIndex] = useState(0);
@@ -94,43 +96,47 @@ export function CommandPaletteModal() {
 
   // Build items list
   const allItems: PaletteItem[] = [
-    // Navigation
-    {
-      id: "nav-projects",
-      category: "Навигация",
-      code: "NAV_01",
-      title: "Проекты и реализации",
-      subtitle: "Оболочка AI Architect Terminal с 6 проектами",
-      icon: Layers,
-      action: () => scrollTo("projects"),
-    },
+    // Navigation (in exact page scroll order: Engineering/About -> Projects -> Console/FAQ -> Contacts)
     {
       id: "nav-engineering",
       category: "Навигация",
-      code: "NAV_02",
-      title: "Инженерная база и стек",
-      subtitle: "Видео-портрет, направления и фильтруемый стек",
+      code: "NAV_01",
+      title: "Обо мне // Инженерная база и стек",
+      subtitle: "Видео-портрет, архитектурные направления и стек",
       icon: Terminal,
       action: () => scrollTo("engineering"),
+    },
+    {
+      id: "nav-projects",
+      category: "Навигация",
+      code: "NAV_02",
+      title: "Проекты и реализации",
+      subtitle: `Оболочка AI Architect Terminal с ${projects.length} проектами`,
+      icon: Layers,
+      action: () => scrollTo("projects"),
     },
     {
       id: "nav-console",
       category: "Навигация",
       code: "NAV_03",
-      title: "AI-консоль архитектора",
-      subtitle: "Интерактивный симулятор архитектурных решений",
+      title: "AI-консоль и частые вопросы",
+      subtitle: "Интерактивный симулятор архитектурных решений и ответы",
       icon: Sparkles,
       action: () => scrollTo("console"),
     },
-    {
-      id: "nav-contacts",
-      category: "Навигация",
-      code: "NAV_04",
-      title: "Контакты для связи",
-      subtitle: "Telegram, Email, GitHub, резюме",
-      icon: Send,
-      action: () => scrollTo("contacts"),
-    },
+    ...(!hideContacts
+      ? [
+          {
+            id: "nav-contacts",
+            category: "Навигация" as const,
+            code: "NAV_04",
+            title: "Контакты для связи",
+            subtitle: "Telegram, Email, GitHub, резюме",
+            icon: Send,
+            action: () => scrollTo("contacts"),
+          },
+        ]
+      : []),
 
     // Projects
     ...projects.map((p, idx) => ({
@@ -147,63 +153,79 @@ export function CommandPaletteModal() {
       },
     })),
 
-    // Commands
+    // Commands (Contacts hidden in Kwork mode)
     {
-      id: "cmd-tg",
+      id: "cmd-scroll-top",
       category: "Команды",
-      code: "EXEC",
-      title: "Написать в Telegram",
-      subtitle: CONTACTS.telegramHandle,
-      badge: "< 15 мин",
-      icon: Send,
+      code: "TOP",
+      title: "Наверх страницы",
+      subtitle: "Возврат в начало Hero-экрана",
+      icon: Terminal,
       action: () => {
-        window.open(CONTACTS.telegram, "_blank");
+        window.scrollTo({ top: 0, behavior: "smooth" });
         setIsOpen(false);
       },
     },
-    {
-      id: "cmd-copy-tg",
-      category: "Команды",
-      code: "CLIP",
-      title: "Скопировать Telegram",
-      subtitle: CONTACTS.telegramHandle,
-      icon: Send,
-      action: () => copyText(CONTACTS.telegram, "Telegram"),
-    },
-    {
-      id: "cmd-copy-email",
-      category: "Команды",
-      code: "CLIP",
-      title: "Скопировать Email",
-      subtitle: CONTACTS.email,
-      icon: Mail,
-      action: () => copyText(CONTACTS.email, "Email"),
-    },
-    {
-      id: "cmd-github",
-      category: "Команды",
-      code: "HTTP",
-      title: "Открыть GitHub профиль",
-      subtitle: "Crazy4elovek66 // Все открытые исходники",
-      badge: "Open Source",
-      icon: Github,
-      action: () => {
-        window.open(CONTACTS.github, "_blank");
-        setIsOpen(false);
-      },
-    },
-    {
-      id: "cmd-hh",
-      category: "Команды",
-      code: "HTTP",
-      title: "Открыть резюме на HeadHunter",
-      subtitle: "Подробный опыт и образование",
-      icon: Briefcase,
-      action: () => {
-        window.open(CONTACTS.hh_resume, "_blank");
-        setIsOpen(false);
-      },
-    },
+    ...(!hideContacts
+      ? [
+          {
+            id: "cmd-tg",
+            category: "Команды" as const,
+            code: "EXEC",
+            title: "Написать в Telegram",
+            subtitle: CONTACTS.telegramHandle,
+            badge: "< 15 мин",
+            icon: Send,
+            action: () => {
+              window.open(CONTACTS.telegram, "_blank");
+              setIsOpen(false);
+            },
+          },
+          {
+            id: "cmd-copy-tg",
+            category: "Команды" as const,
+            code: "CLIP",
+            title: "Скопировать Telegram",
+            subtitle: CONTACTS.telegramHandle,
+            icon: Send,
+            action: () => copyText(CONTACTS.telegram, "Telegram"),
+          },
+          {
+            id: "cmd-copy-email",
+            category: "Команды" as const,
+            code: "CLIP",
+            title: "Скопировать Email",
+            subtitle: CONTACTS.email,
+            icon: Mail,
+            action: () => copyText(CONTACTS.email, "Email"),
+          },
+          {
+            id: "cmd-github",
+            category: "Команды" as const,
+            code: "HTTP",
+            title: "Открыть GitHub профиль",
+            subtitle: "Crazy4elovek66 // Все открытые исходники",
+            badge: "Open Source",
+            icon: Github,
+            action: () => {
+              window.open(CONTACTS.github, "_blank");
+              setIsOpen(false);
+            },
+          },
+          {
+            id: "cmd-hh",
+            category: "Команды" as const,
+            code: "HTTP",
+            title: "Открыть резюме на HeadHunter",
+            subtitle: "Подробный опыт и образование",
+            icon: Briefcase,
+            action: () => {
+              window.open(CONTACTS.hh_resume, "_blank");
+              setIsOpen(false);
+            },
+          },
+        ]
+      : []),
   ];
 
   // Filtering

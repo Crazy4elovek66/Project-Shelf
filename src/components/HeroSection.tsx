@@ -6,6 +6,7 @@ import { ArrowDown, Terminal, Send } from "lucide-react";
 import { CONTACTS } from "@/data/contacts";
 import { projects } from "@/data/projects";
 import { useLanguageMode } from "@/context/LanguageModeContext";
+import { useKwork } from "@/context/KworkModeContext";
 import { SmoothModeText } from "./SmoothModeText";
 import { HeroHandsOverlay } from "./HeroHandsOverlay";
 
@@ -20,6 +21,7 @@ const formatMskTime = () =>
 
 export function HeroSection() {
   const { isSimple } = useLanguageMode();
+  const { hideContacts } = useKwork();
   const containerRef = useRef<HTMLDivElement>(null);
   const [isVolgogradHovered, setIsVolgogradHovered] = useState(false);
 
@@ -306,17 +308,19 @@ export function HeroSection() {
               </SmoothModeText>
             </button>
 
-            <a
-              href={CONTACTS.telegram}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 rounded-lg border border-white/15 bg-transparent px-5 py-3.5 text-xs font-mono text-zinc-300 transition-all hover:border-white hover:text-white"
-            >
-              <Send size={13} />
-              <SmoothModeText as="span">
-                {isSimple ? "^S НАПИСАТЬ МНЕ" : "^S СВЯЗАТЬСЯ"}
-              </SmoothModeText>
-            </a>
+            {!hideContacts && (
+              <a
+                href={CONTACTS.telegram}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 rounded-lg border border-white/15 bg-transparent px-5 py-3.5 text-xs font-mono text-zinc-300 transition-all hover:border-white hover:text-white"
+              >
+                <Send size={13} />
+                <SmoothModeText as="span">
+                  {isSimple ? "^S НАПИСАТЬ МНЕ" : "^S СВЯЗАТЬСЯ"}
+                </SmoothModeText>
+              </a>
+            )}
           </div>
         </div>
       </div>
