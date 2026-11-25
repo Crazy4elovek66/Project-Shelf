@@ -129,16 +129,16 @@ export function CommandPaletteModal({ initialOpen = false }: { initialOpen?: boo
     },
     ...(!hideContacts
       ? [
-          {
-            id: "nav-contacts",
-            category: "Навигация" as const,
-            code: "NAV_04",
-            title: "Контакты для связи",
-            subtitle: "Telegram, Email, GitHub, резюме",
-            icon: Send,
-            action: () => scrollTo("contacts"),
-          },
-        ]
+        {
+          id: "nav-contacts",
+          category: "Навигация" as const,
+          code: "NAV_04",
+          title: "Контакты для связи",
+          subtitle: "Telegram, Email, GitHub, резюме",
+          icon: Send,
+          action: () => scrollTo("contacts"),
+        },
+      ]
       : []),
 
     // Projects
@@ -171,63 +171,63 @@ export function CommandPaletteModal({ initialOpen = false }: { initialOpen?: boo
     },
     ...(!hideContacts
       ? [
-          {
-            id: "cmd-tg",
-            category: "Команды" as const,
-            code: "EXEC",
-            title: "Написать в Telegram",
-            subtitle: CONTACTS.telegramHandle,
-            badge: "< 15 мин",
-            icon: Send,
-            action: () => {
-              window.open(CONTACTS.telegram, "_blank", "noopener,noreferrer");
-              setIsOpen(false);
-            },
+        {
+          id: "cmd-tg",
+          category: "Команды" as const,
+          code: "EXEC",
+          title: "Написать в Telegram",
+          subtitle: CONTACTS.telegramHandle,
+          badge: "< 15 мин",
+          icon: Send,
+          action: () => {
+            window.open(CONTACTS.telegram, "_blank", "noopener,noreferrer");
+            setIsOpen(false);
           },
-          {
-            id: "cmd-copy-tg",
-            category: "Команды" as const,
-            code: "CLIP",
-            title: "Скопировать Telegram",
-            subtitle: CONTACTS.telegramHandle,
-            icon: Send,
-            action: () => copyText(CONTACTS.telegram, "Telegram"),
+        },
+        {
+          id: "cmd-copy-tg",
+          category: "Команды" as const,
+          code: "CLIP",
+          title: "Скопировать Telegram",
+          subtitle: CONTACTS.telegramHandle,
+          icon: Send,
+          action: () => copyText(CONTACTS.telegram, "Telegram"),
+        },
+        {
+          id: "cmd-copy-email",
+          category: "Команды" as const,
+          code: "CLIP",
+          title: "Скопировать Email",
+          subtitle: CONTACTS.email,
+          icon: Mail,
+          action: () => copyText(CONTACTS.email, "Email"),
+        },
+        {
+          id: "cmd-github",
+          category: "Команды" as const,
+          code: "HTTP",
+          title: "Открыть GitHub профиль",
+          subtitle: "Crazy4elovek66 // Все открытые исходники",
+          badge: "Open Source",
+          icon: Github,
+          action: () => {
+            window.open(CONTACTS.github, "_blank", "noopener,noreferrer");
+            setIsOpen(false);
           },
-          {
-            id: "cmd-copy-email",
-            category: "Команды" as const,
-            code: "CLIP",
-            title: "Скопировать Email",
-            subtitle: CONTACTS.email,
-            icon: Mail,
-            action: () => copyText(CONTACTS.email, "Email"),
+        },
+        {
+          id: "cmd-hh",
+          category: "Команды" as const,
+          code: "HTTP",
+          title: "Открыть резюме на HeadHunter",
+          subtitle: "Подробный опыт и образование",
+          icon: Briefcase,
+          action: () => {
+            window.open(CONTACTS.hh_resume, "_blank", "noopener,noreferrer");
+            setIsOpen(false);
           },
-          {
-            id: "cmd-github",
-            category: "Команды" as const,
-            code: "HTTP",
-            title: "Открыть GitHub профиль",
-            subtitle: "Crazy4elovek66 // Все открытые исходники",
-            badge: "Open Source",
-            icon: Github,
-            action: () => {
-              window.open(CONTACTS.github, "_blank", "noopener,noreferrer");
-              setIsOpen(false);
-            },
-          },
-          {
-            id: "cmd-hh",
-            category: "Команды" as const,
-            code: "HTTP",
-            title: "Открыть резюме на HeadHunter",
-            subtitle: "Подробный опыт и образование",
-            icon: Briefcase,
-            action: () => {
-              window.open(CONTACTS.hh_resume, "_blank", "noopener,noreferrer");
-              setIsOpen(false);
-            },
-          },
-        ]
+        },
+      ]
       : []),
   ];
 
