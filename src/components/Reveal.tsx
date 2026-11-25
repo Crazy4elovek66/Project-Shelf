@@ -1,6 +1,6 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { m } from "framer-motion";
 import type { ReactNode } from "react";
 
 type RevealProps = {
@@ -11,7 +11,7 @@ type RevealProps = {
 
 export function Reveal({ children, className, delay = 0 }: RevealProps) {
   return (
-    <motion.div
+    <m.div
       initial={{ opacity: 0.4, y: 24 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-80px" }}
@@ -19,6 +19,6 @@ export function Reveal({ children, className, delay = 0 }: RevealProps) {
       className={className}
     >
       {children}
-    </motion.div>
+    </m.div>
   );
 }

@@ -1,7 +1,7 @@
 "use client";
 
-import { useState, useEffect, useRef, useCallback } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { memo, useState, useEffect, useRef, useCallback } from "react";
+import { m, AnimatePresence } from "framer-motion";
 import {
   RotateCcw,
   Sparkles,
@@ -24,7 +24,7 @@ import {
 import type { Project } from "@/data/projects";
 import { useLanguageMode } from "@/context/LanguageModeContext";
 
-export function ProjectVisual({ project }: { project: Project }) {
+export const ProjectVisual = memo(function ProjectVisual({ project }: { project: Project }) {
   const { isSimple } = useLanguageMode();
   const [resetKey, setResetKey] = useState(0);
 
@@ -79,7 +79,7 @@ export function ProjectVisual({ project }: { project: Project }) {
       </div>
     </div>
   );
-}
+});
 
 function ProjectInteractiveSandbox({
   title,
@@ -618,7 +618,7 @@ function AuraNetSandbox({ isSimple }: { isSimple: boolean }) {
             {aura} <span className="text-cyan-400 text-lg">AURA</span>
           </div>
           <div className="w-full bg-white/10 h-1.5 rounded-full mt-2 overflow-hidden">
-            <motion.div
+            <m.div
               className="bg-gradient-to-r from-cyan-400 to-emerald-400 h-full"
               style={{ width: `${Math.min(100, Math.max(10, (aura / 2000) * 100))}%` }}
               transition={{ type: "spring", stiffness: 300, damping: 25 }}

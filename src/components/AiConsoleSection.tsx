@@ -302,7 +302,7 @@ export function AiConsoleSection() {
   const handleActionClick = (action: Scenario["relatedAction"]) => {
     if (!action) return;
     if (action.url) {
-      window.open(action.url, "_blank");
+      window.open(action.url, "_blank", "noopener,noreferrer");
     } else if (typeof action.targetTab === "number") {
       const el = document.getElementById("projects");
       if (el) {

@@ -1,10 +1,11 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { AnimatePresence, motion } from "framer-motion";
+import { AnimatePresence, m } from "framer-motion";
 import { Search, X, CornerDownLeft, Terminal, Send, Mail, Github, Briefcase, Sparkles, Layers } from "lucide-react";
-import { projects, getProjectId } from "@/data/projects";
+import { projects } from "@/data/projects";
 import { CONTACTS } from "@/data/contacts";
+import { copyToClipboard } from "@/lib/clipboard";
 import { useLanguageMode } from "@/context/LanguageModeContext";
 import { useKwork } from "@/context/KworkModeContext";
 
@@ -19,10 +20,10 @@ type PaletteItem = {
   action: () => void;
 };
 
-export function CommandPaletteModal() {
+export function CommandPaletteModal({ initialOpen = false }: { initialOpen?: boolean }) {
   const { isSimple } = useLanguageMode();
   const { hideContacts } = useKwork();
-  const [isOpen, setIsOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(initialOpen);
   const [query, setQuery] = useState("");
   const [selectedIndex, setSelectedIndex] = useState(0);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -84,14 +85,16 @@ export function CommandPaletteModal() {
     }
   };
 
-  const copyText = (text: string, label: string) => {
-    navigator.clipboard.writeText(text);
+  const copyText = async (text: string, label: string) => {
+    const ok = await copyToClipboard(text);
     setIsOpen(false);
-    window.dispatchEvent(
-      new CustomEvent("show-toast", {
-        detail: `${label} скопирован в буфер!`,
-      }),
-    );
+    if (ok) {
+      window.dispatchEvent(
+        new CustomEvent("show-toast", {
+          detail: `${label} скопирован в буфер!`,
+        }),
+      );
+    }
   };
 
   // Build items list
@@ -177,7 +180,7 @@ export function CommandPaletteModal() {
             badge: "< 15 мин",
             icon: Send,
             action: () => {
-              window.open(CONTACTS.telegram, "_blank");
+              window.open(CONTACTS.telegram, "_blank", "noopener,noreferrer");
               setIsOpen(false);
             },
           },
@@ -208,7 +211,7 @@ export function CommandPaletteModal() {
             badge: "Open Source",
             icon: Github,
             action: () => {
-              window.open(CONTACTS.github, "_blank");
+              window.open(CONTACTS.github, "_blank", "noopener,noreferrer");
               setIsOpen(false);
             },
           },
@@ -220,7 +223,7 @@ export function CommandPaletteModal() {
             subtitle: "Подробный опыт и образование",
             icon: Briefcase,
             action: () => {
-              window.open(CONTACTS.hh_resume, "_blank");
+              window.open(CONTACTS.hh_resume, "_blank", "noopener,noreferrer");
               setIsOpen(false);
             },
           },
@@ -239,10 +242,13 @@ export function CommandPaletteModal() {
     : allItems;
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === "ArrowDown") {
+    if (e.key === "Escape") {
+      e.preventDefault();
+      setIsOpen(false);
+    } else if (e.key === "ArrowDown" && filteredItems.length > 0) {
       e.preventDefault();
       setSelectedIndex((prev) => (prev + 1) % filteredItems.length);
-    } else if (e.key === "ArrowUp") {
+    } else if (e.key === "ArrowUp" && filteredItems.length > 0) {
       e.preventDefault();
       setSelectedIndex((prev) => (prev - 1 + filteredItems.length) % filteredItems.length);
     } else if (e.key === "Enter" && filteredItems[selectedIndex]) {
@@ -254,23 +260,27 @@ export function CommandPaletteModal() {
   return (
     <AnimatePresence>
       {isOpen && (
-        <div className="fixed inset-0 z-[100] flex items-start justify-center p-4 sm:p-6 md:p-20 overflow-y-auto">
+        <m.div
+          key="command-palette-overlay"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.15 }}
+          className="fixed inset-0 z-[100] flex items-start justify-center p-3 sm:p-6 md:p-20 overflow-y-auto pt-[max(1rem,env(safe-area-inset-top))] pb-[max(1rem,env(safe-area-inset-bottom))]"
+        >
           {/* Backdrop */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
+          <div
             onClick={() => setIsOpen(false)}
             className="fixed inset-0 bg-black/85 backdrop-blur-md"
           />
 
           {/* Dialog Terminal Window */}
-          <motion.div
+          <m.div
             initial={{ opacity: 0, scale: 0.97, y: -8 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.97, y: -8 }}
             transition={{ type: "spring", damping: 25, stiffness: 350 }}
-            className="relative z-10 w-full max-w-2xl rounded-xl border border-white/20 bg-[#0B0B0D] shadow-2xl overflow-hidden flex flex-col font-mono"
+            className="relative z-10 w-full max-w-2xl rounded-xl border border-white/20 bg-[#0B0B0D] shadow-2xl overflow-hidden flex flex-col font-mono my-auto sm:my-0"
           >
             {/* Terminal Window Bar */}
             <div className="flex items-center justify-between px-4 py-2.5 border-b border-white/10 bg-[#121215] text-xs text-zinc-400">
@@ -303,7 +313,7 @@ export function CommandPaletteModal() {
                 }}
                 onKeyDown={handleKeyDown}
                 placeholder="Ввод команды или поиск по проектам, навыкам, контактам..."
-                className="w-full bg-transparent text-sm text-white placeholder-zinc-600 focus:outline-none font-mono"
+                className="w-full bg-transparent text-base sm:text-sm text-white placeholder-zinc-600 focus:outline-none font-mono"
               />
               {query && (
                 <button
@@ -397,8 +407,8 @@ export function CommandPaletteModal() {
               </div>
               <span className="text-zinc-600">IDLEON_CLI_OS v3.0</span>
             </div>
-          </motion.div>
-        </div>
+          </m.div>
+        </m.div>
       )}
     </AnimatePresence>
   );

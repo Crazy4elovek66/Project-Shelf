@@ -113,9 +113,12 @@ export function HeroHandsOverlay({ video, children }: HeroHandsOverlayProps) {
 
       if (!gl) return null;
 
-      canvas.width = 1920;
-      canvas.height = 1080;
-      gl.viewport(0, 0, 1920, 1080);
+      const isMobile = typeof window !== "undefined" && window.matchMedia("(max-width: 767px)").matches;
+      const targetWidth = isMobile ? 960 : 1920;
+      const targetHeight = isMobile ? 540 : 1080;
+      canvas.width = targetWidth;
+      canvas.height = targetHeight;
+      gl.viewport(0, 0, targetWidth, targetHeight);
 
       const compileShader = (type: number, src: string) => {
         const shader = gl!.createShader(type);
@@ -273,18 +276,24 @@ export function HeroHandsOverlay({ video, children }: HeroHandsOverlayProps) {
       handleCanPlay();
     }
 
-    // Suspend render loop when offscreen
+    // Suspend render loop & pause video decoder when offscreen
     const heroSection = document.getElementById("hero") || robotCanvas;
     const observer = new IntersectionObserver(
       ([entry]) => {
         const inView = entry.isIntersecting;
-        isVisible = inView;
-        if (inView) {
+        isVisible = inView && !document.hidden;
+        if (isVisible) {
+          if (video.paused && !prefersReducedMotion) {
+            video.play().catch(() => {});
+          }
           startAnimation();
           lastRenderedTime = -1;
           render();
         } else {
           stopAnimation();
+          if (!video.paused) {
+            video.pause();
+          }
         }
       },
       { threshold: 0.05 }
@@ -296,8 +305,14 @@ export function HeroHandsOverlay({ video, children }: HeroHandsOverlayProps) {
       if (document.hidden) {
         isVisible = false;
         stopAnimation();
+        if (!video.paused) {
+          video.pause();
+        }
       } else {
         isVisible = true;
+        if (video.paused && !prefersReducedMotion) {
+          video.play().catch(() => {});
+        }
         startAnimation();
         lastRenderedTime = -1;
         render();

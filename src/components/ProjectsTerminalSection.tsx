@@ -1,8 +1,9 @@
 "use client";
 
 import { useState, useEffect, useMemo } from "react";
+import dynamic from "next/dynamic";
 import Image from "next/image";
-import { motion, AnimatePresence } from "framer-motion";
+import { m, AnimatePresence } from "framer-motion";
 import {
   ExternalLink,
   Github,
@@ -22,9 +23,20 @@ import {
 } from "lucide-react";
 import { projects, getProjectId, type Project } from "@/data/projects";
 import { StatusBadge } from "./Badges";
-import { ProjectVisual } from "./ProjectVisual";
 import { useLanguageMode } from "@/context/LanguageModeContext";
 import { SmoothModeText } from "./SmoothModeText";
+
+const ProjectVisual = dynamic(
+  () => import("./ProjectVisual").then((mod) => mod.ProjectVisual),
+  {
+    ssr: false,
+    loading: () => (
+      <div className="min-h-[440px] rounded-2xl border border-white/10 bg-[#09090D] flex items-center justify-center font-mono text-xs text-zinc-500">
+        Загрузка интерактивной песочницы...
+      </div>
+    ),
+  }
+);
 
 const tabNames = [
   "01_jobradar.py",
@@ -170,7 +182,7 @@ export function ProjectsTerminalSection() {
             </div>
 
             {/* File Tabs Bar */}
-            <div className="flex items-center gap-1 px-3 py-2 border-b border-white/10 bg-[#0E0E12] overflow-x-auto no-scrollbar text-xs">
+            <div className="flex items-center gap-1 px-3 py-2 border-b border-white/10 bg-[#0E0E12] overflow-x-auto touch-pan-x no-scrollbar text-xs">
               {currentTabs.map((tab, idx) => {
                 const isActive = activeProjectIdx === idx;
                 return (
@@ -233,15 +245,21 @@ function AdaptiveScreenshotFrame({
 
   useEffect(() => {
     if (!src) return;
+    let cancelled = false;
     const img = new window.Image();
     img.src = src;
     if (img.complete && img.naturalWidth > 0) {
       setDimensions({ width: img.naturalWidth, height: img.naturalHeight });
     } else {
       img.onload = () => {
-        setDimensions({ width: img.naturalWidth, height: img.naturalHeight });
+        if (!cancelled) {
+          setDimensions({ width: img.naturalWidth, height: img.naturalHeight });
+        }
       };
     }
+    return () => {
+      cancelled = true;
+    };
   }, [src]);
 
   const defaultRatio = src.includes("JobRadar1")
@@ -598,7 +616,7 @@ function SingleProjectInspector({ project, index }: { project: Project; index: n
       <AnimatePresence>
         {isLightboxOpen && images.length > 0 && (
           <div className="fixed inset-0 z-[120] flex items-center justify-center p-4 bg-black/95 backdrop-blur-md">
-            <motion.div
+            <m.div
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.95 }}
@@ -643,7 +661,7 @@ function SingleProjectInspector({ project, index }: { project: Project; index: n
                   ))}
                 </div>
               )}
-            </motion.div>
+            </m.div>
           </div>
         )}
       </AnimatePresence>

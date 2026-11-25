@@ -1,6 +1,6 @@
 "use client";
 
-import React, { createContext, useContext, useEffect, useState } from "react";
+import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
 
 export type LanguageMode = "tech" | "simple";
 
@@ -38,26 +38,37 @@ export function LanguageModeProvider({ children }: { children: React.ReactNode }
     }
   }, []);
 
-  const setMode = (newMode: LanguageMode) => {
+  const setMode = useCallback((newMode: LanguageMode) => {
     setModeState(newMode);
     try {
       localStorage.setItem(STORAGE_KEY, newMode);
     } catch {
       // ignore
     }
-  };
+  }, []);
 
-  const toggleMode = () => {
-    setMode(mode === "simple" ? "tech" : "simple");
-  };
+  const toggleMode = useCallback(() => {
+    setModeState((prev) => {
+      const next = prev === "simple" ? "tech" : "simple";
+      try {
+        localStorage.setItem(STORAGE_KEY, next);
+      } catch {
+        // ignore
+      }
+      return next;
+    });
+  }, []);
 
-  const value: LanguageModeContextType = {
-    // Both SSR and initial client render start with "simple" (zero hydration mismatch)
-    mode: isMounted ? mode : "simple",
-    isSimple: isMounted ? mode === "simple" : true,
-    toggleMode,
-    setMode,
-  };
+  const value: LanguageModeContextType = useMemo(
+    () => ({
+      // Both SSR and initial client render start with "simple" (zero hydration mismatch)
+      mode: isMounted ? mode : "simple",
+      isSimple: isMounted ? mode === "simple" : true,
+      toggleMode,
+      setMode,
+    }),
+    [isMounted, mode, toggleMode, setMode]
+  );
 
   return (
     <LanguageModeContext.Provider value={value}>

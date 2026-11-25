@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { AnimatePresence, motion } from "framer-motion";
+import { AnimatePresence, m } from "framer-motion";
 import { useLanguageMode } from "@/context/LanguageModeContext";
 
 export function SmoothModeText({
@@ -14,7 +14,7 @@ export function SmoothModeText({
   as?: "div" | "span" | "p" | "h1" | "h2" | "h3" | "h4";
 }) {
   const { mode } = useLanguageMode();
-  const Component = motion[as];
+  const Component = m[as];
 
   return (
     <AnimatePresence initial={false} mode="wait">

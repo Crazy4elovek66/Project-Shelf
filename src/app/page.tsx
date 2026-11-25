@@ -7,18 +7,18 @@ import { EngineeringBaseSection } from "@/components/EngineeringBaseSection";
 import { ContactSection } from "@/components/ContactSection";
 import { Footer } from "@/components/Footer";
 import { ScrollToTop } from "@/components/ScrollToTop";
+import { CommandPaletteLauncher } from "@/components/CommandPaletteLauncher";
+import { SectionErrorBoundary } from "@/components/SectionErrorBoundary";
 
-// Dynamic imports with SSR for below-the-fold sections
+// Dynamic imports with SSR and height reservation to prevent CLS
 const ProjectsTerminalSection = dynamic(
-  () => import("@/components/ProjectsTerminalSection").then((m) => m.ProjectsTerminalSection)
+  () => import("@/components/ProjectsTerminalSection").then((m) => m.ProjectsTerminalSection),
+  { loading: () => <div className="min-h-[820px] border-b border-white/10" aria-hidden="true" /> }
 );
 
 const AiConsoleSection = dynamic(
-  () => import("@/components/AiConsoleSection").then((m) => m.AiConsoleSection)
-);
-
-const CommandPaletteModal = dynamic(
-  () => import("@/components/CommandPaletteModal").then((m) => m.CommandPaletteModal)
+  () => import("@/components/AiConsoleSection").then((m) => m.AiConsoleSection),
+  { loading: () => <div className="min-h-[760px] border-b border-white/10" aria-hidden="true" /> }
 );
 
 export default function Home() {
@@ -39,10 +39,14 @@ export default function Home() {
         <EngineeringBaseSection />
 
         {/* 5. ProjectsTerminalSection */}
-        <ProjectsTerminalSection />
+        <SectionErrorBoundary sectionName="ProjectsTerminal">
+          <ProjectsTerminalSection />
+        </SectionErrorBoundary>
 
         {/* 6. AiConsoleSection */}
-        <AiConsoleSection />
+        <SectionErrorBoundary sectionName="AiConsole">
+          <AiConsoleSection />
+        </SectionErrorBoundary>
 
         {/* 7. ContactSection */}
         <ContactSection />
@@ -50,7 +54,7 @@ export default function Home() {
       {/* 8. Footer */}
       <Footer />
       <ScrollToTop />
-      <CommandPaletteModal />
+      <CommandPaletteLauncher />
     </>
   );
 }

@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useRef, useState } from "react";
 import { useLanguageMode } from "@/context/LanguageModeContext";
 
 const techTickerItems = [
@@ -24,13 +25,37 @@ const simpleTickerItems = [
 
 export function KineticMarquee() {
   const { isSimple, mode } = useLanguageMode();
+  const wrapperRef = useRef<HTMLDivElement>(null);
+  const [inView, setInView] = useState(true);
   const items = isSimple ? simpleTickerItems : techTickerItems;
   // Duplicate array inside track to guarantee width > 3000px on 2K/4K displays
   const trackItems = [...items, ...items];
 
+  useEffect(() => {
+    const el = wrapperRef.current;
+    if (!el) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        setInView(entry.isIntersecting);
+      },
+      { rootMargin: "100px" }
+    );
+
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+
   return (
-    <div className="marquee-wrapper w-full border-y border-white/10 py-2.5 sm:py-3 bg-[#08080A] overflow-hidden select-none">
-      <div key={mode} className="animate-marquee-seamless flex w-max">
+    <div
+      ref={wrapperRef}
+      className="marquee-wrapper w-full border-y border-white/10 py-2.5 sm:py-3 bg-[#08080A] overflow-hidden select-none"
+    >
+      <div
+        key={mode}
+        className="animate-marquee-seamless flex w-max"
+        style={{ animationPlayState: inView ? "running" : "paused" }}
+      >
         {/* Track 1 */}
         <div className="flex shrink-0 items-center gap-8 pr-8">
           {trackItems.map((item, idx) => (

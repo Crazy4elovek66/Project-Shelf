@@ -109,8 +109,8 @@ const rawProjects: Project[] = [
     stack: ["Python", "Twitch API", "Whisper STT", "LLM", "FFmpeg", "AsyncIO"],
     repoUrl: "https://github.com/Crazy4elovek66/TwitchChatAi",
     demoUrl: "",
-    imageUrl: "/projects/TwitchAiViev.png",
-    images: ["/projects/TwitchAiViev.png"],
+    imageUrl: "/projects/TwitchAiViev.webp",
+    images: ["/projects/TwitchAiViev.webp"],
     visual: {
       label: "чат / стрим / AI",
       accent: "from-violet-400 via-fuchsia-500 to-cyan-400",
@@ -147,8 +147,8 @@ const rawProjects: Project[] = [
     stack: ["React 19", "Next.js", "TypeScript", "Tailwind CSS", "Framer Motion"],
     repoUrl: "https://github.com/Crazy4elovek66/aura-net",
     demoUrl: "https://aura-net.vercel.app",
-    imageUrl: "/projects/AuraNet1.png",
-    images: ["/projects/AuraNet1.png", "/projects/AuraNet2.png", "/projects/AuraNet3.png"],
+    imageUrl: "/projects/AuraNet1.webp",
+    images: ["/projects/AuraNet1.webp", "/projects/AuraNet2.webp", "/projects/AuraNet3.webp"],
     visual: {
       label: "сеть / веб-сервис",
       accent: "from-emerald-400 via-cyan-500 to-blue-600",
@@ -223,8 +223,8 @@ const rawProjects: Project[] = [
     stack: ["Python", "OpenCV", "Caffe DNN", "FFmpeg", "MediaPipe", "AsyncIO"],
     repoUrl: "https://github.com/Crazy4elovek66/AutoClip",
     demoUrl: "",
-    imageUrl: "/projects/AutoClip1.png",
-    images: ["/projects/AutoClip1.png", "/projects/AutoClip2.png", "/projects/AutoClip3.png"],
+    imageUrl: "/projects/AutoClip1.webp",
+    images: ["/projects/AutoClip1.webp", "/projects/AutoClip2.webp", "/projects/AutoClip3.webp"],
     visual: {
       label: "видео / компьютерное зрение",
       accent: "from-purple-400 via-pink-500 to-rose-600",

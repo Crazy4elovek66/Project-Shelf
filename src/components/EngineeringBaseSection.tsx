@@ -1,11 +1,12 @@
 "use client";
 
 import { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { m, AnimatePresence } from "framer-motion";
 import { Terminal, Cpu, Layers, Video, Database, CheckCircle2, ChevronRight, Sparkles } from "lucide-react";
 import { skillGroups, skillRelations, skillFilterTabs, type SkillCategory } from "@/data/skills";
 import { projects } from "@/data/projects";
 import { SeamlessPortraitVideo } from "./SeamlessPortraitVideo";
+import { SectionErrorBoundary } from "./SectionErrorBoundary";
 import { useLanguageMode } from "@/context/LanguageModeContext";
 import { SmoothModeText } from "./SmoothModeText";
 
@@ -126,7 +127,9 @@ export function EngineeringBaseSection() {
 
             {/* Seamless Video Portrait Box */}
             <div className="my-6">
-              <SeamlessPortraitVideo />
+              <SectionErrorBoundary sectionName="PortraitVideo">
+                <SeamlessPortraitVideo />
+              </SectionErrorBoundary>
             </div>
 
             {/* Bottom 4 Key Metrics */}
@@ -238,7 +241,7 @@ export function EngineeringBaseSection() {
                 <div className="space-y-4">
                   <AnimatePresence mode="popLayout">
                     {filteredGroups.map((group) => (
-                      <motion.div
+                      <m.div
                         key={group.title}
                         layout
                         initial={{ opacity: 0 }}
@@ -282,7 +285,7 @@ export function EngineeringBaseSection() {
                             );
                           })}
                         </div>
-                      </motion.div>
+                      </m.div>
                     ))}
                   </AnimatePresence>
                 </div>

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { motion } from "framer-motion";
+import { m } from "framer-motion";
 import { ArrowUpRight } from "lucide-react";
 import { projects } from "@/data/projects";
 import { useLanguageMode } from "@/context/LanguageModeContext";
@@ -51,7 +51,7 @@ export function ProjectPreviewStrip() {
               >
                 {/* Sliding Hover Highlight Background */}
                 {isHovered && (
-                  <motion.div
+                  <m.div
                     layoutId="previewStripHover"
                     className="absolute inset-0 z-0 bg-white/[0.06]"
                     transition={{ type: "spring", stiffness: 450, damping: 30 }}

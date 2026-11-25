@@ -25,10 +25,15 @@ html {
 body {
   margin: 0;
   min-height: 100vh;
+  min-height: 100dvh;
   background-color: var(--bg-void);
   color: var(--ink-primary);
   font-family: var(--font-mono), monospace;
-  overflow-x: hidden;
+  overflow-x: clip;
+}
+
+button, a, [role="button"], [role="switch"] {
+  touch-action: manipulation;
 }
 
 /* Background technical coordinate grid */

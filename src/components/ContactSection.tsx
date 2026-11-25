@@ -1,7 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { CONTACTS, contactItems } from "@/data/contacts";
+import { copyToClipboard } from "@/lib/clipboard";
 import { ArrowUpRight, Copy, Mail, Send, Github, Briefcase, Check } from "lucide-react";
 import { useLanguageMode } from "@/context/LanguageModeContext";
 import { useKwork } from "@/context/KworkModeContext";
@@ -11,15 +12,24 @@ export function ContactSection() {
   const { isSimple } = useLanguageMode();
   const { hideContacts } = useKwork();
   const [copiedKey, setCopiedKey] = useState<string | null>(null);
+  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => {
+    return () => {
+      if (timerRef.current) clearTimeout(timerRef.current);
+    };
+  }, []);
 
   if (hideContacts) {
     return null;
   }
 
-  const copyToClipboard = (text: string, label: string) => {
-    navigator.clipboard.writeText(text);
+  const handleCopy = async (text: string, label: string) => {
+    const ok = await copyToClipboard(text);
+    if (!ok) return;
     setCopiedKey(label);
-    setTimeout(() => setCopiedKey(null), 2500);
+    if (timerRef.current) clearTimeout(timerRef.current);
+    timerRef.current = setTimeout(() => setCopiedKey(null), 2500);
 
     window.dispatchEvent(
       new CustomEvent("show-toast", {
@@ -32,7 +42,7 @@ export function ContactSection() {
     <section id="contacts" className="py-24 border-b border-white/10 relative font-mono">
       <div className="section-shell">
         {/* Main Monochromatic Container */}
-        <div className="rounded-2xl border border-white/15 bg-[#09090C] p-8 sm:p-12 shadow-2xl relative overflow-hidden">
+        <div className="rounded-2xl border border-white/15 bg-[#09090C] p-5 sm:p-12 shadow-2xl relative overflow-hidden">
           <div className="relative z-10 grid gap-12 lg:grid-cols-12 lg:items-center">
             {/* Left Headline & Pitch */}
             <div className="lg:col-span-7">
@@ -110,8 +120,8 @@ export function ContactSection() {
                     <div className="flex items-center gap-1.5 shrink-0 ml-2">
                       <button
                         type="button"
-                        onClick={() => copyToClipboard(contact.copyValue, contact.label)}
-                        className="p-1.5 rounded border border-white/10 bg-white/[0.02] text-zinc-400 hover:text-white hover:border-white/30 transition-colors"
+                        onClick={() => handleCopy(contact.copyValue, contact.label)}
+                        className="p-2 rounded border border-white/10 bg-white/[0.02] text-zinc-400 hover:text-white hover:border-white/30 transition-colors"
                         title="Скопировать в буфер"
                       >
                         {isCopied ? <Check size={13} className="text-white" /> : <Copy size={13} />}

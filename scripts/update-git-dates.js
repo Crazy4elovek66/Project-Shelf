@@ -1,6 +1,6 @@
 const fs = require('fs');
 const path = require('path');
-const { execSync } = require('child_process');
+const { execFileSync } = require('child_process');
 const https = require('https');
 
 const projects = [
@@ -30,7 +30,11 @@ function getLocalGitDate(localPath) {
   const absolutePath = path.resolve(__dirname, '..', localPath);
   if (fs.existsSync(path.join(absolutePath, '.git'))) {
     try {
-      const date = execSync(`git -C "${absolutePath}" log -1 --format=%cd --date=format:"%m.%Y"`, { encoding: 'utf8' }).trim();
+      const date = execFileSync(
+        'git',
+        ['-C', absolutePath, 'log', '-1', '--format=%cd', '--date=format:%m.%Y'],
+        { encoding: 'utf8' }
+      ).trim();
       if (date && /^\d{2}\.\d{4}$/.test(date)) {
         return date;
       }

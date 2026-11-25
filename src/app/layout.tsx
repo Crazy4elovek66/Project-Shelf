@@ -2,14 +2,17 @@ import type { Metadata, Viewport } from "next";
 import { Analytics } from "@vercel/analytics/next";
 import { JetBrains_Mono, Space_Grotesk, Silkscreen } from "next/font/google";
 import { Toast } from "@/components/Toast";
+import { MotionProvider } from "@/components/MotionProvider";
 import { LanguageModeProvider } from "@/context/LanguageModeContext";
 import { KworkModeProvider } from "@/context/KworkModeContext";
 import "./globals.css";
 
 const jetBrainsMono = JetBrains_Mono({
   subsets: ["latin", "cyrillic"],
+  weight: ["400", "500", "600", "700"],
   variable: "--font-mono",
   display: "swap",
+  adjustFontFallback: true,
 });
 
 const spaceGrotesk = Space_Grotesk({
@@ -17,6 +20,7 @@ const spaceGrotesk = Space_Grotesk({
   weight: ["500", "600", "700"],
   variable: "--font-display",
   display: "swap",
+  adjustFontFallback: true,
 });
 
 const silkscreen = Silkscreen({
@@ -24,6 +28,8 @@ const silkscreen = Silkscreen({
   weight: ["400"],
   variable: "--font-pixel",
   display: "swap",
+  preload: false,
+  adjustFontFallback: true,
 });
 
 export const viewport: Viewport = {
@@ -95,10 +101,12 @@ export default function RootLayout({
       >
         <KworkModeProvider>
           <LanguageModeProvider>
-            <div className="relative min-h-screen overflow-x-hidden">
-              {children}
-            </div>
-            <Toast />
+            <MotionProvider>
+              <div className="relative min-h-[100dvh] overflow-x-clip">
+                {children}
+              </div>
+              <Toast />
+            </MotionProvider>
             <Analytics />
           </LanguageModeProvider>
         </KworkModeProvider>

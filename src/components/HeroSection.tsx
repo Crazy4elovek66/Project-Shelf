@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
+import { m, useMotionValue, useSpring, useTransform } from "framer-motion";
 import { ArrowDown, Terminal, Send } from "lucide-react";
 import { CONTACTS } from "@/data/contacts";
 import { projects } from "@/data/projects";
@@ -27,6 +27,8 @@ export function HeroSection() {
 
   // Single video element & hardware decoder: 100% smooth, 0-stutter, instant startup
   const [videoEl, setVideoEl] = useState<HTMLVideoElement | null>(null);
+  const [isMobileViewport, setIsMobileViewport] = useState(false);
+  const [videoReadyToLoad, setVideoReadyToLoad] = useState(false);
   const [mskTime, setMskTime] = useState<string>("12:00:00");
 
   useEffect(() => {
@@ -35,6 +37,18 @@ export function HeroSection() {
       setMskTime(formatMskTime());
     }, 1000);
     return () => clearInterval(interval);
+  }, []);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const mq = window.matchMedia("(max-width: 767px)");
+    setIsMobileViewport(mq.matches);
+
+    // Defer video source attachment until after initial text paint (improves LCP)
+    const rafId = requestAnimationFrame(() => {
+      setVideoReadyToLoad(true);
+    });
+    return () => cancelAnimationFrame(rafId);
   }, []);
 
   // Mouse Parallax coordinates for kinetic typography
@@ -53,6 +67,9 @@ export function HeroSection() {
 
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
     if (!containerRef.current) return;
+    if (typeof window !== "undefined" && !window.matchMedia("(hover: hover) and (pointer: fine)").matches) {
+      return;
+    }
     const rect = containerRef.current.getBoundingClientRect();
     const centerX = rect.left + rect.width / 2;
     const centerY = rect.top + rect.height / 2;
@@ -96,7 +113,7 @@ export function HeroSection() {
                 onMouseLeave={() => setIsVolgogradHovered(false)}
                 className="relative inline-flex items-center text-zinc-100 border-b border-dashed border-white/35 pb-0.5 cursor-pointer select-none"
               >
-                <motion.span
+                <m.span
                   aria-hidden="true"
                   initial={{ opacity: 0, y: 7, scale: 0.9 }}
                   animate={
@@ -129,7 +146,7 @@ export function HeroSection() {
                       strokeLinecap="round"
                     />
                   </svg>
-                </motion.span>
+                </m.span>
                 VOLGOGRAD
               </span>
 
@@ -162,7 +179,7 @@ export function HeroSection() {
         loop
         muted
         playsInline
-        preload="auto"
+        preload={videoReadyToLoad ? "auto" : "none"}
         controls={false}
         disablePictureInPicture
         onLoadedMetadata={(e) => {
@@ -176,8 +193,18 @@ export function HeroSection() {
         }}
         className="pointer-events-none absolute opacity-0 w-1 h-1 -z-50"
       >
-        <source src="/videos/hero-hands-stacked.webm" type="video/webm" />
-        <source src="/videos/hero-hands-stacked.mp4" type="video/mp4" />
+        {videoReadyToLoad && (
+          <>
+            <source
+              src={isMobileViewport ? "/videos/hero-hands-stacked-mobile.mp4" : "/videos/hero-hands-stacked.mp4"}
+              type="video/mp4"
+            />
+            <source
+              src={isMobileViewport ? "/videos/hero-hands-stacked-mobile.webm" : "/videos/hero-hands-stacked.webm"}
+              type="video/webm"
+            />
+          </>
+        )}
       </video>
 
       <div className="section-shell relative">
@@ -191,31 +218,31 @@ export function HeroSection() {
           {/* Multilayer kinetic typography */}
           <div className="relative select-none z-10">
             {/* Deep Outline Echo Layer */}
-            <motion.div
+            <m.div
               style={{ x: deepEchoX, y: deepEchoY }}
               className="absolute inset-0 pointer-events-none hidden sm:block opacity-20 will-change-transform"
               aria-hidden="true"
             >
-              <h1 className="font-display text-5xl sm:text-7xl lg:text-9xl font-black tracking-tight uppercase leading-[0.88] text-stroke-echo-deep">
+              <h1 className="font-display text-[clamp(2.25rem,11vw,3rem)] sm:text-7xl lg:text-9xl font-black tracking-tight uppercase leading-[0.88] text-stroke-echo-deep">
                 <div>FULL-STACK</div>
                 <div>AI DEVELOPER</div>
               </h1>
-            </motion.div>
+            </m.div>
 
             {/* Bright Outline Echo Parallax Layer */}
-            <motion.div
+            <m.div
               style={{ x: echoX, y: echoY }}
               className="absolute inset-0 pointer-events-none hidden sm:block opacity-45 will-change-transform"
               aria-hidden="true"
             >
-              <h1 className="font-display text-5xl sm:text-7xl lg:text-9xl font-black tracking-tight uppercase leading-[0.88] text-stroke-echo">
+              <h1 className="font-display text-[clamp(2.25rem,11vw,3rem)] sm:text-7xl lg:text-9xl font-black tracking-tight uppercase leading-[0.88] text-stroke-echo">
                 <div>FULL-STACK</div>
                 <div>AI DEVELOPER</div>
               </h1>
-            </motion.div>
+            </m.div>
 
             {/* Front Solid Monochrome Typography Layer */}
-            <h1 className="relative z-10 font-display text-5xl sm:text-7xl lg:text-9xl font-black tracking-tight uppercase leading-[0.88] text-white">
+            <h1 className="relative z-10 font-display text-[clamp(2.25rem,11vw,3rem)] sm:text-7xl lg:text-9xl font-black tracking-tight uppercase leading-[0.88] text-white">
               <span
                 className="block text-white"
                 style={{

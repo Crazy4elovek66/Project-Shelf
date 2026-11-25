@@ -1,9 +1,10 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { motion, useAnimationControls } from "framer-motion";
+import { m, useAnimationControls } from "framer-motion";
 import { Terminal, Send, Mail, Sparkles } from "lucide-react";
 import { CONTACTS } from "@/data/contacts";
+import { copyToClipboard } from "@/lib/clipboard";
 import { useLanguageMode } from "@/context/LanguageModeContext";
 import { useKwork } from "@/context/KworkModeContext";
 
@@ -59,10 +60,7 @@ export function Header() {
     });
 
     return () => {
-      sectionIds.forEach((id) => {
-        const el = document.getElementById(id);
-        if (el) observer.unobserve(el);
-      });
+      observer.disconnect();
     };
   }, [hideContacts]);
 
@@ -70,33 +68,37 @@ export function Header() {
     window.dispatchEvent(new CustomEvent("open-command-palette"));
   };
 
-  const copyTelegram = () => {
-    navigator.clipboard.writeText(CONTACTS.telegram);
-    window.dispatchEvent(
-      new CustomEvent("show-toast", {
-        detail: `Telegram ${CONTACTS.telegramHandle} скопирован в буфер!`,
-      }),
-    );
+  const copyTelegram = async () => {
+    const ok = await copyToClipboard(CONTACTS.telegram);
+    if (ok) {
+      window.dispatchEvent(
+        new CustomEvent("show-toast", {
+          detail: `Telegram ${CONTACTS.telegramHandle} скопирован в буфер!`,
+        }),
+      );
+    }
   };
 
-  const copyEmail = () => {
-    navigator.clipboard.writeText(CONTACTS.email);
-    window.dispatchEvent(
-      new CustomEvent("show-toast", {
-        detail: `Email ${CONTACTS.email} скопирован в буфер!`,
-      }),
-    );
+  const copyEmail = async () => {
+    const ok = await copyToClipboard(CONTACTS.email);
+    if (ok) {
+      window.dispatchEvent(
+        new CustomEvent("show-toast", {
+          detail: `Email ${CONTACTS.email} скопирован в буфер!`,
+        }),
+      );
+    }
   };
 
   return (
     <header
-      className={`fixed inset-x-0 top-0 z-50 flex justify-center transition-all duration-300 ${isScrolled ? "top-3 px-3 sm:px-4" : "top-0 px-0"
+      className={`fixed inset-x-0 top-0 z-50 flex justify-center transition-all duration-300 pt-[env(safe-area-inset-top,0px)] ${isScrolled ? "top-3 px-3 sm:px-4" : "top-0 px-0"
         }`}
     >
       <div
-        className={`flex w-full items-center justify-between transition-all duration-300 ${isScrolled
-          ? "section-shell rounded-xl border border-white/15 bg-[#08080A]/90 px-4 sm:px-6 py-2.5 shadow-2xl backdrop-blur-2xl"
-          : "section-shell border-b border-white/10 bg-[#050505]/80 px-4 py-3.5 backdrop-blur-xl"
+        className={`flex w-full items-center justify-between gap-2 transition-all duration-300 ${isScrolled
+          ? "section-shell rounded-xl border border-white/15 bg-[#08080A]/90 px-3 sm:px-6 py-2.5 shadow-2xl backdrop-blur-2xl"
+          : "section-shell border-b border-white/10 bg-[#050505]/80 px-3 sm:px-4 py-3.5 backdrop-blur-xl"
           }`}
       >
         {/* Left: Clean Text Logo without iO box + MechanicalKeycap */}
@@ -129,14 +131,14 @@ export function Header() {
               >
                 <span className="relative z-10">{item.label}</span>
                 {hoveredIndex === index && (
-                  <motion.span
+                  <m.span
                     layoutId="navHover"
                     className="absolute inset-0 z-0 rounded-lg bg-white/[0.08]"
                     transition={{ type: "spring", stiffness: 400, damping: 30 }}
                   />
                 )}
                 {isActive && (
-                  <motion.span
+                  <m.span
                     layoutId="activeNavPill"
                     className="absolute inset-0 z-0 rounded-lg bg-white/10 border border-white/20"
                     transition={{ type: "spring", stiffness: 400, damping: 30 }}
@@ -159,7 +161,7 @@ export function Header() {
               }`}
             >
               {isSimple && (
-                <motion.span
+                <m.span
                   layoutId="mode-pill"
                   transition={{ type: "spring", stiffness: 420, damping: 32 }}
                   className="absolute inset-0 rounded-md bg-white shadow-sm"
@@ -182,7 +184,7 @@ export function Header() {
               }`}
             >
               {!isSimple && (
-                <motion.span
+                <m.span
                   layoutId="mode-pill"
                   transition={{ type: "spring", stiffness: 420, damping: 32 }}
                   className="absolute inset-0 rounded-md bg-white shadow-sm"
@@ -268,7 +270,7 @@ function MechanicalKeycap() {
   };
 
   return (
-    <motion.button
+    <m.button
       type="button"
       animate={keyControls}
       onMouseEnter={triggerKeyPress}
@@ -281,6 +283,6 @@ function MechanicalKeycap() {
       className="inline-flex h-7 min-w-[34px] items-center justify-center rounded-md border border-white/20 border-b-[3px] border-b-zinc-500 bg-[#121215] px-2 font-mono text-xs font-semibold tracking-tight text-zinc-100 shadow-[inset_0_1px_0_rgba(255,255,255,0.18)] transition-colors duration-150 hover:border-white/40 hover:bg-[#19191E] hover:text-white cursor-pointer select-none"
     >
       &gt;_
-    </motion.button>
+    </m.button>
   );
 }

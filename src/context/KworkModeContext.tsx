@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useContext, ReactNode } from "react";
+import { createContext, useContext, useMemo, ReactNode } from "react";
 import { useKworkMode } from "@/hooks/useKworkMode";
 
 interface KworkModeContextType {
@@ -13,9 +13,10 @@ const KworkModeContext = createContext<KworkModeContextType>({
 
 export function KworkModeProvider({ children }: { children: ReactNode }) {
   const hideContacts = useKworkMode();
+  const value = useMemo(() => ({ hideContacts }), [hideContacts]);
 
   return (
-    <KworkModeContext.Provider value={{ hideContacts }}>
+    <KworkModeContext.Provider value={value}>
       {children}
     </KworkModeContext.Provider>
   );
